@@ -99,7 +99,7 @@
                             <b>{{data.currency.decimalPlaces}}</b>
                         </label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-show="!formData.useFloatingInterestRate">
                         <label class="control-label col-sm-2">{{ 'label.input.nominalannualinterestrate' | translate }}&nbsp;
                             <span class="required">*</span>
                         </label>
@@ -110,19 +110,40 @@
                         <div class="col-sm-2">
                             <form-validate valattributeform="Terms" valattribute="nominalannualinterestrate" />
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">{{ 'label.input.usefloatinginterestrate' | translate }}
+                        </label>
+                        <div class="checkbox col-sm-2">
+                            <label>
+                                <input type="checkbox" ng-model="formData.useFloatingInterestRate"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="formData.useFloatingInterestRate">
+                        <div class="form-group col-md-12">
+                            <table class="table width100">
+                                <tr class="graybg">
+                                    <th>{{'label.heading.floatinginterestrate.valid.fromDate' | translate}}</th>
+                                    <th>{{'label.heading.floatinginterestrate.valid.endDate' | translate}}</th>
+                                    <th>{{'label.heading.floatinginterestrate.floatingInterestRate' | translate}}</th>
+                                </tr>
+                                <tr ng-repeat="floatingInterestRate in formData.floatingInterestRates">
+                                    <td class="width20"> {{ floatingInterestRate.fromDate | DateFormat}}</td>
+                                    <td class="width20"> {{ floatingInterestRate.endDate | DateFormat}}</td>
+                                    <td class="width15"> {{ floatingInterestRate.floatingInterestRate }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label col-sm-2">{{ 'label.input.interestcompoundingperiod' | translate }}&nbsp;
                             <span class="required">*</span>
                         </label>
                         <div class="col-sm-2">
                             <select id="interestCompoundingPeriodType" ng-model="formData.interestCompoundingPeriodType" ng-options="type.id as type.value for type in data.interestCompoundingPeriodTypeOptions"
-                                ng-change="savingdetails.interestCompoundingPeriodTypeValue = formValue(data.interestCompoundingPeriodTypeOptions,formData.interestCompoundingPeriodType)"
-                                value="{{type.id}}" class="form-control width170px"></select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2">{{ 'label.input.currencyinmultiplesof' | translate }}&nbsp;</label>
-                        <div class="col-sm-2">
-                            <input type="text" value="{{data.currency.inMultiplesOf}}" class="form-control" readonly/>
+                                    ng-change="savingdetails.interestCompoundingPeriodTypeValue = formValue(data.interestCompoundingPeriodTypeOptions,formData.interestCompoundingPeriodType)"
+                                    value="{{type.id}}" class="form-control width170px"></select>
                         </div>
 
                         <label class="control-label col-sm-2 col-sm-offset-2">{{ 'label.input.interestpostingperiod' | translate }}&nbsp;
@@ -171,6 +192,12 @@
                                     <option value="">{{'label.selectone' | translate}}</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">{{ 'label.input.currencyinmultiplesof' | translate }}&nbsp;</label>
+                        <div class="col-sm-2">
+                            <input type="text" value="{{data.currency.inMultiplesOf}}" class="form-control" readonly/>
                         </div>
                     </div>
                     <div class="form-group">

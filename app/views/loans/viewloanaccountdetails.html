@@ -429,6 +429,10 @@
                                 <td>{{ 'label.input.interest.recalculation.reschdule.strategy' | translate }}</td>
                                 <td><span class="padded-td">{{ loandetails.interestRecalculationData.rescheduleStrategyType.value}}</span></td>
                             </tr>
+                            <tr data-ng-show="loandetails.isInterestRecalculationEnabled && loandetails.interestRecalculationData.rescheduleStrategyType.id == 3">
+                                <td>{{ 'label.input.interestforexactdaysinperiod' | translate }}</td>
+                                <td><span class="padded-td">{{loandetails.interestRecalculationData.advancePaymentInterestForExactDaysInPeriod}}</span></td>
+                            </tr>
                             <tr data-ng-show="loandetails.isInterestRecalculationEnabled">
                                 <td>{{ 'label.input.frequency.for.recalculte.outstanding.principal' | translate }}</td>
                                 <td><span class="padded-td">{{ loandetails.interestRecalculationData.calendarData.humanReadable}}</span></td>

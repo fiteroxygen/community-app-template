@@ -130,6 +130,21 @@
                     scope.formData.enforceMinRequiredBalance = data.enforceMinRequiredBalance;
                     scope.formData.minRequiredBalance = data.minRequiredBalance;
                     scope.formData.withHoldTax = data.withHoldTax;
+                    scope.formData.useFloatingInterestRate = data.useFloatingInterestRate;
+                    if(data.floatingInterestRates){
+                        scope.formData.floatingInterestRates = data.floatingInterestRates;
+                        for (var i in scope.formData.floatingInterestRates) {
+                            if (scope.formData.floatingInterestRates[i].fromDate) {
+                                var fromDate = dateFilter(scope.formData.floatingInterestRates[i].fromDate, scope.df);
+                                scope.formData.floatingInterestRates[i].fromDate = new Date(fromDate);
+                            }
+                            if (scope.formData.floatingInterestRates[i].endDate) {
+                                var endDate = dateFilter(scope.formData.floatingInterestRates[i].endDate, scope.df);
+                                scope.formData.floatingInterestRates[i].endDate = new Date(endDate);
+                            }
+                        }
+                    }
+
 
                     if (data.interestCompoundingPeriodType) scope.formData.interestCompoundingPeriodType = data.interestCompoundingPeriodType.id;
                     if (data.interestPostingPeriodType) scope.formData.interestPostingPeriodType = data.interestPostingPeriodType.id;
@@ -258,6 +273,20 @@
                     });
                 } else {
                     delete scope.formData.datatables;
+                }
+
+                if(scope.formData.floatingInterestRates){
+                    for (var i in scope.formData.floatingInterestRates) {
+                        if (scope.formData.floatingInterestRates[i].fromDate) {
+                            var fromDate = dateFilter(scope.formData.floatingInterestRates[i].fromDate, scope.df);
+                            scope.formData.floatingInterestRates[i].fromDate = fromDate;
+                        }
+                        if (scope.formData.floatingInterestRates[i].endDate) {
+                            var endDate = dateFilter(scope.formData.floatingInterestRates[i].endDate, scope.df);
+                            scope.formData.floatingInterestRates[i].endDate = endDate;
+                        }
+                        scope.formData.floatingInterestRates[i].floatingInterestRateValue = scope.formData.floatingInterestRates[i].floatingInterestRate;
+                    }
                 }
 
                 resourceFactory.savingsResource.save(this.formData, function (data) {

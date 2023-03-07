@@ -18,6 +18,7 @@
             scope.forceOffice = null;
             scope.showNonPersonOptions = false;
             scope.clientPersonId = 1;
+            scope.titleOptions = [];
             //address
             scope.addressTypes=[];
             scope.countryOptions=[];
@@ -39,6 +40,8 @@
             scope.businessOwnersArray=[];
             scope.formData.businessOwners=[];
             scope.employmentInfoArray=[];
+            //Business
+            scope.businessRegisteredOptions = [{id: true, name: 'Yes'}, {id: false, name: 'No'}];
 
             var requestParams = {staffInSelectedOfficeOnly:true};
             if (routeParams.groupId) {
@@ -47,6 +50,10 @@
             if (routeParams.officeId) {
                 requestParams.officeId = routeParams.officeId;
             }
+
+             resourceFactory.validationLimitTemplateResource.get(function (data) {
+                                        scope.template = data;
+                                    });
             resourceFactory.clientTemplateResource.get(requestParams, function (data) {
                 scope.offices = data.officeOptions;
                 scope.staffs = data.staffOptions;
@@ -58,6 +65,8 @@
                 scope.clientNonPersonConstitutionOptions = data.clientNonPersonConstitutionOptions;
                 scope.clientNonPersonMainBusinessLineOptions = data.clientNonPersonMainBusinessLineOptions;
                 scope.clientLegalFormOptions = data.clientLegalFormOptions;
+                scope.clientLevelOptions = data.clientLevelOptions;
+                scope.titleOptions = data.titleOptions;
                 scope.datatables = data.datatables;
                 if (!_.isUndefined(scope.datatables) && scope.datatables.length > 0) {
                     scope.noOfTabs = scope.datatables.length + 1;
@@ -372,11 +381,22 @@
                     delete this.formData.middlename;
                     delete this.formData.lastname;
                 }
+                
+                if((scope.first.incorpValidityTillDate || scope.first.inBusinessSince) && !this.formData.clientNonPersonDetails){
+                 
+                    this.formData.clientNonPersonDetails = {}
+                }
 
                 if(scope.first.incorpValidityTillDate) {
                     this.formData.clientNonPersonDetails.locale = scope.optlang.code;
                     this.formData.clientNonPersonDetails.dateFormat = scope.df;
                     this.formData.clientNonPersonDetails.incorpValidityTillDate = dateFilter(scope.first.incorpValidityTillDate, scope.df);
+                }
+
+                if(scope.first.inBusinessSince) {
+                    this.formData.clientNonPersonDetails.locale = scope.optlang.code;
+                    this.formData.clientNonPersonDetails.dateFormat = scope.df;
+                    this.formData.clientNonPersonDetails.inBusinessSince = dateFilter(scope.first.inBusinessSince, scope.df);
                 }
 
                 if (!scope.savings.opensavingsproduct) {
@@ -640,7 +660,7 @@
                 }
                 if(scope.employmentInfoEnabled===true)
                 {
-                console.log(scope.formData.employmentStatusId);
+
                   for(var i=0;i<scope.employmentInfoArray.length;i++)
                   {
                     var temp=new Object();

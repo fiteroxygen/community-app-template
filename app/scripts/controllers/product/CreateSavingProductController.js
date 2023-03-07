@@ -1,6 +1,6 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        CreateSavingProductController: function (scope, $rootScope, resourceFactory, location , WizardHandler) {
+        CreateSavingProductController: function (scope, $rootScope, resourceFactory, location , dateFilter, WizardHandler) {
             scope.formData = {};
             scope.savingproduct = {};
             scope.charges = [];
@@ -10,6 +10,7 @@
             scope.penaltySpecificIncomeaccounts = [];
             scope.configureFundOption = {};
             scope.isClicked = false;
+            scope.floatingInterestRates = [];
 
             resourceFactory.savingProductResource.get({resourceType: 'template'}, function (data) {
                 scope.product = data;
@@ -34,8 +35,9 @@
                if(accountMappingForPaymentVar.indexOf("income") > -1){
                 scope.paymentOptions = scope.paymentOptions.concat(scope.incomeAccountOptions);
                 }
-                
 
+
+                scope.formData.useFloatingInterestRate = false;
 
                 scope.formData.currencyCode = data.currencyOptions[0].code;
                 scope.formData.digitsAfterDecimal = data.currencyOptions[0].decimalPlaces;
@@ -158,6 +160,56 @@
                 location.path('/savingproducts');
             };
 
+            /**
+             * Add floating interest rate from list
+             */
+            scope.addNewRow = function () {
+                var fromDateSelected = '';
+                var endDateSelected = '';
+                var floatingInterestRateValue = '';
+                if (_.isNull(scope.floatingInterestRates) || _.isUndefined(scope.floatingInterestRates)) {
+                    scope.floatingInterestRates = [];
+                } else {
+                    var lastFloatingInterestRate = {};
+                    if (scope.floatingInterestRates.length > 0) {
+                        lastFloatingInterestRate = angular.copy(scope.floatingInterestRates[scope.floatingInterestRates.length - 1]);
+                    }else{
+                        lastFloatingInterestRate = null;
+                    }
+                    if (!(_.isNull(lastFloatingInterestRate) || _.isUndefined(lastFloatingInterestRate))) {
+                        fromDateSelected = dateFilter(lastFloatingInterestRate.fromDate, scope.df);
+                        endDateSelected = dateFilter(lastFloatingInterestRate.endDate, scope.df);
+                        floatingInterestRateValue = lastFloatingInterestRate.floatingInterestRateValue;
+
+                        /*var savingProductFloatingInterestRate = {
+                            "fromDate": fromDateSelected,
+                            "endDate": endDateSelected,
+                            "floatingInterestRate": floatingInterestRateValue,
+                            "dateFormat": scope.df,
+                            "locale": scope.optlang.code,
+                        };
+                        scope.floatingInterestRates.push(savingProductFloatingInterestRate);*/
+                    }
+                }
+                 var savingProductFloatingInterestRate = {
+                    "fromDate": fromDateSelected,
+                    "endDate": endDateSelected,
+                    "floatingInterestRateValue": floatingInterestRateValue,
+                    "dateFormat": scope.df,
+                    "locale": scope.optlang.code
+                };
+                scope.floatingInterestRates.push(savingProductFloatingInterestRate);
+            };
+
+             /**
+             * Remove floating interest interest  row
+             */
+            scope.removeRow = function (index) {
+                scope.floatingInterestRates.splice(index, 1);
+            }
+
+            ////
+
             scope.submit = function () {
                 scope.paymentChannelToFundSourceMappings = [];
                 scope.feeToIncomeAccountMappings = [];
@@ -205,6 +257,12 @@
                 this.formData.penaltyToIncomeAccountMappings = scope.penaltyToIncomeAccountMappings;
                 this.formData.charges = scope.chargesSelected;
                 this.formData.locale = scope.optlang.code;
+                for (var i in scope.floatingInterestRates) {
+                    scope.floatingInterestRates[i].fromDate = dateFilter(scope.floatingInterestRates[i].fromDate, scope.df);
+                    scope.floatingInterestRates[i].endDate = dateFilter(scope.floatingInterestRates[i].endDate, scope.df);
+                    this.formData.nominalAnnualInterestRate = scope.floatingInterestRates[i].floatingInterestRateValue;//as nominal interest rate is required just populating it from any of floating rate
+                }
+                this.formData.floatingInterestRates = scope.floatingInterestRates;
 
                 resourceFactory.savingProductResource.save(this.formData, function (data) {
                     location.path('/viewsavingproduct/' + data.resourceId);
@@ -212,7 +270,7 @@
             }
         }
     });
-    mifosX.ng.application.controller('CreateSavingProductController', ['$scope', '$rootScope', 'ResourceFactory', '$location','WizardHandler', mifosX.controllers.CreateSavingProductController]).run(function ($log) {
+    mifosX.ng.application.controller('CreateSavingProductController', ['$scope', '$rootScope', 'ResourceFactory', '$location','dateFilter','WizardHandler', mifosX.controllers.CreateSavingProductController]).run(function ($log) {
         $log.info("CreateSavingProductController initialized");
     });
 }(mifosX.controllers || {}));

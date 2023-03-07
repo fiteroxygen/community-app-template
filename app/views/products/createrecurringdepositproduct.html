@@ -354,6 +354,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">{{ 'label.input.addPenaltyOnMissedTargetSavings' | translate }}
+                            <i class="fa fa-question-circle"
+                               uib-tooltip="{{'label.tooltip.addPenaltyOnMissedTargetSavings' | translate}}"
+                               tooltip-append-to-body="true"></i>
+                        </label>
+                        <div class="col-sm-2">
+                            <input id="addPenaltyOnMissedTargetSavings" type="checkbox" ng-model="formData.addPenaltyOnMissedTargetSavings" ng-true-value="true"
+                                   ng-false-value="false">
+                        </div>
+                    </div>
                     <hr>
                     <button class="btn btn-default pull-left" wz-previous><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Previous
                     </button>
@@ -368,33 +379,7 @@
                     <api-validate></api-validate>
                     <h3>{{ 'label.heading.interestchart' | translate }}</h3>
                     <hr>
-                    <!--<tr>
-                           <td>
-                               <div class="control-group">
-                                   <label class="control-label" for="name">{{ 'label.input.interestratechart.name' | translate
-                                       }}<span
-                                               class="required">*</span></label>
 
-                                   <div class="controls">
-                                       <input id="name" ng-autofocus="true" type="text" name="name" ng-model="chart.name"/>
-                                   </div>
-                               </div>
-                           </td>
-                           <td>
-                               <div class="control-group">
-                                   <label class="control-label" for="name">{{ 'label.input.interestratechart.description' |
-                                       translate
-                                       }}</label>
-
-                                   <div class="controls">
-                                       <input id="chdescription" ng-autofocus="true" type="text" name="chdescription"
-                                              ng-model="chart.description"/>
-                                   </div>
-                               </div>
-                           </td>
-                           <td>&nbsp;</td>
-                           <td>&nbsp;</td>
-                       </tr>-->
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="name">{{ 'label.input.interestratechart.valid.from' |
                             translate }}<span class="required">*</span></label>
@@ -1186,10 +1171,7 @@
                         <tr class="bottomborder">
                             <td colspan="4"><strong>{{'label.heading.settings' | translate}}</strong></td>
                         </tr>
-                        <!--<tr class="toppadding">
-                            <td>{{'label.heading.minimumopeningbalance' | translate}}</td>
-                            <td colspan="3">{{depositproduct.minRequiredOpeningBalance}}</td>
-                        </tr>-->
+
                         <tr>
                             <td>{{'label.heading.lockinPeriodFrequency' | translate}}</td>
                             <td>{{depositproduct.lockinPeriodFrequency}}
@@ -1224,18 +1206,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <!--<tr>
-                            <td>{{'label.heading.recurringdepositfrequency' | translate}}</td>
-                            <td>Every &nbsp; &nbsp; &nbsp; {{depositproduct.recurringDepositFrequency}} &nbsp; &nbsp;
-                                {{depositproduct.recurringDepositFrequencyType.value}}
-                            </td>
-                        </tr>-->
-                        <!--<tr>
-                            <td>{{'label.heading.interestfreeperiodapplicable' | translate}}</td>
-                            <td>from &nbsp; {{depositproduct.interestFreeFromPeriod}} &nbsp;&nbsp; - {{depositproduct.interestFreeToPeriod}}
-                                &nbsp; &nbsp; {{depositproduct.interestFreePeriodFrequencyType.value}}
-                            </td>
-                        </tr>-->
+
                         <tr ng-show="depositproduct.preClosurePenalInterest">
                             <td>{{'label.heading.preclosurepenalapplicable' | translate}}</td>
                             <td>{{depositproduct.preClosurePenalInterest}} &nbsp; &nbsp; % &nbsp; &nbsp; On &nbsp;&nbsp;
@@ -1247,12 +1218,8 @@
                             <td>{{depositproduct.minBalanceForInterestCalculation | number}}</td>
                         </tr>
                         <tr>
-                            <td>{{'label.heading.withholdtax' | translate}}</td>
-                            <td colspan="3">{{depositproduct.withHoldTax}}</td>
-                        </tr>
-                        <tr ng-show="depositproduct.withHoldTax">
-                            <td>{{'label.heading.withholdtaxgroup' | translate}}</td>
-                            <td colspan="3">{{depositproduct.taxGroup.name}}</td>
+                            <td>{{'label.heading.addPenaltyOnMissedTargetSavings' | translate}}</td>
+                            <td colspan="3">{{depositproduct.addPenaltyOnMissedTargetSavings}}</td>
                         </tr>
 
                         <tr>

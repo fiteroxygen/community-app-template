@@ -36,6 +36,9 @@
             //Rates
             scope.rates = [];
             scope.rateFlag = false;
+            //set chart template
+            scope.chart = [];
+            scope.chart.chartSlabs = [];
             for (var i = 1; i <= 28; i++) {
                 scope.interestRecalculationOnDayTypeOptions.push(i);
             }
@@ -442,10 +445,137 @@
                     delete this.formData.recalculationRestFrequencyOnDayType;
                     delete this.formData.recalculationRestFrequencyNthDayType;
                 }
+                if(scope.chart){
+                      this.formData.charts = [];//declare charts array
+                      this.formData.charts.push(copyChartData(scope.chart));
+                }
                 resourceFactory.loanProductResource.save(this.formData, function (data) {
                     location.path('/viewloanproduct/' + data.resourceId);
                 });
             };
+
+            /**
+                         * Add a new row with default values for entering chart details
+                         */
+                        scope.addNewRow = function () {
+                            var fromPeriod = '';
+                            var amountRangeFrom = '';
+                            var periodType = {};
+                            var toPeriod = '';
+                            var amountRangeTo = '';
+                            if (_.isNull(scope.chart.chartSlabs) || _.isUndefined(scope.chart.chartSlabs)) {
+                                scope.chart.chartSlabs = [];
+                            } else {
+                                var lastChartSlab = {};
+                                if (scope.chart.chartSlabs.length > 0) {
+                                    lastChartSlab = angular.copy(scope.chart.chartSlabs[scope.chart.chartSlabs.length - 1]);
+                                }else{
+                                    lastChartSlab = null;
+                                }
+                                if (!(_.isNull(lastChartSlab) || _.isUndefined(lastChartSlab))) {
+                                    if(scope.isPrimaryGroupingByAmount){
+                                        if((_.isNull(lastChartSlab.toPeriod) || _.isUndefined(lastChartSlab.toPeriod) || lastChartSlab.toPeriod.length == 0)){
+                                            amountRangeFrom = _.isNull(lastChartSlab) ? '' : parseFloat(lastChartSlab.amountRangeTo) + 1;
+                                            fromPeriod = (_.isNull(lastChartSlab.fromPeriod) || _.isUndefined(lastChartSlab.fromPeriod) || lastChartSlab.fromPeriod.length == 0)? '' : 1;
+                                        }else{
+                                            amountRangeFrom = lastChartSlab.amountRangeFrom;
+                                            amountRangeTo = lastChartSlab.amountRangeTo;
+                                            fromPeriod = _.isNull(lastChartSlab) ? '' : parseInt(lastChartSlab.toPeriod) + 1;
+                                        }
+                                    }else{
+                                        if((_.isNull(lastChartSlab.amountRangeTo) || _.isUndefined(lastChartSlab.amountRangeTo) || lastChartSlab.amountRangeTo.length == 0)){
+                                            amountRangeFrom = (_.isNull(lastChartSlab.amountRangeFrom) || _.isUndefined(lastChartSlab.amountRangeFrom) || lastChartSlab.amountRangeFrom.length == 0) ? '' : 1;
+                                            fromPeriod = _.isNull(lastChartSlab) ? '' : parseFloat(lastChartSlab.toPeriod) + 1;
+                                        }else{
+                                            fromPeriod = lastChartSlab.fromPeriod;
+                                            toPeriod = lastChartSlab.toPeriod;
+                                            amountRangeFrom = _.isNull(lastChartSlab) ? '' : parseInt(lastChartSlab.amountRangeTo) + 1;
+                                        }
+                                    }
+                                    periodType = 2
+                                }
+                            }
+
+
+                            var chartSlab = {
+                                "fromPeriod": fromPeriod,
+                                "periodType": periodType,
+
+                            };
+                            if(!_.isUndefined(toPeriod) && toPeriod.length > 0){
+                                chartSlab.toPeriod = toPeriod;
+                            }
+                            scope.chart.chartSlabs.push(chartSlab);
+                        }
+
+                        /**
+                         * Remove chart details row
+                         */
+                        scope.removeRow = function (index) {
+                            scope.chart.chartSlabs.splice(index, 1);
+                        }
+
+                        /**
+                         *  create new chart data object
+                         */
+
+                        copyChartData = function () {
+                            var newChartData = {
+                                dateFormat: scope.df,
+                                locale: scope.optlang.code,
+                                fromDate: dateFilter(new Date(), scope.df),
+                                chartSlabs: angular.copy(copyChartSlabs(scope.chart.chartSlabs))
+                            }
+
+                            //remove empty values
+                            _.each(newChartData, function (v, k) {
+                                if (!v)
+                                    delete newChartData[k];
+                            });
+
+                            return newChartData;
+                        }
+
+                        /**
+                         *  copy all chart details to a new Array
+                         * @param chartSlabs
+                         * @returns {Array}
+                         */
+                        copyChartSlabs = function (chartSlabs) {
+                            var detailsArray = [];
+                            _.each(chartSlabs, function (chartSlab) {
+                                var chartSlabData = copyChartSlab(chartSlab);
+                                detailsArray.push(chartSlabData);
+                            });
+                            return detailsArray;
+                        }
+
+                        /**
+                         * create new chart detail object data from chartSlab
+                         * @param chartSlab
+                         *
+                         */
+
+                        copyChartSlab = function (chartSlab) {
+                            var newChartSlabData = {
+                                id: chartSlab.id,
+                                fromPeriod: chartSlab.fromPeriod,
+                                toPeriod: chartSlab.toPeriod,
+                                annualInterestRate: chartSlab.annualInterestRate,
+                                locale: scope.optlang.code,
+                                periodType : 2
+                            }
+                            //remove empty values
+                            _.each(newChartSlabData, function (v, k) {
+                                if (!v && v != 0) {
+                                    // alert('key:' + k + " and value:" + v);
+                                    delete newChartSlabData[k];
+                                }
+                            });
+
+                            return newChartSlabData;
+                        }
+
         }
     });
     mifosX.ng.application.controller('CreateLoanProductController', ['$scope','$rootScope', 'ResourceFactory', '$location', 'dateFilter','WizardHandler', '$translate', mifosX.controllers.CreateLoanProductController]).run(function ($log) {

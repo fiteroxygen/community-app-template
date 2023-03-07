@@ -57,6 +57,34 @@
                   <div data-ng-switch on="showNonPersonOptions">
                      <div data-ng-switch-when="false">
                         <div class="form-group">
+                           <label class="control-label col-sm-2">{{'label.input.title' | translate}}</label>
+                           <div class="col-sm-3">
+                              <select id="titleId" ng-model="formData.titleId" class="form-control"
+                                 ng-options="titleId.value as titleOption.name for titleOption in titleOptions track by titleOption.id"
+                                 value="formData.titleId">
+                                 <option value="">--{{'label.menu.title' | translate}}--</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div data-ng-switch on="showNonPersonOptions">
+                     <div data-ng-switch-when="true">
+                        <div class="form-group">
+                           <label class="control-label col-sm-2">{{'label.input.businessregistered' | translate}}</label>
+                           <div class="col-sm-3">
+                              <select id="isBusinessRegistered" ng-model="formData.isBusinessRegistered" class="form-control"
+                              ng-options="isBusinessRegistered.value as businessRegisteredOption.name for businessRegisteredOption in businessRegisteredOptions track by businessRegisteredOption.id"
+                                 value="formData.clientNonPersonDetails.isBusinessRegistered">
+                                 <option value="">--{{'label.menu.businessRegistered' | translate}}--</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div data-ng-switch on="showNonPersonOptions">
+                     <div data-ng-switch-when="false">
+                        <div class="form-group">
                            <label class="control-label col-sm-2" for="firstname">{{ 'label.input.firstname' | translate
                               }}<span class="required">*</span></label>
                            <div class="col-sm-3">
@@ -154,6 +182,23 @@
                      </div>
                   </div>
                   <div class="form-group">
+                     <label class="control-label col-sm-2" for="altMobileNo">{{'label.input.altMobileNo' |
+                        translate}}</label>
+                     <div class="col-sm-3">
+                        <input type="text" id="altMobileNo" name="altMobileNo" ng-model="formData.altMobileNo"
+                           ng-pattern="/^[0-9]+$/" class="form-control" />
+                     </div>
+                     <div class="col-sm-2">
+                        <span ng-show="createclientform.altMobileNo.$invalid && createclientform.altMobileNo$dirty">
+                           <small class="required" ng-show="createclientform.altMobileNo$error.pattern">
+                              {{'label.mustbenumeric' | translate}}
+                           </small>
+                        </span>
+                     </div>
+                     
+
+                  </div>
+                  <div class="form-group">
                      <label class="control-label col-sm-2" ng-hide="showNonPersonOptions">{{'label.input.dateofbirth' |
                         translate}}</label>
                      <label class="control-label col-sm-2"
@@ -186,6 +231,33 @@
                            </div>
                         </div>
                      </div>
+                  </div>
+                  <div data-ng-switch on="showNonPersonOptions">
+                     <div data-ng-switch-when="true">
+                        <div class="form-group">
+                  
+                           <label class="control-label col-sm-2">{{'label.input.ageinbusiness' |
+                              translate}}</label>
+                           <div class="col-sm-3">
+                              <input id="ageInBusiness" type="text" name="ageInBusiness" datepicker-pop="dd MMMM yyyy"
+                                 ng-model="first.inBusinessSince" is-open="opened1" class="form-control"  min="minData" max="restrictDate"/>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                  <div data-ng-switch on="showNonPersonOptions">
+                     <div data-ng-switch-when="false">
+                        <label class="control-label col-sm-2">{{'label.input.maritalstatus' | translate}}</label>
+                        <div class="col-sm-3">
+                           <select chosen="maritalStatusIdOptions" id="maritalStatusId"
+                              ng-model="formData.maritalStatusId" class="form-control"
+                              ng-options="maritalStatusIdOption.id as maritalStatusIdOption.name for maritalStatusIdOption in maritalStatusIdOptions track by maritalStatusIdOption.id"
+                              value="formData.maritalStatusId">
+                              <option value="">--{{'label.menu.maritalstatus' | translate}}--</option></select>
+                        </div>
+                     </div>
+                  </div>
                   </div>
                   <div class="form-group">
                      <label class="control-label col-sm-2">{{'label.input.clienttype' | translate}}</label>
@@ -290,7 +362,50 @@
                            ng-model="first.submitondate" is-open="opened1" min="'2000-01-01'" max="restrictDate"
                            class="form-control" />
                      </div>
+
+                     <label class="control-label col-sm-2" ng-hide = "formData.legalFormId=='2'">{{'label.input.dailyWithdrawLimit' | translate}}</label>
+                     <div class="col-sm-3" ng-hide = "formData.legalFormId=='2'">
+                        <input id="dailyWithdrawLimit" type="text" name="dailyWithdrawLimit"  ng-model="formData.dailyWithdrawLimit"
+                               class="form-control"
+                               number-format>
+                     </div>
                   </div>
+                  <div class="form-group" ng-hide = "formData.legalFormId=='2'">
+                     <label class="control-label col-sm-2"></label>
+                     <div class="col-sm-3"></div>
+                     <label class="control-label col-sm-2">{{'label.input.singleWithdrawLimit' | translate}}</label>
+                     <div class="col-sm-3">
+                        <input id="singleWithdrawLimit" type="text" name="singleWithdrawLimit" ng-model="formData.singleWithdrawLimit"
+                               class="form-control"
+                               number-format>
+                     </div>
+                  </div>
+
+                  <div class="form-group">
+                  <label class="control-label col-sm-2" ng-hide = "formData.legalFormId=='2'">{{'label.heading.clientLevel' | translate}}</label>
+                  <div class="col-sm-3" ng-hide = "formData.legalFormId=='2'">
+                     <select id="clientLevelId" ng-model="formData.clientLevelId"  class="form-control" ng-hide = "formData.legalFormId=='2'"
+                             ng-options="clientLevel.id as clientLevel.name for clientLevel in template.clientLevelOptions" value="{{clientLevel.id}}" >
+
+                     </select>
+                  </div>
+                  </div>
+
+                  <div class="form-group">
+                     <label class="control-label col-sm-2">{{'label.heading.mnemonics' | translate}}</label>
+                     <div class="col-sm-3">
+                        <input id="mnemonics" type="text" name="mnemonics" ng-model="formData.mnemonics"
+                               class="form-control">
+                     </div>
+
+                     <label class="control-label col-sm-2">{{'label.heading.initials' | translate}}</label>
+                     <div class="col-sm-3">
+                        <input id="initials" type="text" name="initials" ng-model="formData.initials"
+                               class="form-control">
+                     </div>
+                  </div>
+
+
                   <div class="form-group" ng-show="showSavingOptions">
                      <label class="control-label col-sm-2">{{ 'label.input.opensavingsproduct' | translate
                         }}&nbsp;</label>
@@ -311,7 +426,7 @@
                   </div>
                   <div class="form-group">
                      <div class="form-group">
-                        <div class="control-label col-sm-3">
+                        <div class="control-label col-sm-2">
                            <h3><strong>{{ 'label.heading.nextOfKin' | translate }}</strong>&nbsp;<a
                                  ng-click="addFamilyMember()"><i class="fa fa-plus"
                                     title="{{'label.button.addfamilymember' | translate}}"></i></a></h3>

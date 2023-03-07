@@ -85,6 +85,10 @@ define(['Q', 'underscore', 'mifosX'], function (Q) {
             'product/floatingrates/EditFloatingRateController',
             'product/SavingProductController',
             'product/ViewSavingProductController',
+            'product/ViewSavingsProductFloatingInterestRatesController',
+            'product/SavingsProductFloatingInterestRateController',
+            'product/EditSavingsProductFloatingInterestRateController',
+            'product/AddSavingsProductFloatingInterestRateController',
             'product/ShareProductController',
             'product/ViewShareProductController',
             'product/CreateShareProductController',
@@ -365,6 +369,10 @@ define(['Q', 'underscore', 'mifosX'], function (Q) {
             'client/AddEmploymentInfoController',
             'client/EditEmploymentInfoController',
             'client/BusinessOwnerDocumentController',
+            'product/ValidationLimitController',
+            'product/CreateValidationLimitController',
+            'product/EditValidationLimitController',
+            'product/ViewValidationLimitController',
             'deposits/fixed/FixedDepositAccountPartialLiquidationController'
         ],
         filters: [

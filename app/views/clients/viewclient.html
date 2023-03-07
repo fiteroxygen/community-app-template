@@ -900,6 +900,18 @@
 										<th>{{ 'label.numofactivesavings' | translate }}</th>
 										<td><span class="padded-td">{{client.ClientSummary.activeSavings}}</span></td>
 									</tr>
+									<tr ng-hide = "client.legalForm.id=='2'">
+										<th>{{ 'label.heading.clientLevel' | translate }}</th>
+										<td><span class="padded-td">{{client.clientLevel.name}}</span></td>
+									</tr>
+									<tr ng-hide = "client.legalForm.id=='2'">
+										<th>{{ 'label.input.dailyWithdrawLimit' | translate }}</th>
+										<td><span class="padded-td">{{client.dailyWithdrawLimit |number}}</span></td>
+									</tr>
+									<tr ng-hide = "client.legalForm.id=='2'">
+										<th>{{ 'label.input.singleWithdrawLimit' | translate }}</th>
+										<td><span class="padded-td">{{client.singleWithdrawLimit |number}}</span></td>
+									</tr>
 								</table>
 							</div>
 						</div>

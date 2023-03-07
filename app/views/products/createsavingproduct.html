@@ -117,7 +117,7 @@
                 <fieldset>
                     <!--<h3>{{ 'label.heading.terms' | translate }}</h3>-->
                     <hr>
-                    <div class="form-group">
+                    <div class="form-group" ng-show="!formData.useFloatingInterestRate">
                         <label class="control-label col-sm-2">{{ 'label.input.nominalannualinterestrate' | translate}}
                             <span class="required">*</span>
                             <i class="fa fa-question-circle" uib-tooltip="{{'label.tooltip.nominalannualinterest' | translate}}" tooltip-append-to-body="true"></i>
@@ -131,6 +131,61 @@
                             <form-validate valattributeform="Terms" valattribute="nominalAnnualInterestRate"/>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">{{ 'label.input.usefloatinginterestrate' | translate }}
+                            <i class="fa fa-question-circle"
+                               uib-tooltip="{{'label.input.usefloatinginterestrate' | translate}}"
+                               tooltip-append-to-body="true"></i>
+                        </label>
+                        <div class="checkbox col-sm-2">
+                            <label>
+                                <input type="checkbox" ng-model="formData.useFloatingInterestRate"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="formData.useFloatingInterestRate">
+                        <div class="form-group col-md-12">
+                            <table class="table width100">
+                                <tr class="graybg">
+                                    <th>{{'label.heading.floatinginterestrate.valid.fromDate' | translate}}<span
+                                            class="required">*</span></th>
+                                    <th>{{'label.heading.floatinginterestrate.valid.endDate' | translate}}</th>
+                                    <th>{{'label.heading.floatinginterestrate.floatingInterestRate' | translate}}<span
+                                            class="required">*</span></th>
+                                    <td>
+                                        <div ng-show="floatingInterestRates.length < 1">
+                                            <a class="btn btn-primary" ng-click="addNewRow()"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{'label.add.row'
+                                                | translate}}</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="floatingInterestRate in floatingInterestRates">
+                                    <td class="width20">
+                                        <input id="fromDate" sort type="text" name="fromDate" class="form-control" datepicker-pop="dd MMMM yyyy"
+                                               ng-model="floatingInterestRate.fromDate" is-open="opened" min="minDate" max="restrictDate" required>
+                                    </td>
+                                    <td class="width20">
+                                        <input id="endDate" sort type="text" name="fromDate" class="form-control" datepicker-pop="dd MMMM yyyy"
+                                               ng-model="floatingInterestRate.endDate" is-open="opened" min="minDate" max="restrictDate">
+                                    </td>
+                                    <td class="width15">
+                                        <input id="floatingInterestRateValue" name="floatingInterestRateValue" type="text" class="form-control"
+                                               ng-model="floatingInterestRate.floatingInterestRateValue" decimals required/>
+                                    </td>
+                                    <td class="width10">
+                                        <a ng-click="removeRow($index)"><i class="fa fa-times-circle fa-2x"></i></a>
+
+                                        <div ng-show="$last">
+                                            <br />
+                                            <a ng-click="addNewRow()" class="btn btn-primary"><i class="fa fa-plus "></i>&nbsp;&nbsp;{{'label.add.row'
+                                                | translate}}</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="control-label col-sm-2">{{ 'label.input.interestcompoundingperiod' | translate}}
                             <span class="required">*</span>

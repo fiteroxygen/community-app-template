@@ -944,6 +944,22 @@
                             value="{{type.id}}"></select>
                 </div>
             </div>
+            <div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled">
+                <div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled && formData.rescheduleStrategyMethod == 3">
+                    <label class="control-label col-sm-2">{{'label.input.interestforexactdaysinperiod'| translate }}<span class="required">*</span>
+                        <i class="fa fa-question-circle "
+                        uib-tooltip="{{'label.tooltip.interestforexactdaysinperiod' | translate}}"
+                        tooltip-append-to-body="true"></i>
+                    </label>
+
+                    <div class="col-sm-2 checkbox">
+                        <label>
+                            <input id="advancePaymentInterestForExactDaysInPeriod" type="checkbox"
+                                   ng-model="formData.advancePaymentInterestForExactDaysInPeriod">
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled">
                 <label class="control-label col-sm-2">{{'label.input.interest.recalculation.compounding.method'
@@ -1238,6 +1254,69 @@
                     <hr>
                     <button class = "btn btn-default pull-left" wz-previous><i class = "fa fa-arrow-left"></i>&nbsp;&nbsp;Previous</button>
                     <button class = "btn btn-default pull-right" type="submit">Next&nbsp;&nbsp;<i class = "fa fa-arrow-right"></i></button>
+                </fieldset>
+            </form>
+        </wz-step>
+        <wz-step wz-title="{{'label.heading.interestchart' | translate}}" wz-disabled="{{disabled}}">
+            <form name="interestchart"  ng-submit="goNext(interestchart)" novalidate="" class="form-horizontal">
+                <fieldset>
+                    <api-validate></api-validate>
+                    <h3>{{ 'label.heading.interestchart' | translate }}
+                        <i class="fa fa-question-circle"
+                           uib-tooltip="{{'label.tooltip.fixeddepositproduct.interesetchart' | translate}}"
+                           tooltip-append-to-body="true"></i>
+                    </h3>
+                    <hr>
+                    <div class="col-md-12">
+                        <table class="table table-bordered width100">
+                        <tr class="graybg">
+                            <td>{{'label.heading.interestratedetails.period.from.to' | translate}}</td>
+                            <td>{{'label.heading.interestratedetails.interest' | translate}}</td>
+                            <td>
+                                <div ng-show="chart.chartSlabs.length < 1">
+                                    <a class="btn btn-primary" ng-click="addNewRow()"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{'label.add.row'
+                                        | translate}}</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="chartSlab in chart.chartSlabs">
+
+                            <td class="width15">
+                                <table class="width100">
+                                    <tr>
+                                        <td><input id="fromPeriod" name="fromPeriod" type="text"
+                                                   class="form-control"
+                                                   ng-model="chartSlab.fromPeriod"/></td>
+                                        <td>&nbsp;&nbsp;-&nbsp;&nbsp;</td>
+                                        <td><input id="toPeriod" name="toPeriod" type="text" class="form-control"
+                                                   ng-model="chartSlab.toPeriod"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td class="width15">
+                                <input id="annualInterestRate" name="annualInterestRate" type="text"
+                                       class="form-control"
+                                       ng-model="chartSlab.annualInterestRate"/>
+                            </td>
+
+                            <td class="width10">
+                                <a ng-click="removeRow($index)"><i class="fa fa-times-circle fa-2x"></i></a>
+
+                                <div ng-show="$last">
+                                    <br/>
+                                    <a ng-click="addNewRow()" class="btn btn-primary"><i class="fa fa-plus "></i>&nbsp;&nbsp;{{'label.add.row'
+                                        | translate}}</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </table>
+                    </div>
+                    <hr>
+                    <button class="btn btn-default pull-left" wz-previous><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Previous
+                    </button>
+                    <button class="btn btn-default pull-right" type="submit">Next&nbsp;&nbsp;<i class="fa fa-arrow-right"></i>
+                    </button>
                 </fieldset>
             </form>
         </wz-step>

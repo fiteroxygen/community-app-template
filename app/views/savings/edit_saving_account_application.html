@@ -72,6 +72,10 @@
                         <label><b>{{data.currency.decimalPlaces}}</b></label>
                     </td>
                 </tr>
+            </table>
+        </div>
+        <div ng-show="!formData.useFloatingInterestRate">
+            <table class="width100">
                 <tr>
                     <td class="width14">
                         <label class="control-label">{{ 'label.input.nominalannualinterestrate' | translate
@@ -86,6 +90,45 @@
                         <form-validate valattributeform="newsavingccountform"
                                        valattribute="nominalannualinterestrate"/>
                     </td>
+                </tr>
+            </table>
+        </div>
+        <div ng-show="data">
+            <tr>
+                <td>
+                    <label class="control-label">{{ 'label.input.usefloatinginterestrate' | translate }}
+                    </label>
+                </td>
+                <td class="width36 paddedbottom10">
+                    <label>
+                        <input type="checkbox" ng-model="formData.useFloatingInterestRate"/>
+                    </label>
+                </td>
+            </tr>
+        </div>
+        <br>
+        <div ng-show="formData.useFloatingInterestRate">
+            <tr>
+                <td>
+                    <table class="witdh100">
+                        <tr class="graybg">
+                            <th>{{'label.heading.floatinginterestrate.valid.fromDate' | translate}}</th>
+                            <th>{{'label.heading.floatinginterestrate.valid.endDate' | translate}}</th>
+                            <th>{{'label.heading.floatinginterestrate.floatingInterestRate' | translate}}</th>
+                        </tr>
+                        <tr ng-repeat="floatingInterestRate in formData.floatingInterestRates">
+                            <td class="width40"> {{ floatingInterestRate.fromDate | DateFormat}}</td>
+                            <td class="width40"> {{ floatingInterestRate.endDate | DateFormat}}</td>
+                            <td class="width20" align="center"> {{ floatingInterestRate.floatingInterestRate }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </div>
+        <br>
+        <div ng-show="data">
+            <table class="width100">
+                <tr>
                     <td class="width14">
                         <label class="control-label">{{ 'label.input.interestcompoundingperiod' | translate
                             }}&nbsp;<span class="required">*</span></label>
@@ -97,15 +140,6 @@
                                 value="{{type.id}}" class="form-control width170px"></select>
                     </td>
 
-                </tr>
-                <tr>
-                    <td class="width14">
-                        <label class="control-label">{{ 'label.input.currencyinmultiplesof' | translate }}&nbsp;</label></td>
-                    </td>
-                    <td class="width36 paddedbottom10">
-                        <input type="text" value="{{data.currency.inMultiplesOf}}"
-                               class="form-control" readonly/>
-                    </td>
                     <td class="width14">
                         <label class="control-label">{{ 'label.input.interestpostingperiod' | translate }}&nbsp;<span
                                 class="required">*</span></label></td>
@@ -159,6 +193,13 @@
                         </div>
                     </td>
                 </tr>
+                <td class="width14">
+                    <label class="control-label">{{ 'label.input.currencyinmultiplesof' | translate }}&nbsp;</label></td>
+                </td>
+                <td class="width36 paddedbottom10">
+                    <input type="text" value="{{data.currency.inMultiplesOf}}"
+                           class="form-control" readonly/>
+                </td>
                 <tr>
                     <td colspan="2" class="paddedbottom10 paddedtop">
                         <input type="checkbox" ng-model="formData.withdrawalFeeForTransfers">&nbsp;

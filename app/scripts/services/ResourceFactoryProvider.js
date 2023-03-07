@@ -195,6 +195,13 @@
                         getAllSavingProducts: {method: 'GET', params: {}, isArray: true},
                         update: {method: 'PUT', params: {}}
                     }),
+                    savingProductsFloatingInterestRateResource: defineResource(apiVer + "/savingsproducts/:savingProductId/floatinginterestrates/:floatingInterestRateId", {savingProductId: '@savingProductId', floatingInterestRateId: '@floatingInterestRateId'}, {
+                        getAllSavingProductFloatingInterestRates: {method: 'GET', params: {}, isArray: true},
+                        get: {method: 'GET', params: {}},
+                        save: {method: 'POST', params: {}},
+                        update: {method: 'PUT', params: {}},
+                        delete: {method: 'DELETE'}
+                    }),
                     fixedDepositProductResource: defineResource(apiVer + "/fixeddepositproducts/:productId/:resourceType", {productId: '@productId', resourceType: '@resourceType'}, {
                         getAllFixedDepositProducts: {method: 'GET', params: {}, isArray: true},
                         update: {method: 'PUT', params: {}}
@@ -864,6 +871,15 @@
                         getAllConfigs: {method: 'GET', params: {}},
                         put: {method: 'PUT', params: {}}
                     }),
+                       validationLimitResource: defineResource(apiVer + "/validationlimit/:validationLimitId", { validationLimitId: '@validationLimitId' }, {
+                                            getAllValidationLimit: { method: 'GET', params: {}, isArray: true },
+                                            getValidationLimit: { method: 'GET', params: {} },
+                                            update: { method: 'PUT', params: {} }
+                                        }),
+                                        validationLimitTemplateResource: defineResource(apiVer + "/validationlimit/template", {
+                                            get: { method: 'GET', params: {}, isArray: true }
+
+                                        }),
                     rateResource: defineResource(apiVer + "/rates/:rateId", {rateId: '@rateId'}, {
                         getAllRates: {method: 'GET', params: {}, isArray: true},
                         getRate: {method: 'GET', params: {}},
