@@ -1586,6 +1586,7 @@
   "label.input.preclose.interest.calculation.strategy": "Pre-closure interest calculation rule",
   "loanPreClosureInterestCalculationStrategy.tillPreClosureDate": "Calculate until pre-closure date",
   "loanPreClosureInterestCalculationStrategy.tillRestFrequencyDate": "Calculate until rest frequency date",
+  "loanPreClosureInterestCalculationStrategy.tillExpectedMaturityDate": "Calculate until expected maturity date",
   "label.input.isConfigLoanAttributes": "Allow overriding select terms and settings in loan accounts",
   "label.input.rescheduleReasonId": "Reason for Rescheduling",
   "label.input.changeRepaymentDate": "Change Repayment Date",
