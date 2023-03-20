@@ -68,6 +68,27 @@
 	               min="minDate" />
 	    </div>
 	</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2">{{ 'label.input.productCategory' | translate }}
+			</label>
+			<div class="col-sm-3">
+				<select id="productCategoryId" name="productCategoryId" ng-model="formData.productCategoryId"
+						ng-options="productCategory.id as productCategory.name for productCategory in productCategories"
+						value="{{clientLevel.id}}" class="form-control" required>
+					<option value="">{{'label.selectone' | translate}}</option>
+				</select>
+			</div>
+			<label class="control-label col-sm-2 col-sm-offset-2">{{ 'label.input.productType' | translate }}
+			</label>
+			<div class="col-sm-3">
+				<select id="productTypeId" name="productTypeId" ng-model="formData.productTypeId"
+						ng-options="productType.id as productType.name for productType in productTypes"
+						value="{{clientLevel.id}}" class="form-control" required>
+					<option value="">{{'label.selectone' | translate}}</option>
+				</select>
+			</div>
+		</div>
+
 	<div class="form-group">
 	    <label class="control-label col-sm-2">{{ 'label.input.includeinborrowerloancounter' | translate }}
 	        <i class="fa fa-question-circle" uib-tooltip="{{'label.tooltip.loanproduct.includeborrower' | translate}}" tooltip-append-to-body="true"></i>
@@ -648,6 +669,42 @@
 					   type="text" ng-model="formData.maxNumberOfLoanExtensionsAllowed" late-validate number=true >
 			</div>
 		</div>
+
+		<!-- bnpl product -->
+		<div class="form-group">
+			<div class="col-sm-3">
+				<input type="checkbox" name="isBnplProductCheckBox" ng-model="formData.isBnplLoanProduct" ng-change="bnplValueChanged()"/>
+				{{'label.input.isBnplLoanProduct' | translate}}
+				<i class="fa fa-question-circle "
+				   uib-tooltip="{{'label.input.isBnplLoanProduct' | translate}}"
+				   tooltip-append-to-body="true"></i>
+			</div>
+		</div>
+
+		<div class="form-group" ng-show="formData.isBnplLoanProduct">
+
+			<div class="col-sm-3">
+				<input type="checkbox" name="requiresEquityContributionBox" ng-model="formData.requiresEquityContribution"/>
+				{{'label.input.requiresEquityContribution' | translate}}
+				<i class="fa fa-question-circle "
+				   uib-tooltip="{{'label.input.requiresEquityContribution' | translate}}"
+				   tooltip-append-to-body="true"></i>
+			</div>
+
+			<label class="control-label col-sm-2">{{ 'label.input.equityContributionLoanPercentage' | translate }}
+			</label>
+
+			<div class="col-sm-2">
+				<input id="equityContributionLoanPercentage" name="equityContributionLoanPercentage" class="form-control" type="text"
+					   ng-model="formData.equityContributionLoanPercentage"
+					   placeholder="{{'label.input.equityContributionLoanPercentage' | translate}}" number-format/>
+			</div>
+		</div>
+
+		<!-- bnpl product - ends --->
+
+
+
 		<div class="form-group">
 			<div class="col-sm-3">
 				<input type="checkbox" name="isAccountLevelArrearsToleranceEnable" ng-model="formData.isAccountLevelArrearsToleranceEnable"/>
@@ -733,6 +790,22 @@
                     value="{{type.id}}"></select>
         </div>
     </div>
+	<div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled">
+		<div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled && formData.rescheduleStrategyMethod == 3">
+			<label class="control-label col-sm-2">{{'label.input.interestforexactdaysinperiod'| translate }}<span class="required">*</span>
+				<i class="fa fa-question-circle "
+				uib-tooltip="{{'label.tooltip.interestforexactdaysinperiod' | translate}}"
+				tooltip-append-to-body="true"></i>
+			</label>
+
+			<div class="col-sm-2 checkbox">
+				<label>
+					<input id="advancePaymentInterestForExactDaysInPeriod" type="checkbox"
+						   ng-model="formData.advancePaymentInterestForExactDaysInPeriod">
+				</label>
+			</div>
+		</div>
+	</div>
 
     <div class="form-group" data-ng-show="formData.isInterestRecalculationEnabled">
 		<label class="control-label col-sm-2">{{'label.input.interest.recalculation.compounding.method'
@@ -948,6 +1021,55 @@
 			<div class="col-sm-2">
 				<input type="checkbox" ng-model="graceOnArrearsAging"/>
 			</div>
+		</div>
+		<h3>{{ 'label.heading.interestchart' | translate }}
+			<i class="fa fa-question-circle" uib-tooltip="{{'label.tooltip.fixeddepositproduct.interesetchart' | translate}}"
+			   tooltip-append-to-body="true"></i>
+		</h3>
+		<div class="col-md-12">
+			<table class="table table-bordered width100">
+				<tr class="graybg">
+					<td>{{'label.heading.interestratedetails.period.from.to' | translate}}</td>
+					<td>{{'label.heading.interestratedetails.interest' | translate}}</td>
+					<td>
+						<div ng-show="chart.chartSlabs.length < 1">
+							<a class="btn btn-primary" ng-click="addNewRow()"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{'label.add.row'
+								| translate}}</a>
+						</div>
+					</td>
+					<td>&nbsp;</td>
+				</tr>
+
+				<tr ng-repeat="chartSlab in chart.chartSlabs">
+
+
+					<td class="width15">
+						<table class="width100">
+							<tr>
+								<td><input id="fromPeriod" name="fromPeriod" type="text" class="form-control"
+										   ng-model="chartSlab.fromPeriod"/></td><td>&nbsp;&nbsp;-&nbsp;&nbsp;</td>
+								<td><input id="toPeriod" name="toPeriod" type="text" class="form-control"
+										   ng-model="chartSlab.toPeriod"/></td>
+							</tr>
+						</table>
+					</td>
+
+					<td class="width15">
+						<input id="annualInterestRate" name="annualInterestRate" type="text"
+							   class="form-control"
+							   ng-model="chartSlab.annualInterestRate"/>
+					</td>
+					<td class="width10">
+						<a ng-click="removeRow($index)"><i class="fa fa-times-circle fa-2x"></i></a>
+
+						<div ng-show="$last">
+							<br/>
+							<a class="btn btn-primary" ng-click="addNewRow()"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{'label.add.row'
+								| translate}}</a>
+						</div>
+					</td>
+				</tr>
+			</table>
 		</div>
 	<h3>{{ 'label.heading.charges' | translate }}</h3>
 	<hr>

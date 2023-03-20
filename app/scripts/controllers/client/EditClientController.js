@@ -10,6 +10,11 @@
             scope.opensavingsproduct = 'false';
             scope.showNonPersonOptions = false;
             scope.clientPersonId = 1;
+            scope.businessRegisteredOptions = [{id: true, name: 'Yes'}, {id: false, name: 'No'}];
+
+            resourceFactory.validationLimitTemplateResource.get(function (data) {
+                            scope.template = data;
+                        });
             resourceFactory.clientResource.get({clientId: routeParams.id, template:'true', staffInSelectedOfficeOnly:true}, function (data) {
                 scope.offices = data.officeOptions;
                 scope.staffs = data.staffOptions;
@@ -20,6 +25,8 @@
                 scope.clientNonPersonConstitutionOptions = data.clientNonPersonConstitutionOptions;
                 scope.clientNonPersonMainBusinessLineOptions = data.clientNonPersonMainBusinessLineOptions;
                 scope.clientLegalFormOptions = data.clientLegalFormOptions;
+                scope.maritalStatusIdOptions=data.familyMemberOptions.maritalStatusIdOptions;
+                scope.titleOptions = data.titleOptions;
                 scope.officeId = data.officeId;
                 scope.formData = {
                     firstname: data.firstname,
@@ -34,11 +41,37 @@
                     savingsProductId: data.savingsProductId,
                     genderId: data.gender.id,
                     fullname: data.fullname,
+                    dailyWithdrawLimit : data.dailyWithdrawLimit,
+                    singleWithdrawLimit: data.singleWithdrawLimit,
                     clientNonPersonDetails : {
                         incorpNumber: data.clientNonPersonDetails.incorpNumber,
                         remarks: data.clientNonPersonDetails.remarks
                     }
                 };
+
+                if(data.clientAdditionalInfoData){
+                    ci=data.clientAdditionalInfoData;
+                    
+                    if(ci.title){
+                        scope.formData.titleId = ci.title.id;
+                    }
+
+                    if(ci.initials){
+                        scope.formData.initials = ci.initials;
+                    }
+                     
+                    if(ci.mnemonics){
+                        scope.formData.mnemonics = ci.mnemonics;
+                    }
+
+                    if(ci.altMobileNo){
+                        scope.formData.altMobileNo = ci.altMobileNo;
+                    }
+                
+                    if(ci.maritalStatus){
+                        scope.formData.maritalStatusId = ci.maritalStatus.id;
+                    }
+                }
 
                 if(data.gender){
                     scope.formData.genderId = data.gender.id;
@@ -56,6 +89,9 @@
                     scope.displayPersonOrNonPersonOptions(data.legalForm.id);
                     scope.formData.legalFormId = data.legalForm.id;
                 }
+                if(data.clientLevel){
+                     scope.formData.clientLevelId = data.clientLevel.id;
+                  }
 
                 if(data.clientNonPersonDetails.constitution){
                     scope.formData.clientNonPersonDetails.constitutionId = data.clientNonPersonDetails.constitution.id;
@@ -117,6 +153,11 @@
                     this.formData.dateOfBirth = dateFilter(scope.date.dateOfBirth,  scope.df);
                 }
 
+                if(scope.clientLevelId){
+                  this.formData.clientLevelId = scope.clientLevelId
+
+                 }
+
                 if(scope.date.submittedOnDate){
                     this.formData.submittedOnDate = dateFilter(scope.date.submittedOnDate,  scope.df);
                 }
@@ -135,6 +176,7 @@
                     delete this.formData.lastname;
                 }
 
+                console.log(this.formData);
                 resourceFactory.clientResource.update({'clientId': routeParams.id}, this.formData, function (data) {
                     location.path('/viewclient/' + routeParams.id);
                 });

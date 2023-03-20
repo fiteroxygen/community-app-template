@@ -68,6 +68,37 @@
             <td colspan="3">{{savingproduct.interestCalculationDaysInYearType.value}}</td>
         </tr>
         <tr>
+            <td>{{'label.heading.withdrawalFrequency' | translate}}</td>
+            <td colspan="3">{{savingproduct.withdrawalFrequency}} {{savingproduct.withdrawalFrequencyEnum.value}} </td>
+        </tr>
+        <tr>
+            <td colspan="4"><br/></td>
+        </tr>
+
+        <tr class="bottomborder">
+            <td colspan="4"><strong>{{'label.heading.floatinginterestrate' | translate}}</strong></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div class="pull-right">
+                    <a href="#/viewsavingproduct/{{savingproduct.id}}/floatinginterestrate">{{'label.anchor.floatinginterestratevieweditdelete'
+                        | translate}}</a>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="bottomborder graybg">
+            <td>{{'label.heading.floatinginterestrate.valid.fromDate' | translate}}</td>
+            <td>{{'label.heading.floatinginterestrate.valid.endDate' | translate}}</td>
+            <td>{{'label.heading.floatinginterestrate.floatingInterestRate' | translate}}</td>
+        </tr>
+        <tr ng-repeat="floatingInterestRate in savingproduct.floatingInterestRates">
+            <td>{{floatingInterestRate.fromDate | DateFormat}}</td>
+            <td>{{floatingInterestRate.endDate | DateFormat}}</td>
+            <td>{{floatingInterestRate.floatingInterestRate}}</td>
+        </tr>
+
+        <tr>
             <td colspan="4"><br/></td>
         </tr>
         <tr>

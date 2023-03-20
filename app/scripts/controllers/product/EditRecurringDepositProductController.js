@@ -60,7 +60,8 @@
                     allowFreeWithdrawal:data.allowFreeWithdrawal,
                     adjustAdvanceTowardsFuturePayments:data.adjustAdvanceTowardsFuturePayments,
                     minBalanceForInterestCalculation:data.minBalanceForInterestCalculation,
-                    withHoldTax: data.withHoldTax == true ? 'true' : 'false'
+                    withHoldTax: data.withHoldTax == true ? 'true' : 'false',
+                    addPenaltyOnMissedTargetSavings: data.addPenaltyOnMissedTargetSavings
                 }
 
                 if(data.withHoldTax){
