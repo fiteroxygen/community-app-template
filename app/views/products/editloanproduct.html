@@ -71,7 +71,7 @@
 		<div class="form-group">
 			<label class="control-label col-sm-2">{{ 'label.input.productCategory' | translate }}
 			</label>
-			<div class="col-sm-3">
+			<div class="col-sm-2">
 				<select id="productCategoryId" name="productCategoryId" ng-model="formData.productCategoryId"
 						ng-options="productCategory.id as productCategory.name for productCategory in productCategories"
 						value="{{clientLevel.id}}" class="form-control" required>
@@ -80,7 +80,7 @@
 			</div>
 			<label class="control-label col-sm-2 col-sm-offset-2">{{ 'label.input.productType' | translate }}
 			</label>
-			<div class="col-sm-3">
+			<div class="col-sm-2">
 				<select id="productTypeId" name="productTypeId" ng-model="formData.productTypeId"
 						ng-options="productType.id as productType.name for productType in productTypes"
 						value="{{clientLevel.id}}" class="form-control" required>
@@ -1032,7 +1032,7 @@
 					<td>{{'label.heading.interestratedetails.period.from.to' | translate}}</td>
 					<td>{{'label.heading.interestratedetails.interest' | translate}}</td>
 					<td>
-						<div ng-show="chart.chartSlabs.length < 1">
+						<div ng-hide="chart.chartSlabs.length < 1">
 							<a class="btn btn-primary" ng-click="addNewRow()"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{'label.add.row'
 								| translate}}</a>
 						</div>

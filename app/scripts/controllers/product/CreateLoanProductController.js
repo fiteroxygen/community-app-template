@@ -454,9 +454,12 @@
                     delete this.formData.recalculationRestFrequencyOnDayType;
                     delete this.formData.recalculationRestFrequencyNthDayType;
                 }
-                if(scope.chart){
-                      this.formData.charts = [];//declare charts array
-                      this.formData.charts.push(copyChartData(scope.chart));
+                if(scope.chart.chartSlabs.length > 0){
+                      var newChart = copyChartData(scope.chart);
+                      if(newChart.chartSlabs.length > 0){
+                         this.formData.charts = [];//declare charts array
+                         this.formData.charts.push(newChart);
+                      }
                 }
                 resourceFactory.loanProductResource.save(this.formData, function (data) {
                     location.path('/viewloanproduct/' + data.resourceId);

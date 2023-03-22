@@ -19,6 +19,9 @@
             //Rates
             scope.rates = [];
             scope.rateFlag = false;
+
+             scope.chart = {};
+
             for (var i = 1; i <= 28; i++) {
                 scope.interestRecalculationOnDayTypeOptions.push(i);
             }
@@ -616,8 +619,18 @@
                 }
 
                 if(scope.chart){
-                    this.formData.charts = [];//declare charts array
-                    this.formData.charts.push(copyChartData(scope.chart));
+                     var newChart = copyChartData(scope.chart);
+                     if(newChart.chartSlabs.length > 0){
+                       this.formData.charts = [];
+                       this.formData.charts.push(newChart);
+                      }else{
+                        this.formData.charts = [];
+                        var chartData = {
+                            id:scope.chart.id,
+                            delete:true
+                        }
+                        this.formData.charts.push(chartData);
+                      }
                 }
 
                 resourceFactory.loanProductResource.put({loanProductId: routeParams.id}, this.formData, function (data) {

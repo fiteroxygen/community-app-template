@@ -35,6 +35,15 @@
         <td>{{'label.heading.shortname' | translate}} :</td>
         <td colspan="3">{{depositproduct.shortName}}</td>
     </tr>
+
+        <tr ng-show="depositproduct.productCategory">
+            <td>{{'label.input.productCategory' | translate}}:</td>
+            <td colspan="3">{{depositproduct.productCategory}}</td>
+        </tr>
+        <tr ng-show="depositproduct.productType">
+            <td>{{'label.input.productType' | translate}}:</td>
+            <td colspan="3">{{depositproduct.productType}}</td>
+        <tr>
     <tr>
         <td colspan="4"><br/></td>
     </tr>

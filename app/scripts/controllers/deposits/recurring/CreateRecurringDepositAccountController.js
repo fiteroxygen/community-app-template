@@ -41,6 +41,7 @@
                 scope.chargeOptions = data.chargeOptions;
                 scope.clientName = data.clientName;
                 scope.groupName = data.groupName;
+                scope.savingsAccounts = data.savingsAccounts;
             });
 
             scope.goNext = function(form){
