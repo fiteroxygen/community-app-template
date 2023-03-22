@@ -200,6 +200,26 @@
                             <input type="text" value="{{data.currency.inMultiplesOf}}" class="form-control" readonly/>
                         </div>
                     </div>
+
+                    <div class="form-group" ng-show="formData.withdrawalFrequency" >
+                        <label class="control-label col-sm-2">{{ 'label.savingsproduct.withdraw.frequency' | translate }}
+                            <i class="fa fa-question-circle" uib-tooltip="{{'label.savingsproduct.withdraw.frequency' | translate}}" tooltip-append-to-body="true"></i>
+                        </label>
+                        <div class="col-sm-2">
+                            <input id="withdrawalFrequency" name="withdrawalFrequency" type="text"
+                                   class="form-control"
+                                   ng-model="formData.withdrawalFrequency" readonly />
+                        </div>
+
+                        <div class="col-sm-2">
+                            <select id="withdrawalFrequencyOptions" class="form-control"
+                                    ng-model="formData.withdrawalFrequencyEnum"
+                                    ng-options="type.id as type.value for type in formData.withdrawalFrequencyOptions"
+                                    ng-change="formData.withdrawalFrequencyEnum.value = formValue(formData.withdrawalFrequencyOptions,formData.withdrawalFrequencyEnum)"
+                                    value="{{type.id}}" readonly ></select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="col-sm-4">
                             <input type="checkbox" ng-model="formData.withdrawalFeeForTransfers">&nbsp;

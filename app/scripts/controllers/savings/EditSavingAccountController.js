@@ -59,6 +59,9 @@
                 scope.formData.enforceMinRequiredBalance = data.enforceMinRequiredBalance;
                 scope.formData.minRequiredBalance = data.minRequiredBalance;
                 scope.formData.withHoldTax = data.withHoldTax;
+                scope.formData.withdrawalFrequency = data.withdrawalFrequency;
+                scope.formData.withdrawalFrequencyEnum = data.withdrawalFrequencyEnum;
+                scope.formData.withdrawalFrequencyOptions = data.withdrawalFrequencyOptions;
 
                 scope.formData.useFloatingInterestRate = data.useFloatingInterestRate;
                 if(data.floatingInterestRates){

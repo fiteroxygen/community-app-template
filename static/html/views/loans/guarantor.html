@@ -16,6 +16,15 @@
                             <input type="checkbox" data-ng-model="temp" data-ng-change="checkClient()">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="middlename">{{ 'label.input.middlename' | translate }}<span
+                                class="required">*</span></label>
+
+                        <div class="col-sm-3">
+                            <input type="text" id="middlename" name="middlename" ng-model="formData.middlename" class="form-control"/>
+                        </div>
+                       
+                    </div>
                     <div data-ng-switch on="temp">
                         <div data-ng-switch-when="true">
                             <div class="form-group">
@@ -68,6 +77,17 @@
                                     <form-validate valattributeform="guaratorform" valattribute="firstname"/>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="middlename">{{ 'label.input.middlename' | translate }}<span
+                                        class="required">*</span></label>
+
+                                <div class="col-sm-3">
+                                    <input type="text" id="middlename" name="middlename" ng-model="formData.middlename" class="form-control"/>
+                                </div>
+                               
+                            </div>
+
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.lastname' | translate }}<span class="required">*</span></label>
 
@@ -79,6 +99,7 @@
                                     <form-validate valattributeform="guaratorform" valattribute="lastname"/>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.dob' | translate }}</label>
 
@@ -119,12 +140,48 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-sm-2" for="email">{{'label.input.email' | translate}}<span class="required">*</span></label>
+  
+                                <div class="col-sm-3">
+                                   <input type="email" id="email" name="email" class="form-control" ng-model="formData.email" late-validate/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <form-validate valattributeform="guarantorform" valattribute="email" />
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.residence' | translate }}</label>
 
                                 <div class="col-sm-3">
                                     <input id="residence" type="text" class="form-control" ng-model="formData.residence">
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="bvn">{{ 'label.input.bvn' | translate }}<span
+                                        class="required">*</span></label>
+
+                                <div class="col-sm-3">
+                                    <input type="text" id="bvn" name="bvn" ng-model="formData.bvn" class="form-control"/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <form-validate valattributeform="guaratorform" valattribute="bvn"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{{'label.input.pep' | translate}}</label>
+        
+                                <div class="col-sm-3">
+                                    <select id="pep" ng-model="formData.pep"  class="form-control"
+                                            ng-options="yesNo as yesNoOption.name for yesNoOption in yesNoOptions" value="{{yesNo.name | translate}}">
+                                        <option value="">--{{'label.menu.pep' | translate}}--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+
+
                         </div>
                     </div>
                     <div data-ng-show="clientview">

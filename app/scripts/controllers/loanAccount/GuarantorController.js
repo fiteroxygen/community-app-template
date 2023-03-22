@@ -10,10 +10,12 @@
             scope.clientData={};
             scope.offices=[];
             scope.toClients=[];
+            scope.yesNoOptions = [{id: true, name: "Yes"}, {id: false, name: 'No'}];
 
             resourceFactory.clientTemplateResource.get(function(data) {
                 scope.offices=data.officeOptions;
                 scope.formData.officeId=scope.offices[0].id;
+                scope.genderOptions = data.genderOptions;
             });
 
             scope.changeOffice=function(officeId){
@@ -83,6 +85,28 @@
                     guarantor.housePhoneNumber = this.formData.residence;
                     guarantor.guarantorTypeId = scope.template.guarantorTypeOptions[2].id;
                     guarantor.clientRelationshipTypeId = this.formData.relationshipType;
+                    
+                    if(this.formData.middlename){
+                        guarantor.middlename = this.formData.middlename;
+                    }
+
+                    if(this.formData.email){
+                        guarantor.email = this.formData.email;
+                    }
+
+                    if(this.formData.bvn){
+                        guarantor.bvn = this.formData.bvn;
+                    }
+
+                    //add pep option if selected
+                    if(this.formData.pep){
+                        guarantor.pep = this.formData.pep;
+                    }
+
+                    if(this.formData.genderId){
+                        guarantor.genderId = this.formData.genderId;
+                    }
+
                 }
                 resourceFactory.guarantorResource.save({ loanId: routeParams.id}, guarantor, function (data) {
                     location.path('viewloanaccount/' + routeParams.id);

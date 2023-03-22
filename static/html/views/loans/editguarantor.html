@@ -31,6 +31,15 @@
                             <form-validate valattributeform="editguaratorform" valattribute="firstname"/>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="middlename">{{ 'label.input.middlename' | translate }}</label>
+
+                        <div class="col-sm-3">
+                            <input type="text" id="middlename" name="middlename" ng-model="formData.middlename" class="form-control"/>
+                        </div>
+                       
+                    </div>
                     <div class="form-group">
                         <label class="control-label col-sm-2">{{ 'label.input.lastname' | translate }}<span class="required">*</span></label>
 
@@ -39,6 +48,18 @@
                             <form-validate valattributeform="editguaratorform" valattribute="lastname"/>
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="genderId">{{ 'label.input.gender' | translate }}</label>
+
+                        <div class="col-sm-3">
+                            <select chosen="genderOptions" id="genderId" ng-model="formData.genderId" class="form-control"
+                                    ng-options="gender.id as gender.name for gender in genderOptions" value="{{gender.id}}">
+                            </select>
+                        </div>
+                    </div>
+
+
                     <div class="form-group">
                         <label class="control-label col-sm-2">{{ 'label.input.dob' | translate }}</label>
 
@@ -77,12 +98,46 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label col-sm-2" for="email">{{'label.input.email' | translate}}</label>
+
+                        <div class="col-sm-3">
+                           <input type="email" id="email" name="email" class="form-control" ng-model="formData.email" late-validate/>
+                        </div>
+                        <div class="col-sm-2">
+                            <form-validate valattributeform="guarantorform" valattribute="email" />
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label col-sm-2">{{ 'label.input.residence' | translate }}</label>
 
                         <div class="col-sm-3">
                             <input id="residence" type="text" ng-model="formData.residence">
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="bvn">{{ 'label.input.bvn' | translate }}</label>
+
+                        <div class="col-sm-3">
+                            <input type="text" id="bvn" name="bvn" ng-model="formData.bvn" class="form-control"/>
+                        </div>
+                        <div class="col-sm-2">
+                            <form-validate valattributeform="guaratorform" valattribute="bvn"/>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">{{'label.input.pep' | translate}}</label>
+
+                        <div class="col-sm-3">
+                            <select id="pep" ng-model="formData.pep"  class="form-control"
+                                    ng-options="pep.id as pep.name for pep in yesNoOptions" value="{{pep.id | translate}}">
+                                <option value="">--{{'label.menu.pep' | translate}}--</option>
+                            </select>
+                        </div>
+                    </div>
+        
                     <div class="col-md-offset-2 paddedleft120">
                         <a id="cancel" href="#/listguarantors/{{template.loanId}}" class="btn btn-default">{{ 'label.button.cancel' | translate
                             }}</a>

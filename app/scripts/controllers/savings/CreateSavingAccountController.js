@@ -131,6 +131,7 @@
                     scope.formData.minRequiredBalance = data.minRequiredBalance;
                     scope.formData.withHoldTax = data.withHoldTax;
                     scope.formData.useFloatingInterestRate = data.useFloatingInterestRate;
+                    scope.formData.withdrawalFrequency = data.withdrawalFrequency;
                     if(data.floatingInterestRates){
                         scope.formData.floatingInterestRates = data.floatingInterestRates;
                         for (var i in scope.formData.floatingInterestRates) {
@@ -152,6 +153,8 @@
                     if (data.interestCalculationDaysInYearType) scope.formData.interestCalculationDaysInYearType = data.interestCalculationDaysInYearType.id;
                     if (data.lockinPeriodFrequencyType) scope.formData.lockinPeriodFrequencyType = data.lockinPeriodFrequencyType.id;
                     if (data.withdrawalFeeType) scope.formData.withdrawalFeeType = data.withdrawalFeeType.id;
+                    if (data.withdrawalFrequencyEnum) scope.formData.withdrawalFrequencyEnum = data.withdrawalFrequencyEnum.id;
+                    if (data.withdrawalFrequencyOptions) scope.formData.withdrawalFrequencyOptions = data.withdrawalFrequencyOptions;
                     scope.datatables = data.datatables;
                     scope.handleDatatables(scope.datatables);
                     scope.disabled = false;

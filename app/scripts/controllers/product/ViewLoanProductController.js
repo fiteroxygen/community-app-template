@@ -7,6 +7,10 @@
 
             resourceFactory.loanProductResource.get({loanProductId: routeParams.id, template: 'true'}, function (data) {
                 scope.loanproduct = data;
+                let productType=data.productTypes.filter(pt=>pt.id===data.productTypeId)[0]
+                scope.loanproduct.productType=productType?productType.name:'';
+                let productCategory=data.productCategories.filter(pc=>pc.id===data.productCategoryId)[0]
+                scope.loanproduct.productCategory=productCategory?productCategory.name:'';
                 if (data.accountingRule.id == 2 || data.accountingRule.id == 3 || data.accountingRule.id == 4) {
                     scope.isAccountingEnabled = true;
                 }

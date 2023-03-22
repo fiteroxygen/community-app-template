@@ -80,6 +80,32 @@
         <td></td>
     </tr>
 </table>
+
+    <!-- bnpl -->
+    <table class=" width100" ng-show="formData.productId">
+        <tr>
+            <td>
+                <input type="checkbox" name="isBnplProductCheckBox" ng-model="formData.isBnplLoan" ng-change="bnplValueChanged()"/>
+                {{'label.input.isBnplLoanProduct' | translate}}
+                <i class="fa fa-question-circle "
+                   uib-tooltip="{{'label.input.isBnplLoanProduct' | translate}}"
+                   tooltip-append-to-body="true"></i>
+            </td>
+            <td ng-show="formData.isBnplLoan">
+                <input type="checkbox" name="requiresEquityContributionBox" ng-model="formData.requiresEquityContribution"/>
+                {{'label.input.requiresEquityContribution' | translate}}
+                <i class="fa fa-question-circle "
+                   uib-tooltip="{{'label.input.requiresEquityContribution' | translate}}"
+                   tooltip-append-to-body="true"></i>
+            </td>
+            <td ng-show="formData.isBnplLoan">
+                <input id="equityContributionLoanPercentage" name="equityContributionLoanPercentage" class="form-control" type="text"
+                       ng-model="formData.equityContributionLoanPercentage" number-format/>
+            </td>
+        </tr>
+    </table>
+    <!-- bnpl ends -->
+
 <div ng-hide="previewRepayment">
     <div ng-show="loanaccountinfo">
         <div ng-hide="loanaccountinfo.meeting == undefined">
@@ -127,6 +153,27 @@
                     <td class="width31" ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.createStandingInstruction == true">
                     <input id="createStandingInstruction" class="input-mini-small" type="checkbox"
                            ng-model="formData.createStandingInstructionAtDisbursement"></label>
+                </td>
+            </tr>
+            <tr ng-show="formData.isBnplLoan">
+                <td class="width19" ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
+                    <label>{{ 'label.input.vendorForBnpl' | translate }}:</label>
+                </td>
+                <td class="width31 paddedbottom20" ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
+                    <input id="toVendorClientId" ng-model="toVendorClientData" name="client" class="form-control" type="text"
+                           uib-typeahead="(toVendorClient.id + ' ' + toVendorClient.displayName) as (toVendorClient.id + ' ' + toVendorClient.displayName) for toVendorClient in toVendorClients | filter:$viewValue | limitTo:8"
+                           typeahead-on-select="changeVendorClient($item)" required>
+                </td>
+                <td ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
+                    <label class="control-label col-sm-2" for="toAccountId">{{ 'label.input.vendorSavingsaccount' | translate }}<span
+                            class="required">*</span></label>
+                </td>
+                <td ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
+                    <select id="linkVendorAccountId" ng-model="formData.linkVendorAccountId" name="linkVendorAccountId" class="form-control"
+                            ng-options="toAccount.id as (toAccount.productName+' - '+toAccount.accountNo) for toAccount in vendorSavingsAccountOptions"
+                            value="{{toAccount.id}}" required>
+                        <option value="">{{'label.selectone' | translate}}</option>
+                    </select>
                 </td>
             </tr>
             <tr ng-show="loanaccountinfo.accountSummaryCollectionData">
