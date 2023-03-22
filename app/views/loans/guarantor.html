@@ -40,10 +40,10 @@
                                         class="required">*</span></label>
 
                                 <div class="col-sm-3">
-                                    <input type="text" ng-model="clientData.available" class="form-control"
-                                        typeahead-editable="false"
-                                        uib-typeahead="client as ( client.id + ' '+ client.displayName ) for client in clientOptions($viewValue)"
-                                        typeahead-on-select="viewClient(clientData.available)"/>
+                                    <input autocomplete="off" typeahead-on-select="viewClient($item)" name="clientname" type="text"
+                                           ng-model="clientTemplate" class="form-control"
+                                           uib-typeahead="client.displayName as client.displayName for client in clients | filter:$viewValue | limitTo:8"
+                                           required late-validate />
                                 </div>
                                 <div class="col-sm-2">
                                     <form-validate valattributeform="guaratorform" valattribute="clientname"/>
@@ -85,6 +85,16 @@
                                     <form-validate valattributeform="guaratorform" valattribute="firstname"/>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="middlename">{{ 'label.input.middlename' | translate }}</label>
+
+                                <div class="col-sm-3">
+                                    <input type="text" id="middlename" name="middlename" ng-model="formData.middlename" class="form-control"/>
+                                </div>
+                               
+                            </div>
+
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.lastname' | translate }}<span class="required">*</span></label>
 
@@ -96,6 +106,17 @@
                                     <form-validate valattributeform="guaratorform" valattribute="lastname"/>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="genderId">{{ 'label.input.gender' | translate }}</label>
+        
+                                <div class="col-sm-3">
+                                    <select chosen="genderOptions" id="genderId" ng-model="formData.genderId" class="form-control"
+                                            ng-options="gender.id as gender.name for gender in genderOptions" value="{{gender.id}}">
+                                    </select>
+                                </div>
+                            </div>
+                            
                             <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.dob' | translate }}</label>
 
@@ -136,12 +157,47 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-sm-2" for="email">{{'label.input.email' | translate}}</label>
+  
+                                <div class="col-sm-3">
+                                   <input type="email" id="email" name="email" class="form-control" ng-model="formData.email" late-validate/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <form-validate valattributeform="guarantorform" valattribute="email" />
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-sm-2">{{ 'label.input.residence' | translate }}</label>
 
                                 <div class="col-sm-3">
                                     <input id="residence" type="text" class="form-control" ng-model="formData.residence">
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="bvn">{{ 'label.input.bvn' | translate }}</label>
+
+                                <div class="col-sm-3">
+                                    <input type="text" id="bvn" name="bvn" ng-model="formData.bvn" class="form-control"/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <form-validate valattributeform="guaratorform" valattribute="bvn"/>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{{'label.input.pep' | translate}}</label>
+        
+                                <div class="col-sm-3">
+                                    <select id="pep" ng-model="formData.pep"  class="form-control"
+                                            ng-options="pep.id as pep.name for pep in yesNoOptions" value="{{pep.id | translate}}">
+                                        <option value="">--{{'label.menu.pep' | translate}}--</option>
+                                    </select>
+                                </div>
+                            </div>
+                
+
                         </div>
                     </div>
                     <div data-ng-show="clientview">

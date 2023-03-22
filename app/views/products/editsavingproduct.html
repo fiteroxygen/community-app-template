@@ -113,6 +113,24 @@
 	                    value="{{type.id}}"></select>
                 </div>            
 	        </div>
+			<div class="form-group">
+				<label class="control-label col-sm-2">{{ 'label.savingsproduct.withdraw.frequency' | translate }}
+					<i class="fa fa-question-circle" uib-tooltip="{{'label.savingsproduct.withdraw.frequency' | translate}}" tooltip-append-to-body="true"></i>
+				</label>
+				<div class="col-sm-2">
+					<input id="withdrawalFrequency" name="withdrawalFrequency" type="text"
+						   class="form-control"
+						   ng-model="formData.withdrawalFrequency"/>
+				</div>
+
+				<div class="col-sm-2">
+					<select id="withdrawalFrequencyOptions" class="form-control"
+							ng-model="formData.withdrawalFrequencyEnum"
+							ng-options="type.id as type.value for type in product.withdrawalFrequencyOptions"
+							ng-change="savingproduct.withdrawalFrequencyEnum.value = formValue(product.withdrawalFrequencyOptions,formData.withdrawalFrequencyEnum)"
+							value="{{type.id}}"></select>
+				</div>
+			</div>
 	    	<h3>{{ 'label.heading.settings' | translate }}</h3>
 	    	<hr>
 	    	<div class="form-group">

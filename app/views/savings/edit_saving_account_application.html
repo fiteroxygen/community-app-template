@@ -193,6 +193,7 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
                 <td class="width14">
                     <label class="control-label">{{ 'label.input.currencyinmultiplesof' | translate }}&nbsp;</label></td>
                 </td>
@@ -200,6 +201,16 @@
                     <input type="text" value="{{data.currency.inMultiplesOf}}"
                            class="form-control" readonly/>
                 </td>
+                </tr>
+                <tr data-ng-show="formData.withdrawalFrequencyEnum">
+                    <td class="width14">
+                        <label class="control-label">{{ 'label.input.withdrawalFrequency' | translate }}&nbsp;</label></td>
+                    </td>
+                    <td class="width36 paddedbottom10">
+                        <input type="text" value="{{formData.withdrawalFrequency | number}} {{formData.withdrawalFrequencyEnum.value}}"
+                               class="form-control" readonly/>
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="2" class="paddedbottom10 paddedtop">
                         <input type="checkbox" ng-model="formData.withdrawalFeeForTransfers">&nbsp;

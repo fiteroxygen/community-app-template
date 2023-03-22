@@ -5,8 +5,18 @@
             scope.clientview = false;
             scope.date = {};
             scope.restrictDate = new Date();
+            scope.yesNoOptions = [{
+                "id": 1,
+                "name": "Yes",
+                "position": 1
+              },{
+                "id": 2,
+                "name": "No",
+                "position": 2
+              }];
             resourceFactory.guarantorResource.get({ loanId: routeParams.loanId, templateResource: routeParams.id, template: true}, function (data) {
                 scope.template = data;
+                scope.genderOptions = scope.template.genderOptions;
                 scope.formData = {
                     firstname: data.firstname,
                     lastname: data.lastname,
@@ -25,6 +35,38 @@
                 if (data.dob) {
                     scope.date.first = new Date(dateFilter(data.dob, scope.df));
                 }
+
+                //add pep option if selected
+                if(data.pep){
+                    scope.formData.pepId = 1
+                }
+
+                if(!data.pep){
+                    scope.formData.pepId = 2;
+                }
+
+                //add bvn if selected
+                if(data.bvn){
+                    scope.formData.bvn = data.bvn;
+                }
+
+                //add email if selected
+                if(data.email){
+                    scope.formData.email = data.email;
+                }
+
+                //add middle name if selected
+                if(data.middlename){
+                    scope.formData.middlename = data.middlename;
+                }
+
+                //add gender if selected
+                if(data.gender){
+                    scope.formData.genderId = data.gender.id;
+                }
+
+                console.log(scope.formData);
+
             });
             scope.submit = function () {
                 var guarantor = {};
@@ -42,6 +84,28 @@
                 guarantor.housePhoneNumber = this.formData.residence;
                 guarantor.clientRelationshipTypeId = this.formData.relationshipType;
                 guarantor.guarantorTypeId = 3;
+                
+                if(this.formData.middlename){
+                    guarantor.middlename = this.formData.middlename;
+                }
+
+                if(this.formData.email){
+                    guarantor.email = this.formData.email;
+                }
+
+                if(this.formData.bvn){
+                    guarantor.bvn = this.formData.bvn;
+                }
+
+                //add pep option if selected
+                if(this.formData.pepId){
+                    guarantor.pep = this.formData.pepId == 1 ? true : false;
+                }
+
+                if(this.formData.genderId){
+                    guarantor.genderId = this.formData.genderId;
+                }
+
                 resourceFactory.guarantorResource.update({ loanId: routeParams.loanId, templateResource: routeParams.id}, guarantor, function (data) {
                     location.path('listguarantors/' + routeParams.loanId);
                 });

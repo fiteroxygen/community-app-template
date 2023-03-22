@@ -148,6 +148,9 @@
                     case "unlock":
                         location.path('/savingaccount/'+accountId+ '/unlock');
                         break;
+                    case "nextWithdrawalDate":
+                        location.path('/savingaccount/'+accountId+ '/nextWithdrawalDate');
+                        break;
 
                 }
             };
@@ -303,7 +306,11 @@
                             {
                                 name: "button.freeze",
                                 taskPermissionName : ""
-                            }
+                            },
+                             {
+                                 name: "button.nextWithdrawalDate",
+                                 taskPermissionName : "NEXTWITHDRAWALDATE_SAVINGSACCOUNT"
+                             }
                         ]
 
                     if($rootScope.hasPermission("UNBLOCKDEBIT_SAVINGSACCOUNT")){

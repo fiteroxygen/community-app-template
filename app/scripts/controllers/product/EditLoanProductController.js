@@ -19,6 +19,9 @@
             //Rates
             scope.rates = [];
             scope.rateFlag = false;
+
+             scope.chart = {};
+
             for (var i = 1; i <= 28; i++) {
                 scope.interestRecalculationOnDayTypeOptions.push(i);
             }
@@ -27,6 +30,8 @@
                 scope.product = data;
                 scope.chart = scope.product.activeChart;
                 scope.ratesEnabled = data.ratesEnabled;
+                scope.productCategories=data.productCategories;
+                scope.productTypes=data.productTypes;
                 scope.assetAccountOptions = scope.product.accountingMappingOptions.assetAccountOptions || [];
                 scope.incomeAccountOptions = scope.product.accountingMappingOptions.incomeAccountOptions || [];
                 scope.expenseAccountOptions = scope.product.accountingMappingOptions.expenseAccountOptions || [];
@@ -51,6 +56,8 @@
                 scope.product.interestRecalculationNthDayTypeOptions.push({"code" : "onDay", "id" : -2, "value" : "on day"});
                 scope.formData = {
                     name: scope.product.name,
+                    productCategoryId:scope.product.productCategoryId,
+                    productTypeId:scope.product.productTypeId,
                     shortName: scope.product.shortName,
                     description: scope.product.description,
                     fundId: scope.product.fundId,
@@ -103,6 +110,9 @@
                     isEqualAmortization : scope.product.isEqualAmortization,
                     maxNumberOfLoanExtensionsAllowed : scope.product.maxNumberOfLoanExtensionsAllowed,
                     isAccountLevelArrearsToleranceEnable : scope.product.isAccountLevelArrearsToleranceEnable,
+                    isBnplLoanProduct : scope.product.isBnplLoanProduct,
+                    requiresEquityContribution : scope.product.requiresEquityContribution,
+                    equityContributionLoanPercentage : scope.product.equityContributionLoanPercentage
                 };
 
                 if (scope.product.isInterestRecalculationEnabled) {
@@ -275,6 +285,11 @@
                   });
                 }
             });
+
+            scope.bnplValueChanged = () => {
+                scope.formData.requiresEquityContribution = scope.product.requiresEquityContribution;
+                scope.formData.equityContributionLoanPercentage = scope.product.equityContributionLoanPercentage;
+            };
 
             //Rate
             scope.rateSelected = function(currentRate){
@@ -604,8 +619,18 @@
                 }
 
                 if(scope.chart){
-                    this.formData.charts = [];//declare charts array
-                    this.formData.charts.push(copyChartData(scope.chart));
+                     var newChart = copyChartData(scope.chart);
+                     if(newChart.chartSlabs.length > 0){
+                       this.formData.charts = [];
+                       this.formData.charts.push(newChart);
+                      }else{
+                        this.formData.charts = [];
+                        var chartData = {
+                            id:scope.chart.id,
+                            delete:true
+                        }
+                        this.formData.charts.push(chartData);
+                      }
                 }
 
                 resourceFactory.loanProductResource.put({loanProductId: routeParams.id}, this.formData, function (data) {
