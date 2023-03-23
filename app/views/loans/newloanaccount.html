@@ -478,7 +478,7 @@
                             </td>
                             <td class="width36 paddedbottom20" ng-show="formData.isTopup == true">
                                 <select id="loanIdToClose" ng-model="formData.loanIdToClose" ng-change="loandetails.loanAccountToClose= formValue(loanaccountinfo.clientActiveLoanOptions,formData.loanIdToClose,'id','accountNo');calculateTopUpCarryForwardSchedules()"
-                                    ng-options="loanSummary.id  as (loanSummary.accountNo+' - '+formData.loanProductName) for loanSummary in loanaccountinfo.clientActiveLoanOptions"
+                                    ng-options="loanSummary.id  as (loanSummary.accountNo+' - '+loanProductName) for loanSummary in loanaccountinfo.clientActiveLoanOptions"
                                     class="form-control width170px" value="{{loanSummary.id}}"></select>
                             </td>
                         </tr>

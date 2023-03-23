@@ -308,6 +308,20 @@
                                 {{data.taxGroup.name}}
                             </td>
                         </tr>
+                        <tr>
+                            <td class="width14">
+                                <label class="control-label">{{ 'label.input.linksavings' | translate }}</label>
+                            </td>
+                            <td class="width23 paddedbottom10">
+                                <select id="linkAccountId" ng-model="formData.linkAccountId"
+                                        ng-options="savingaccount.id as savingaccount.savingsProductName for savingaccount in savingsAccounts" class="form-control width170px"
+                                        ng-change="fixedDetails.linkAccountName = formValue(savingsAccounts,formData.linkAccountId,'id','displayName')"
+                                        value="{{savingaccount.id}}">
+                                    <option value="">{{'label.menu.selectone' | translate}}</option>
+                                </select>
+                            </td>
+
+                        </tr>
                     </table>
                     <hr>
                     <button class="btn btn-default pull-left" wz-previous><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Previous

@@ -13,7 +13,7 @@
             scope.fromDate = {}; //required for date formatting
             scope.endDate = {};//required for date formatting
 
-            resourceFactory.recurringDepositAccountResource.get({accountId: scope.accountId, template: 'true', associations: 'charges'}, function (data) {
+            resourceFactory.recurringDepositAccountResource.get({accountId: scope.accountId, template: 'true', associations: 'charges, linkedAccount'}, function (data) {
                 scope.data = data;
                 scope.charges = data.charges || [];
                 if (scope.charges) {
@@ -40,6 +40,10 @@
                 }
                 scope.formData.productId = data.depositProductId;
                 scope.products = data.productOptions;
+                scope.savingsAccounts = data.savingsAccounts;
+                if (data.linkedAccount) {
+                   scope.formData.linkAccountId = data.linkedAccount.id;
+                }
                 if (data.fieldOfficerId != 0)scope.formData.fieldOfficerId = data.fieldOfficerId;
                 if (data.timeline) {
                     var submittedOnDate = dateFilter(data.timeline.submittedOnDate, scope.df);
