@@ -3,6 +3,10 @@
     ViewFixedDepositProductController: function(scope, routeParams , location , anchorScroll , resourceFactory,$uibModal ) {
         resourceFactory.fixedDepositProductResource.get({productId: routeParams.productId , template: 'true'} , function(data) {
             scope.depositproduct = data;
+            let  productType = data.productTypes.filter(pt=>pt.id===data.productTypeId)[0]
+            scope.depositproduct.productType = productType?productType.name:'';
+            let productCategory = data.productCategories.filter(pc=>pc.id===data.productCategoryId)[0]
+            scope.depositproduct.productCategory = productCategory?productCategory.name:'';
             scope.chartSlabs = scope.depositproduct.activeChart.chartSlabs;
             scope.hasAccounting = data.accountingRule.id == 2 || data.accountingRule.id == 3 ? true : false;
         });
