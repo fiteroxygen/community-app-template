@@ -243,6 +243,7 @@ define(['Q', 'underscore', 'mifosX'], function (Q) {
             'deposits/recurring/EditRecurringDepositAccountController',
             'deposits/recurring/AddNewRecurringDepositChargeController',
             'deposits/recurring/ViewRecurringDepositTransactionController',
+            'deposits/recurring/RecurringDocumentController',
             'groups/CreateGroupController',
             'groups/EditGroupController',
             'groups/GroupAttendanceController',
