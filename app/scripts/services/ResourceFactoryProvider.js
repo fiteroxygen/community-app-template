@@ -264,6 +264,9 @@
                     LoanDocumentResource: defineResource(apiVer + "/loans/:loanId/documents/:documentId", {loanId: '@loanId', documentId: '@documentId'}, {
                         getLoanDocuments: {method: 'GET', params: {}, isArray: true}
                     }),
+                    RecurringDocumentResource: defineResource(apiVer + "/recurring/:accountId/documents/:documentId", {accountId: '@accountId', documentId: '@documentId'}, {
+                        getRecurringDocuments: {method: 'GET', params: {}, isArray: true}
+                    }),
                     currencyConfigResource: defineResource(apiVer + "/currencies", {}, {
                         get: {method: 'GET', params: {}},
                         update: { method: 'PUT'},

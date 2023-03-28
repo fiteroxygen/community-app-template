@@ -193,7 +193,7 @@
                             <td class="width31 paddedbottom20" ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
                                 <input id="toVendorClientId" ng-model="toVendorClientData" name="client" class="form-control" type="text"
                                        uib-typeahead="(toVendorClient.id + ' ' + toVendorClient.displayName) as (toVendorClient.id + ' ' + toVendorClient.displayName) for toVendorClient in toVendorClients | filter:$viewValue | limitTo:8"
-                                       typeahead-on-select="changeVendorClient($item)" required>
+                                       typeahead-on-select="changeVendorClient($item)" ng-required="formData.isBnplLoan">
                             </td>
                             <td ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
                                 <label class="control-label col-sm-2" for="toAccountId">{{ 'label.input.vendorSavingsaccount' | translate }}<span
@@ -202,7 +202,7 @@
                             <td ng-hide="response.uiDisplayConfigurations.loanAccount.isHiddenField.linkAccountId == true">
                                 <select id="linkVendorAccountId" ng-model="formData.linkVendorAccountId" name="linkVendorAccountId" class="form-control"
                                         ng-options="toAccount.id as (toAccount.productName+' - '+toAccount.accountNo) for toAccount in vendorSavingsAccountOptions"
-                                        value="{{toAccount.id}}" required>
+                                        value="{{toAccount.id}}" ng-required="formData.isBnplLoan">
                                     <option value="">{{'label.selectone' | translate}}</option>
                                 </select>
                             </td>

@@ -701,6 +701,9 @@
             .when('/viewrecurringdepositaccounttrxn/:accountId/:transactionId', {
                 templateUrl: 'views/deposits/recurring/view_recurring_deposit_transaction.html'
             })
+            .when('/addrecurringdocument/:id', {
+                 templateUrl: 'views/deposits/recurring/addrecurringdocument.html'
+            })
             .when('/viewgroup/:id', {
                 templateUrl: 'views/groups/viewgroup.html'
             })
