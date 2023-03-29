@@ -123,6 +123,7 @@
                     scope.formData.withdrawalFeeForTransfers = data.withdrawalFeeForTransfers;
                     scope.formData.allowOverdraft = data.allowOverdraft;
                     scope.formData.overdraftLimit = data.overdraftLimit;
+                    scope.formData.postOverdraftInterestOnDeposit = data.postOverdraftInterestOnDeposit;
                     scope.formData.nominalAnnualInterestRateOverdraft = data.nominalAnnualInterestRateOverdraft;
                     scope.formData.minOverdraftForInterestCalculation = data.minOverdraftForInterestCalculation;
                     scope.formData.lienAllowed = data.lienAllowed;
