@@ -255,6 +255,15 @@
                             <input id="minOverdraftForInterestCalculation" type="text" ng-model="formData.minOverdraftForInterestCalculation" number-format>
                         </div>
                     </div>
+                    <div class="form-group" ng-show="formData.allowOverdraft">
+                        <div class="col-sm-2">
+                            <label class="control-label">{{ 'label.input.postoverdraftinterestondeposit' | translate }}&nbsp;
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input id="postOverdraftInterestOnDeposit" type="checkbox" ng-model="formData.postOverdraftInterestOnDeposit" ng-true-value="true" ng-false-value="false">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-4">
                             <input type="checkbox" ng-model="formData.lienAllowed   "> &nbsp;
