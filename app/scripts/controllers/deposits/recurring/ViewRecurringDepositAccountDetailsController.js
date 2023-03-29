@@ -1,7 +1,8 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        ViewRecurringDepositAccountDetailsController: function (scope, routeParams, resourceFactory, paginatorService, location, route, dateFilter,$uibModal) {
+        ViewRecurringDepositAccountDetailsController: function (scope, routeParams, resourceFactory, paginatorService, location, route, dateFilter,$uibModal, API_VERSION, $sce, $rootScope, $window) {
             scope.transactions = [];
+            scope.f = [];
             scope.isDebit = function (savingsTransactionType) {
                 return savingsTransactionType.withdrawal == true || savingsTransactionType.feeDeduction == true || savingsTransactionType.withholdTax == true;
             };
@@ -457,9 +458,41 @@
                 }
             };
 
+            scope.getRecurringDocuments = function () {
+                            resourceFactory.RecurringDocumentResource.getRecurringDocuments({accountId: routeParams.id}, function (data) {
+                                for (var i in data) {
+                                    var recurringdocs = {};
+                                    recurringdocs = API_VERSION + '/recurring/' + data[i].parentEntityId + '/documents/' + data[i].id + '/attachment?tenantIdentifier=' + $rootScope.tenantIdentifier;
+                                    data[i].docUrl = recurringdocs;
+                                    if (data[i].fileName)
+                                        if (data[i].fileName.toLowerCase().indexOf('.jpg') != -1 || data[i].fileName.toLowerCase().indexOf('.jpeg') != -1 || data[i].fileName.toLowerCase().indexOf('.png') != -1)
+                                            data[i].fileIsImage = true;
+                                    if (data[i].type)
+                                         if (data[i].type.toLowerCase().indexOf('image') != -1)
+                                            data[i].fileIsImage = true;
+                                }
+                                scope.recurringDocuments = data;
+                            });
+
+                        };
+            scope.deleteDocument = function (documentId, index) {
+                resourceFactory.RecurringDocumentResource.delete({accountId: scope.savingaccountdetails.id, documentId: documentId}, '', function (data) {
+                    scope.recurringDocuments.splice(index, 1);
+                });
+            };
+
+            scope.previewDocument = function (url, fileName) {
+                scope.preview =  true;
+                scope.fileUrl = scope.hostUrl + url;
+                if(fileName.toLowerCase().indexOf('.png') != -1)
+                    scope.fileType = 'image/png';
+                else if((fileName.toLowerCase().indexOf('.jpg') != -1) || (fileName.toLowerCase().indexOf('.jpeg') != -1))
+                    scope.fileType = 'image/jpg';
+            };
+
         }
     });
-    mifosX.ng.application.controller('ViewRecurringDepositAccountDetailsController', ['$scope', '$routeParams', 'ResourceFactory', 'PaginatorService', '$location', '$route', 'dateFilter','$uibModal', mifosX.controllers.ViewRecurringDepositAccountDetailsController]).run(function ($log) {
+    mifosX.ng.application.controller('ViewRecurringDepositAccountDetailsController', ['$scope', '$routeParams', 'ResourceFactory', 'PaginatorService', '$location', '$route', 'dateFilter','$uibModal', 'API_VERSION', '$sce', '$rootScope', '$window', mifosX.controllers.ViewRecurringDepositAccountDetailsController]).run(function ($log) {
         $log.info("ViewRecurringDepositAccountDetailsController initialized");
     });
 }(mifosX.controllers || {}));

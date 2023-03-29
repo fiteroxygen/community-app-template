@@ -141,6 +141,10 @@
             <td>{{'label.heading.minoverdraftforinterestcalculation' | translate}}</td>
             <td colspan="3">{{savingproduct.minOverdraftForInterestCalculation}}</td>
         </tr>
+        <tr ng-show="savingproduct.allowOverdraft">
+            <td>{{'label.input.postoverdraftinterestondeposit' | translate}}</td>
+            <td colspan="3">{{savingproduct.postOverdraftInterestOnDeposit}}</td>
+        </tr>
         <tr>
             <td>{{'label.heading.lienAllowed' | translate}}</td>
             <td colspan="3">{{savingproduct.lienAllowed}}</td>

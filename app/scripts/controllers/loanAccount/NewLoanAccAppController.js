@@ -318,7 +318,7 @@
             };
             scope.computeInterestRateForJlg = function() {
                   //Reset interest to default
-                  scope.formData.interestRatePerPeriod = scope.loanaccountinfo.interestRatePerPeriod;
+                  scope.formData.interestRatePerPeriod = scope.loanaccountinfo != null ? scope.loanaccountinfo.interestRatePerPeriod : '';
                   if(scope.formData.loanTermFrequency == 1 && scope.formData.loanTermFrequencyType == 1){
                    var disbursementDate = dateFilter(scope.date.second, scope.df);
                    var nextMeetingDate  = dateFilter(new Date(scope.loanaccountinfo.calendarOptions[0].nextTenRecurringDates[0]),scope.df);
