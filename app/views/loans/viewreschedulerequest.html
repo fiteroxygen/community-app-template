@@ -10,11 +10,13 @@
         <fieldset>
             <legend>{{'label.heading.viewreschedulerequest' | translate }}</legend>
             <div class="btn-group pull-right">
-                    <button ng-click="reject()" type="button" class="btn btn-warning" has-permission="REJECTRESCHEDULE_LOAN"><i class="fa fa-times"></i>
+                    <button type="button" ng-click="reject()"  class="btn btn-warning" has-permission="REJECTRESCHEDULE_LOAN"><i class="fa fa-times"></i>
                         {{'label.button.reject' | translate}}</button>
                     <button id="approve" type="button" ng-click="approve()" class="btn btn-success" has-permission="APPROVERESCHEDULE_LOAN"><i class="fa fa-ok"></i>
                         {{ 'label.button.approve' | translate }}</button>
             </div>
+
+
             <div class="row">
                 <div class="col-md-8">
             <table class="width100 table table-bordered">
@@ -129,8 +131,16 @@
                             class="control-label">{{ 'label.input.changeEMI' | translate }}&nbsp;</span>
                     </td>
                     <td>{{'label.input.installment.date' | translate}} : {{emi.instDate | DateFormat}}, &nbsp;&nbsp;&nbsp;&nbsp;{{"label.input.new.emi"|translate}} : {{emi.emi }}</td>
-                </tr>  
-                 
+                </tr>
+
+                <tr ng-repeat = "emi in loanRescheduleDetails.principalAmountChange">
+                    <td class = "paddedtop">
+                        <input type="checkbox" ng-disabled="true" ng-model="principalAmountChange"> &nbsp;<span
+                            class="control-label">{{ 'label.input.changePrincipalAmount' | translate }}&nbsp;</span>
+                    </td>
+                    <td>{{'label.input.installment.date' | translate}} : {{emi.instDate | DateFormat}}, &nbsp;&nbsp;&nbsp;&nbsp;{{"label.input.new.emi"|translate}} : {{emi.emi }}</td>
+                </tr>
+
                 <!--<tr>
                     <td class = "paddedtop">
                         <input type="checkbox" ng-disabled="true" ng-model="loanRescheduleDetails.recalculateInterest"> &nbsp;<span
