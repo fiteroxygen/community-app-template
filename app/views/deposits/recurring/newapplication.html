@@ -112,15 +112,11 @@
                                         value="{{type.id}}">
                                 </select>
                             </td>
-                            <td class="width14"><label class="control-label">{{ 'label.input.daysinyears' | translate }}&nbsp;<span
-                                    class="required">*</span></label></td>
-
+                            <td class="width14"><label class="control-label">{{ 'label.heading.nominalinterestrate' | translate }}&nbsp;
+                             </label></td>
                             <td class="width36 paddedbottom10">
-                                <select id="interestCalculationDaysInYearType" ng-model="formData.interestCalculationDaysInYearType"
-                                        ng-options="type.id as type.value for type in data.interestCalculationDaysInYearTypeOptions"
-                                        ng-change="recurringDetails.interestCalculationDaysInYearTypeValue = formValue(data.interestCalculationDaysInYearTypeOptions,formData.interestCalculationDaysInYearType)"
-                                        value="{{type.id}}" class="form-control width170px">
-                                </select>
+                                <input id="nominalInterestRate" ng-model="formData.nominalAnnualInterestRate"
+                                        class="form-control width170px" />
                             </td>
                         </tr>
                         <tr>
@@ -140,8 +136,16 @@
                                     </select>
                                 </div>
                             </td>
-                            <td class="width14"></td>
-                            <td class="width36 paddedbottom10"></td>
+                            <td class="width14"><label class="control-label">{{ 'label.input.daysinyears' | translate }}&nbsp;<span
+                                    class="required">*</span></label></td>
+
+                            <td class="width36 paddedbottom10">
+                                <select id="interestCalculationDaysInYearType" ng-model="formData.interestCalculationDaysInYearType"
+                                        ng-options="type.id as type.value for type in data.interestCalculationDaysInYearTypeOptions"
+                                        ng-change="recurringDetails.interestCalculationDaysInYearTypeValue = formValue(data.interestCalculationDaysInYearTypeOptions,formData.interestCalculationDaysInYearType)"
+                                        value="{{type.id}}" class="form-control width170px">
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="4">
