@@ -387,6 +387,9 @@
                         getAllNotes: {method: 'GET', params: {}, isArray: true},
                         update: {method: 'PUT'}
                     }),
+                    savingsDocumentsResource: defineResource(apiVer + "/savings/:savingsId/documents/:documentId", {savingsId: '@savingsId', documentId: '@documentId'}, {
+                        getAllSavingsDocuments: {method: 'GET', params: {}, isArray: true}
+                    }),
                     gsimResource: defineResource(apiVer + "/savingsaccounts/gsim/:parentAccountId", {parentAccountId:'@parentAccountId'}, {
                         post: {method: 'POST', params: {}},
                         update: {method: 'PUT'}
