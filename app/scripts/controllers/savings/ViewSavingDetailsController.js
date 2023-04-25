@@ -151,6 +151,9 @@
                     case "nextWithdrawalDate":
                         location.path('/savingaccount/'+accountId+ '/nextWithdrawalDate');
                         break;
+                    case "documents":
+                        location.path('/savingaccount/'+accountId+ '/documents');
+                        break;
 
                 }
             };
@@ -310,6 +313,10 @@
                              {
                                  name: "button.nextWithdrawalDate",
                                  taskPermissionName : "NEXTWITHDRAWALDATE_SAVINGSACCOUNT"
+                             },
+                             {
+                                name: "button.documents",
+                                taskPermissionName: ""
                              }
                         ]
 
