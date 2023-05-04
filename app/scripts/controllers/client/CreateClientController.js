@@ -326,6 +326,7 @@
             };
 
             scope.submit = function () {
+                console.log(scope.formData);
                 var reqDate = dateFilter(scope.first.date, scope.df);
 
                 this.formData.locale = scope.optlang.code;
@@ -394,6 +395,7 @@
                 }
 
                 if(scope.first.inBusinessSince) {
+                    console.log("came");
                     this.formData.clientNonPersonDetails.locale = scope.optlang.code;
                     this.formData.clientNonPersonDetails.dateFormat = scope.df;
                     this.formData.clientNonPersonDetails.inBusinessSince = dateFilter(scope.first.inBusinessSince, scope.df);
