@@ -117,6 +117,13 @@
                     var incorpValidityTillDate = dateFilter(data.clientNonPersonDetails.incorpValidityTillDate, scope.df);
                     scope.date.incorpValidityTillDate = new Date(incorpValidityTillDate);
                 }
+                if (data.clientNonPersonDetails.inBusinessSince) {
+                     var inBusinessSince = dateFilter(data.clientNonPersonDetails.inBusinessSince, scope.df);
+                     scope.date.inBusinessSince = new Date(inBusinessSince);
+                }
+                if (data.clientNonPersonDetails.isRegistered != null) {
+                     scope.formData.clientNonPersonDetails.isRegistered = data.clientNonPersonDetails.isRegistered;
+                }
 
                 var actDate = dateFilter(data.activationDate, scope.df);
                 scope.date.activationDate = new Date(actDate);

@@ -605,6 +605,12 @@
             .when('/savingaccount/:savingsId/hold', {
                 templateUrl: 'views/savings/holdSavingsAccount.html'
             })
+            .when('/savingaccount/:savingsId/documents', {
+                templateUrl: 'views/savings/documents.html'
+            })
+            .when('/addsavingsdocument/:savingsId', {
+                templateUrl: 'views/savings/addsavingsdocument.html'
+            })
             .when('/viewsavingsholdtransactions/:savingsId', {
                 templateUrl: 'views/savings/holdSavingsTransactions.html'
             })

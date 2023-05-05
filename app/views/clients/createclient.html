@@ -71,14 +71,14 @@
                   <div data-ng-switch on="showNonPersonOptions">
                      <div data-ng-switch-when="true">
                         <div class="form-group">
-                           <label class="control-label col-sm-2">{{'label.input.businessregistered' | translate}}</label>
-                           <div class="col-sm-3">
-                              <select id="isBusinessRegistered" ng-model="formData.isBusinessRegistered" class="form-control"
-                              ng-options="isBusinessRegistered.value as businessRegisteredOption.name for businessRegisteredOption in businessRegisteredOptions track by businessRegisteredOption.id"
-                                 value="formData.clientNonPersonDetails.isBusinessRegistered">
-                                 <option value="">--{{'label.menu.businessRegistered' | translate}}--</option>
-                              </select>
-                           </div>
+                        <label class="control-label col-sm-2">{{'label.input.businessregistered' | translate}}</label>
+                        <div class="col-sm-3">
+                           <select id="isRegistered" ng-model="formData.clientNonPersonDetails.isRegistered" class="form-control"
+                                   ng-options="businessRegisteredOption.id as businessRegisteredOption.name for businessRegisteredOption in businessRegisteredOptions"
+                                   value="{{businessRegisteredOption.id}}">
+                              <option value="">--{{'label.menu.businessRegistered' | translate}}--</option>
+                           </select>
+                        </div>
                         </div>
                      </div>
                   </div>
@@ -303,12 +303,12 @@
                      <div data-ng-switch-when="true">
                         <div class="form-group">
                            <label class="control-label col-sm-2">{{'label.input.constitution' | translate}}<span
-                                 class="required"></span></label>
+                                 class="required">*</span></label>
                            <div class="col-sm-3">
                               <select id="constitutionId" name="constitution"
                                  ng-model="formData.clientNonPersonDetails.constitutionId" class="form-control"
                                  ng-options="constitution.id as constitution.name for constitution in clientNonPersonConstitutionOptions"
-                                 value="{{constitution.id}}">
+                                 value="{{constitution.id}}" required>
                                  <option value="">--{{'label.menu.constitution' | translate}}--</option>
                               </select>
                            </div>
