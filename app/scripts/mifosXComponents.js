@@ -205,6 +205,8 @@ define(['Q', 'underscore', 'mifosX'], function (Q) {
             'savings/ViewSavingDepositAccrualTransactionController',
             'savings/HoldSavingsAccountController',
             'savings/HoldSavingsTransactionController',
+            'savings/SavingsDocumentsController',
+            'savings/SavingsDocumentController',
             'shares/CreateShareAccountController',
             'shares/ViewShareAccountController',
             'shares/EditShareAccountController',
