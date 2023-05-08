@@ -60,8 +60,9 @@
 					<div class="form-group">
 						<label class="control-label col-sm-2">{{'label.input.businessregistered' | translate}}</label>
 						<div class="col-sm-3">
-							<select id="businessRegisteredId" ng-model="formData.businessRegisteredId"  class="form-control"
-									ng-options="businessRegistered.value as businessRegistered.name for businessRegistered in businessRegisteredOptions" value="{{businessRegistered.id}}">
+							<select id="businessRegisteredId" ng-model="formData.clientNonPersonDetails.isRegistered"  class="form-control"
+									ng-options="businessRegistered.id as businessRegistered.name for businessRegistered in businessRegisteredOptions"
+									value="{{businessRegistered.id}}">
 								<option value="">--{{'label.menu.businessRegistered' | translate}}--</option>
 							</select>
 						</div>
@@ -221,7 +222,7 @@
 						 translate}}</label>
 					  <div class="col-sm-3">
 						 <input id="ageInBusiness" type="text" name="ageInBusiness" datepicker-pop="dd MMMM yyyy"
-							ng-model="formData.ageInBusiness" is-open="opened1" class="form-control"  min="minData" max="restrictDate"/>
+							ng-model="date.inBusinessSince" is-open="opened1" class="form-control"  min="minData" max="restrictDate"/>
 					  </div>
 				   </div>
 				</div>
@@ -285,12 +286,12 @@
 				<div data-ng-switch-when="true">
 					<div class="form-group">
 						<label class="control-label col-sm-2">{{'label.input.constitution' | translate}}<span
-								class="required"></span></label>
+								class="required">*</span></label>
 
 						<div class="col-sm-3">
 							<select id="constitutionId" name="constitution" ng-model="formData.clientNonPersonDetails.constitutionId"  class="form-control"
 									ng-options="constitution.id as constitution.name for constitution in clientNonPersonConstitutionOptions"
-									value="{{constitution.id}}">
+									value="{{constitution.id}}" required>
 								<option value="">--{{'label.menu.constitution' | translate}}--</option>
 							</select>
 						</div>
