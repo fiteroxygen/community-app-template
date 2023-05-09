@@ -95,6 +95,12 @@
                         update: {method: 'PUT', params: {surveyId: '@surveyId'}},
                         activateOrDeactivate: {method: 'POST', params: {surveyId: '@surveyId',command: '@command'}},
                     }),
+
+                    tasksResource: defineResource(apiVer + "/tasks/:taskId", {taskId: '@taskId'}, {
+                        getAll: {method: 'GET', params: {status: '@status'}, isArray: true},
+                        get: {method: 'GET', params: {taskId: '@taskId'}, isArray: false},
+                        update: {method: 'PUT', params: {surveyId: '@taskId'}},
+                    }),
                     surveyScorecardResource: defineResource(apiVer + "/surveys/scorecards/:surveyId", {surveyId: '@surveyId'}, {
                         post: {method: 'POST', params: {}, isArray: false}
                     }),
