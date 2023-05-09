@@ -49,7 +49,7 @@
                         <td class="pointer">{{ survey.id }}</td>
                         <td class="pointer">{{ survey.title }}</td>
                         <td class="pointer">{{ survey.description }}</td>
-                        <td class="pointer">{{ survey.status }}</td>
+                        <td class="pointer">{{ survey.status | translate }}</td>
                         <td>
                             <i type="button" class="btn btn-primary"
                                ng-click="routeTo(survey.id)"><i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;
