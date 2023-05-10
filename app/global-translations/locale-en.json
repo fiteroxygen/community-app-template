@@ -4639,6 +4639,8 @@
   "label.heading.guarantee.pep": "Politically Exposed Person",
   "label.heading.middlename": "Middle Name",
   "label.heading.recurringDocuments": "Recurring Documents",
+  "validation.msg.client.dailyWithdrawLimit.maximum.dailyWithDraw.limit.cannot.exceed.global.limit": "Maximum dailyWithDraw limit cannot exceed global validation limit",
+  "validation.msg.client.singleWithdrawLimit.maximum.singleWithDraw.limit.cannot.exceed.global.limit": "Maximum SingleWithdraw limit cannot exceed global validation limit",
   "task.status.pending": "PENDING",
   "task.status.blocked": "BLOCKED",
   "task.status.progress": "IN PROGRESS",
