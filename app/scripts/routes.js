@@ -1031,6 +1031,18 @@
             .when('/surveys',{
                 templateUrl: 'views/surveys/surveys.html'
             })
+            .when('/mytasks',{
+                templateUrl: 'views/mytasks/mytasks.html'
+            })
+            .when('/mytasks/add',{
+                templateUrl: 'views/mytasks/createmytask.html'
+            })
+            .when('/editmytask/:id',{
+                templateUrl: 'views/mytasks/editmytask.html'
+            })
+            .when('/viewmytask/:id',{
+                templateUrl: 'views/mytasks/viewmytask.html'
+            })
             .when('/surveys/add',{
                 templateUrl: 'views/surveys/createsurvey.html'
             })

@@ -74,7 +74,7 @@
 			<div class="col-sm-2">
 				<select id="productCategoryId" name="productCategoryId" ng-model="formData.productCategoryId"
 						ng-options="productCategory.id as productCategory.name for productCategory in productCategories"
-						value="{{clientLevel.id}}" class="form-control" required>
+						value="{{productCategory.id}}" class="form-control">
 					<option value="">{{'label.selectone' | translate}}</option>
 				</select>
 			</div>
@@ -83,7 +83,7 @@
 			<div class="col-sm-2">
 				<select id="productTypeId" name="productTypeId" ng-model="formData.productTypeId"
 						ng-options="productType.id as productType.name for productType in productTypes"
-						value="{{clientLevel.id}}" class="form-control" required>
+						value="{{productType.id}}" class="form-control">
 					<option value="">{{'label.selectone' | translate}}</option>
 				</select>
 			</div>
