@@ -90,9 +90,11 @@
             scope.collateralAddedDataArray = [];
 
             scope.addCollateral = function () {
+             if((scope.collateralFormData.collateralId != null || !_.isUndefined(scope.collateralFormData.collateralId)) && (scope.collateralFormData.quantity != null || !_.isUndefined(scope.collateralFormData.quantity ))){
                 scope.collateralAddedDataArray.push(scope.collateralsData.filter((collateral) => scope.collateralFormData.collateralId == collateral.collateralId)[0]);
                 scope.collateralsData = scope.collateralsData.filter((collateral) => scope.collateralFormData.collateralId != collateral.collateralId);
                 scope.collaterals.push({collateralId: scope.collateralFormData.collateralId, quantity: scope.collateralFormData.quantity, total: scope.collateralFormData.total, totalCollateral: scope.collateralFormData.totalCollateral});
+             }
             };
 
             scope.updateValues = function() {
