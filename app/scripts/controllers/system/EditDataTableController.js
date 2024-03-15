@@ -115,14 +115,15 @@
 
                 scope.formData.addColumns = [];
                 scope.formData.changeColumns = [];
+                var tempColumns = JSON.parse(JSON.stringify(scope.columns));
 
                 if (scope.dropColumns.length > 0) {
                     scope.formData.dropColumns = scope.dropColumns;
                 }
 
-                for (var i in scope.columns) {
+                for (var i in tempColumns) {
 
-                    if (scope.columns[i].originalName) {
+                    if (tempColumns[i].originalName) {
                         //This value should be updated based on the configuration
                         /*if (scope.columns[i].newName) {
                          if (scope.columns[i].type == "dropdown") {
@@ -130,21 +131,20 @@
                          scope.columns[i].newName = scope.columns[i].columnCode + "_cd_" + scope.columns[i].newName;
                          }
                          }*/
+                        delete tempColumns[i].originalName;
+                        delete tempColumns[i].type;
 
-                        delete scope.columns[i].originalName;
-                        delete scope.columns[i].type;
-
-                        if (scope.columns[i].code) {
-                            scope.columns[i].newCode = scope.columns[i].newCode || scope.columns[i].code;
+                        if (tempColumns[i].code) {
+                            tempColumns[i].newCode = tempColumns[i].newCode || tempColumns[i].code;
                         }
 
-                        if (scope.columns[i].name) {
-                            scope.columns[i].newName = scope.columns[i].newName || scope.columns[i].name;
+                        if (tempColumns[i].name) {
+                            tempColumns[i].newName = tempColumns[i].newName || tempColumns[i].name;
                         }
-                        scope.formData.changeColumns.push(scope.columns[i]);
+                        scope.formData.changeColumns.push(tempColumns[i]);
 
                     } else {
-                        scope.formData.addColumns.push(scope.columns[i]);
+                        scope.formData.addColumns.push(tempColumns[i]);
                     }
                 }
 
