@@ -29,12 +29,34 @@
             var entityname="ADDRESS";
             formdata={};
 
+            scope.loanStatusOptions = [];
+            scope.selectedLoanStatusOptions = 300;
+            scope.filteredLoanAccounts = [];
+            if(!scope.searchCriteria.clientLoanAccountStatus) {
+                scope.searchCriteria.clientLoanAccountStatus = scope.selectedLoanStatusOptions;
+                scope.saveSC();
+            } else {
+                scope.selectedLoanStatusOptions = scope.searchCriteria.clientLoanAccountStatus;
+            }
+
+            scope.savingStatusOptions = [];
+            scope.selectedSavingStatusOptions = 300;
+            scope.filteredSavingAccounts = [];
+            if(!scope.searchCriteria.clientSavingAccountStatus) {
+                scope.searchCriteria.clientSavingAccountStatus = scope.selectedSavingStatusOptions;
+                scope.saveSC();
+            } else {
+                scope.selectedSavingStatusOptions = scope.searchCriteria.clientSavingAccountStatus;
+            }
+
 
             resourceFactory.clientTemplateResource.get(function(data)
             {
                 scope.enableAddress=data.isAddressEnabled;
                 scope.businessOwnerEnabled=data.isBusinessOwnerEnabled;
                 scope.employmentInfoEnabled=data.isEmploymentInfoEnabled;
+                scope.loanStatusOptions = data.loanStatusOptions;
+                scope.savingStatusOptions = data.savingStatusOptions;
                 if(scope.enableAddress===true)
                 {
 
@@ -777,6 +799,8 @@
                         }
                     }
                 }
+                scope.filterLoanByStatus(scope.selectedLoanStatusOptions);
+
                 if (data.savingsAccounts) {
                     for (var i in data.savingsAccounts) {
                         if (data.savingsAccounts[i].status.value == "Active") {
@@ -814,7 +838,7 @@
                     scope.showFixed = true;
                     }
                 }
-
+                scope.filterSavingByStatus(scope.selectedSavingStatusOptions);
 
             });
 
@@ -1366,6 +1390,32 @@
                 }else{
                     alert("Please Select Respective integrated Credit Bureau");
                 }
+            };
+
+            scope.filterLoanByStatus = function(selectedStatusId) {
+                if(selectedStatusId >= 400 && selectedStatusId < 700) {
+                    scope.openLoan = false;
+                } else {
+                    scope.openLoan = true;
+                }
+                scope.filteredLoanAccounts = scope.clientAccounts.loanAccounts.filter(function(loanAccount) {
+                    return loanAccount.status.id === selectedStatusId;
+                });
+                scope.searchCriteria.clientLoanAccountStatus = selectedStatusId;
+                scope.saveSC();
+            };
+
+            scope.filterSavingByStatus = function(selectedStatusId) {
+                if(selectedStatusId >= 400 && selectedStatusId < 700) {
+                    scope.openSaving = false;
+                } else {
+                    scope.openSaving = true;
+                }
+                scope.filteredSavingAccounts = scope.clientAccounts.savingsAccounts.filter(function(savingAccount) {
+                    return savingAccount.status.id === selectedStatusId;
+                });
+                scope.searchCriteria.clientSavingAccountStatus = selectedStatusId;
+                scope.saveSC();
             };
 
         }

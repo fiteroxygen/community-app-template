@@ -350,14 +350,15 @@
 								</div>
 								<br>
 								<div class="pull-right">
-										<span data-ng-show="clientAccounts.loanAccounts">
-											<button data-ng-show="openLoan" type="button" class="btn-primary btn btn-sm" data-ng-click="setLoan()">{{
-												'label.button.viewclosedloans' | translate }}
-											</button>
-											<button data-ng-show="!openLoan" type="button" class="btn-primary btn btn-sm" data-ng-click="setLoan()">{{
-												'label.button.viewactiveloans' | translate }}
-											</button>
-										</span>
+									<span data-ng-show="clientAccounts.loanAccounts">
+										<form name="formFilter" novalidate action="#">
+											<select chosen="loanStatusOptions" id="loanStatus" name="loanStatus" class="form-control"
+												ng-model="selectedLoanStatusOptions"
+												ng-options="status.id as status.value for status in loanStatusOptions"
+												ng-change="filterLoanByStatus(selectedLoanStatusOptions)" value="{{status.id}}">
+											</select>
+										</form>
+									</span>
 								</div>
 								<div data-ng-show="clientAccounts.loanAccounts">
 
@@ -375,7 +376,7 @@
 											<th>{{'label.heading.actions' | translate}}</th>
 										</tr>
 										<tr class="pointer-main"
-											ng-repeat="loanaccount in clientAccounts.loanAccounts | orderBy:'id':true | filter:isLoanNotClosed">
+											ng-repeat="loanaccount in filteredLoanAccounts | orderBy:'id':true | filter:isLoanNotClosed">
 											<td class="pointer" data-ng-click="routeToLoan(loanaccount.id)">
 												<i ng-hide="loanaccount.inArrears" uib-tooltip-placement="right" uib-tooltip="{{loanaccount.status.value}}"
 												   class="fa fa-stop {{loanaccount.status.code | StatusLookup}}"></i>
@@ -419,14 +420,14 @@
 										<tr class="graybg">
 											<th>{{'label.heading.accnum' | translate}}</th>
 											<th>{{'label.heading.loanaccount' | translate}}</th>
-                      <th>{{'label.heading.loanamount' | translate}}</th>
-                      <th>{{'label.heading.outstandingamount' | translate}}</th>
-                      <th>{{'label.heading.dueamount' | translate}}</th>
+                      						<th>{{'label.heading.loanamount' | translate}}</th>
+                      						<th>{{'label.heading.outstandingamount' | translate}}</th>
+											<th>{{'label.heading.dueamount' | translate}}</th>
 											<th class="center">{{'label.heading.type' | translate}}</th>
 											<th>{{'label.heading.closedate' | translate}}</th>
 										</tr>
 										<tr class="pointer-main"
-											ng-repeat="loanaccount in clientAccounts.loanAccounts | orderBy:'id':true | filter:isClosed">
+											ng-repeat="loanaccount in filteredLoanAccounts | orderBy:'id':true | filter:isClosed">
 											<td class="pointer" data-ng-click="routeToLoan(loanaccount.id)">
 												<i uib-tooltip-placement="right" uib-tooltip="{{loanaccount.status.value}}" class="fa fa-stop {{loanaccount.status.code | StatusLookup}}"></i>
 												{{loanaccount.accountNo}}
@@ -449,16 +450,14 @@
 								</div>
 								<div data-ng-show="clientAccounts.savingsAccounts">
 									<div class="pull-right">
-											<span data-ng-show="clientAccounts.savingsAccounts">
-												<button data-ng-show="openSaving" type="button" data-ng-click="setSaving()"
-														class="btn-primary btn btn-sm">
-													{{ 'label.button.viewclosedsavings' | translate }}
-												</button>
-												<button data-ng-show="!openSaving" type="button" data-ng-click="setSaving()"
-														class="btn-primary btn btn-sm">
-													{{ 'label.button.viewactivesavings' | translate }}
-												</button>
-											</span>
+										<span data-ng-show="clientAccounts.savingsAccounts">
+											<form name="savingFormFilter" novalidate action="#">
+												<select chosen="savingStatusOptions" id="savingStatus" name="savingStatus" class="form-control"
+													ng-model="selectedSavingStatusOptions" ng-options="status.id as status.value for status in savingStatusOptions"
+													ng-change="filterSavingByStatus(selectedSavingStatusOptions)" value="{{status.id}}">
+												</select>
+											</form>
+										</span>
 									</div>
 									<div class="span gray-head">
 											<span class="boldlabel">
@@ -474,7 +473,7 @@
 											<th>Actions</th>
 										</tr>
 										<tr class="pointer-main"
-											ng-repeat="savingaccount in clientAccounts.savingsAccounts | orderBy:'id':true | filter:isSavingNotClosed | filter:isSavings">
+											ng-repeat="savingaccount in filteredSavingAccounts | orderBy:'id':true | filter:isSavingNotClosed | filter:isSavings">
 											<td class="pointer" data-ng-click="routeToSaving(savingaccount.id, savingaccount.depositType.code)">
 												<i uib-tooltip-placement="right" ng-show="savingaccount.subStatus.id==0" uib-tooltip="{{savingaccount.status.value}}" class="fa fa-stop {{savingaccount.status.code | StatusLookup}}"></i>
 												<i uib-tooltip-placement="right" ng-hide="savingaccount.subStatus.id==0"  uib-tooltip="{{savingaccount.status.value+':'+savingaccount.subStatus.value}}" class="fa fa-stop {{savingaccount.status.code+savingaccount.subStatus.value | StatusLookup}}"></i>
@@ -513,7 +512,7 @@
 											<th>{{'label.heading.closedate' | translate}}</th>
 										</tr>
 										<tr class="pointer-main"
-											ng-repeat="savingaccount in clientAccounts.savingsAccounts | orderBy:'id':true | filter:isSavingClosed | filter:isSavings">
+											ng-repeat="savingaccount in filteredSavingAccounts | orderBy:'id':true | filter:isSavingClosed | filter:isSavings">
 											<td class="pointer" data-ng-click="routeToSaving(savingaccount.id, savingaccount.depositType.code)">
 												<i uib-tooltip="{{savingaccount.status.value}}" class="fa fa-stop {{savingaccount.status.code | StatusLookup}}"></i>
 												{{savingaccount.accountNo}}
