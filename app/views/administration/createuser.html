@@ -111,17 +111,15 @@
 	                            class="required">*</span></label>
 
 	                    <div class="col-sm-3">
-	                        <input type="password" minlength="6" id="password" name="password" ng-model="formData.password" class="form-control" required
-								   late-Validate>
+	                        <input type="password" id="password" name="password" ng-model="formData.password" class="form-control" required
+								   ng-pattern="/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/" late-Validate>
 	                    </div>
-	                    <div class="col-sm-3">
-							<span ng-show="createuserform.password.$invalid">
-								<small class="error required">
-									{{'label.passwordminsixchars' | translate}}
-								</small>
+						<div class="col-sm-4">
+							<span ng-show="createuserform.password.$invalid" class="required">
+								Password must contain at least 8 characters, including UPPER/lowercase/Special character and numbers
 							</span>
 							<form-validate valattributeform="createuserform" valattribute="password"/>
-	                    </div>
+						</div>
 	                </div>
 	                <div class="form-group">
 	                    <label class="control-label col-sm-2" for="repeatPassword">{{'label.input.repeatpassword' | translate}}<span
