@@ -345,8 +345,8 @@
                                         ng-change="loandetails.interestValue = formValue(loanaccountinfo.interestTypeOptions,formData.interestType)"
                                         ng-options="interestType.id as interestType.value for interestType in loanaccountinfo.interestTypeOptions"
                                         class="form-control width170px" value="{{interestType.id}}"></select>
-                                    <label class="col-sm-offset-1">{{ 'label.input.isequalamortization' | translate }}</label>
-                                    <input type="checkbox" ng-model="formData.isEqualAmortization" ng-true-value="true" ng-false-value="false">
+                                    <label class="col-sm-offset-1" ng-hide="loandetails.interestValue == 'Flat'">{{ 'label.input.isequalamortization' | translate }}</label>
+                                    <input ng-hide="loandetails.interestValue == 'Flat'" type="checkbox" ng-model="formData.isEqualAmortization" ng-true-value="true" ng-false-value="false">
                                 </div>
                             </td>
                         </tr>
