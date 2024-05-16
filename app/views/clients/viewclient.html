@@ -1776,18 +1776,26 @@
 						<br>
 
 						<div ng-show="datatabledetails.isData">
-							<table class="table" data-ng-show="datatabledetails.isMultirow">
-								<thead>
-								<th ng-repeat="column in datatabledetails.columnHeaders">{{column.columnName | prettifyDataTableColumn}}</th>
-								</thead>
-								<tbody>
-								<tr class="pointer-main" ng-repeat="data in datatabledetails.data">
-									<td class="pointer" ng-repeat="row in data.row track by $index"
-										ng-click="viewDataTable(clientdatatable.registeredTableName,data)">{{row}}
-									</td>
-								</tr>
-								</tbody>
-							</table>
+							<div class="table-responsive">
+								<table class="table table-striped table-bordered" data-ng-show="datatabledetails.isMultirow">
+									<thead>
+									<tr>
+										<th ng-repeat="column in datatabledetails.columnHeaders" class="text-wrap">
+											{{column.columnName | prettifyDataTableColumn}}
+										</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr class="pointer-main" ng-repeat="data in datatabledetails.data">
+										<td class="pointer text-wrap" ng-repeat="row in data.row track by $index"
+											ng-click="viewDataTable(clientdatatable.registeredTableName, data)">
+											{{row}}
+										</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+
 							<table class="table table-bordered width450px" data-ng-hide="datatabledetails.isMultirow">
 								<tr ng-repeat="value in singleRow">
 									<td class="graybg table-font-nav">{{value.key | prettifyDataTableColumn}}</td>
