@@ -1,8 +1,8 @@
 (function (module) {
     mifosX.directives = _.extend(module, {
         LateValidateDirective: function () {
-            var numRegex = /^([0-9])*([0-9]+(,)[0-9]+)*$/;
-            var decimalRegex=/^([0-9])*([0-9]+(,)[0-9]+)*([0-9]+(\.)[0-9]+)*$/;
+            var numRegex = /^\d{1,19}$|^\d{1,3}(,\d{3}){1,7}$/;
+            var decimalRegex=/((^\d{1,19})|(^\d{1,3}(,\d{3}){1,7}))(\.\d{1,6})?$/;
             return {
                 restrict: 'A',
                 require: 'ngModel',
@@ -15,14 +15,13 @@
                     if (attr.type === 'radio' || attr.type === 'checkbox' || attr.type ==='input') return;
                     elm.bind('blur', function () {
                         scope.$apply(function () {
-                            var isMatchRegex = numRegex.test(elm.val());
-                            var isDecimalMatchRegex=decimalRegex.test(elm.val());
                             if (elm.val() === null) {
                                 ctrl.$setValidity('req', false);
                             } else {
                                 ctrl.$setValidity('req', true);
                             }
                             if(scope.number) {
+                                var isMatchRegex = numRegex.test(elm.val());
                                 if (isMatchRegex || elm.val() === '') {
                                     ctrl.$setValidity('nval', true);
                                 } else {
@@ -30,6 +29,7 @@
                                 }
                             }
                             if(scope.decimalNumber) {
+                                var isDecimalMatchRegex=decimalRegex.test(elm.val());
                                 if (isDecimalMatchRegex || elm.val() == '') {
                                     ctrl.$setValidity('nval', true);
                                 } else {
