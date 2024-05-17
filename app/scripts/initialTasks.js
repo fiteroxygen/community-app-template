@@ -4,8 +4,10 @@
         var baseApiUrl = "https://demo.mifos.io";
         var host = "";
         var portNumber = "";
+        var mainDomain = getMainDomain(mainLink.hostname);
+
         //accessing from openmf server
-        if (mainLink.hostname.indexOf('mifos.io') >= 0) {
+        if (mainDomain.indexOf('mifos.io') >= 0) {
             var hostname = window.location.hostname;
             console.log('hostname---' + hostname);
             domains = hostname.split('.');
@@ -90,6 +92,15 @@ getLocation = function(href) {
     l.href = href;
     return l;
 };
+
+getMainDomain = function(hostname) {
+    var parts = hostname.split('.');
+    if(parts.length <= 2) {
+        return hostname;
+    }
+    var mainDomain = parts.slice(parts.length - 2).join('.');
+    return mainDomain;
+}
 
 QueryParameters = (function() {
     var result = {};
