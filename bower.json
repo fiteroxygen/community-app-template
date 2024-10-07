@@ -22,7 +22,7 @@
     "d3": "3.3.13",
     "nvd3": "~v1.1.15-beta",
     "angularjs-file-upload": "12.0.1",
-    "angular-sanitize": "1.7.9",
+    "angular-sanitize": "1.8.3",
     "ckeditor": "^4.14.0",
     "ng-idle": "v0.3.5",
     "q": "1.0.1",
@@ -40,9 +40,10 @@
     "jasmine": "2.4.1"
   },
   "resolutions": {
-    "angular": "1.7.9",
+    "angular": "^1.8.3",
     "d3": "3.5.12",
     "angular-translate": "^2.18.2",
+    "jquery": "3.7.1",
     "angular-resource": "^1.8.3"
   }
 }
