@@ -303,7 +303,7 @@ mifosX.ng.application.directive("hasPermission", ['$rootScope', mifosX.directive
 ;(function (module) {
     mifosX.directives = _.extend(module, {
         LateValidateDirective: function () {
-            var numRegex = /^[0-9]+(,[0-9]+)*$/;
+            var numRegex = /^\d{1,19}$|^\d{1,3}(,\d{3}){1,7}$/;
             return {
                 restrict: 'A',
                 require: 'ngModel',
