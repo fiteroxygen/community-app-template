@@ -303,7 +303,7 @@ mifosX.ng.application.directive("hasPermission", ['$rootScope', mifosX.directive
 ;(function (module) {
     mifosX.directives = _.extend(module, {
         LateValidateDirective: function () {
-            var numRegex = /^([0-9])*([0-9]+(,)[0-9]+)*$/;
+            var numRegex = /^[0-9]+(,[0-9]+)*$/;
             return {
                 restrict: 'A',
                 require: 'ngModel',
@@ -523,7 +523,7 @@ Reference from JSfiddle : https://jsfiddle.net/sonicblis/2afea34h/9/
                        navTabsElement,
                        scrollTimer,
                        dragInfo = {};
-                   
+
 
                    init();
                     function scrollOnWheel($event){
@@ -560,7 +560,7 @@ Reference from JSfiddle : https://jsfiddle.net/sonicblis/2afea34h/9/
 
                        $document.off('mousemove', onDocumentMouseMove);
                        $document.off('mouseup', onDocumentMouseUp)
-                       
+
                        if (dragInfo.moved === true) {
                            [].forEach.call(navTabsElement.querySelectorAll('li a'), function(anchor) {
                                var anchorScope = angular.element(anchor).scope();
@@ -604,13 +604,13 @@ Reference from JSfiddle : https://jsfiddle.net/sonicblis/2afea34h/9/
 
                        // determine whether or not it should actually be scrollable
                        // the logic is different if the tabs are currently tagged as scrollable
-                    
+
                        if (currentlyScrollable === true) {
                            difference = navTabsElement.scrollWidth - navTabsElement.clientWidth;
                        } else {
                            difference = navTabsElement.clientHeight - navTabsElement.querySelector('.nav-tabs > li').clientHeight;
                        }
-                       
+
 
                        if (difference > 2) {
                            element.classList.add("scrollable");
@@ -625,12 +625,12 @@ Reference from JSfiddle : https://jsfiddle.net/sonicblis/2afea34h/9/
                        wrappedElement.on('mouseup mouseleave', function($event) {
                            stopScroll($event);
                        });
-                    
+
 
                        angular.element(navTabsElement).on('mousedown', onNavTabsMouseDown);
                        angular.element(navTabsElement).on('DOMMouseScroll',scrollOnWheel);
                        angular.element(navTabsElement).on('mousewheel',scrollOnWheel);
-                       
+
 
                        $window.addEventListener('resize', onWindowResize);
 
@@ -771,8 +771,8 @@ mifosX.ng.application.directive("scroll", [mifosX.directives.ScrollbarTopDirecti
                         if(scope.responses.length > 0) {
 
                             scope.uniqueId = [];
-                                              
-                            //fills up the uniqueId array with unique identifiers      
+
+                            //fills up the uniqueId array with unique identifiers
                             for (var i = 0; i < scope.responses.length; i++) {
                                 for(var j = 0; j < scope.br.length; j++) {
                                     if(scope.responses[i].requestId == scope.br[j].requestId) {
@@ -786,14 +786,14 @@ mifosX.ng.application.directive("scroll", [mifosX.directives.ScrollbarTopDirecti
                                 '<span ng-repeat="id in uniqueId">{{id+" "}}</span>' +
                                 '</div>';
 
-                            elm.html('').append($compile(template)(scope));   
-                        }                 
+                            elm.html('').append($compile(template)(scope));
+                        }
                     });
 
                     /* watch the batchRequests array for changes within the scope
                     of the controller this directive is inserted in.
-                    Most importantly there must always be a "scope.batchRequests" 
-                    variable within the controller this directive is inserted in.*/                    
+                    Most importantly there must always be a "scope.batchRequests"
+                    variable within the controller this directive is inserted in.*/
                     scope.$watch(function() {
                         return scope.batchRequests;
                     }, function(batchRequests){
@@ -802,8 +802,8 @@ mifosX.ng.application.directive("scroll", [mifosX.directives.ScrollbarTopDirecti
 
                     /* watch the requestIdentifier for changes within the scope
                     of the controller this directive is inserted in.
-                    Most importantly there must always be a "scope.requestIdentifier" 
-                    variable within the controller this directive is inserted in.*/                    
+                    Most importantly there must always be a "scope.requestIdentifier"
+                    variable within the controller this directive is inserted in.*/
                     scope.$watch(function() {
                         return scope.requestIdentifier;
                     }, function(identifier){
@@ -898,11 +898,11 @@ mifosX.ng.application.directive("persistentTab", ['localStorageService', mifosX.
                     var treeModel = attrs.treeModel;
                     var nodeId = attrs.nodeId || 'id';
                     var nodeglCode = attrs.glCode || 'glCode';
-					var nodeLabel = attrs.nodeLabel || 'label';					
+					var nodeLabel = attrs.nodeLabel || 'label';
                     var nodeChildren = attrs.nodeChildren || 'children';
-                    var parentId = attrs.parentId || 'parentId';					
-					var template = "";					
-					
+                    var parentId = attrs.parentId || 'parentId';
+					var template = "";
+
                     if (treeId === "holidaytreeview") {
                         template =
                             '<ul>' +
@@ -916,7 +916,7 @@ mifosX.ng.application.directive("persistentTab", ['localStorageService', mifosX.
                                 '<i class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                                 '<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                                 '<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i> ' +
-                                '<span ng-show="node.'+ nodeId + ' >= 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node); $root.tempNodeID = node.'+ nodeId +'">({{node.'+ nodeglCode +'}}) {{node.' + nodeLabel + '}} </span>' +								
+                                '<span ng-show="node.'+ nodeId + ' >= 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node); $root.tempNodeID = node.'+ nodeId +'">({{node.'+ nodeglCode +'}}) {{node.' + nodeLabel + '}} </span>' +
 								'<span ng-show="node.'+ nodeId + ' < 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)" >{{node.' + nodeLabel + '}}</span>' +
                                 '<div data-ng-hide="node.collapsed"  data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id="' + nodeId + '" data-node-label="' + nodeLabel + '" data-node-children="' + nodeChildren + '"></div>' +
                                 '</li>' +
@@ -933,18 +933,18 @@ mifosX.ng.application.directive("persistentTab", ['localStorageService', mifosX.
                                 '<i class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                                 '<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                                 '<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i> ' +
-                                '<span ng-show="node.'+ nodeId + ' >= 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node); $root.tempNodeID = node.'+ nodeId +'">({{node.'+ nodeglCode +'}}) {{node.' + nodeLabel + '}} </span>' +								
-								'<span ng-show="node.'+ nodeId + ' < 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)" >{{node.' + nodeLabel + '}}</span>' +								
+                                '<span ng-show="node.'+ nodeId + ' >= 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node); $root.tempNodeID = node.'+ nodeId +'">({{node.'+ nodeglCode +'}}) {{node.' + nodeLabel + '}} </span>' +
+								'<span ng-show="node.'+ nodeId + ' < 0" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)" >{{node.' + nodeLabel + '}}</span>' +
 								'<div data-ng-hide="node.collapsed"  data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id="' + nodeId + '" data-node-label="' + nodeLabel + '" data-node-children="' + nodeChildren + '"></div>' +
                                 '</li>' +
                             '</ul>';
-								
-								
+
+
                     }
                     if (treeId && treeModel) {
 
                         if (attrs.angularTreeview) {
-							
+
                             scope[treeId] = scope[treeId] || {};
 
                             scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function (selectedNode) {
@@ -956,8 +956,8 @@ mifosX.ng.application.directive("persistentTab", ['localStorageService', mifosX.
                                     scope[treeId].currentNode.selected = undefined;
                                 }
                                 selectedNode.selected = 'selected';
-                                scope[treeId].currentNode = selectedNode;				
-								
+                                scope[treeId].currentNode = selectedNode;
+
                             };
                             scope[treeId].setCollapsedAll = scope[treeId].setCollapsedAll || function (selectedNode, state) {
                                 selectedNode.collapsed = state;
@@ -990,7 +990,7 @@ mifosX.ng.application.directive("persistentTab", ['localStorageService', mifosX.
                         element.html('').append($compile(template)(scope));
                     }
                 }
-            };		
+            };
         }
     });
 }(mifosX.directives || {}));
