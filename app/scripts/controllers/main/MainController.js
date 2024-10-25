@@ -1,6 +1,6 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        MainController: function (scope, location, sessionManager, translate, $rootScope, localStorageService, keyboardManager, $idle, tmhDynamicLocale,
+        MainController: function (scope, resourceFactory, location, sessionManager, translate, $rootScope, localStorageService, keyboardManager, $idle, tmhDynamicLocale,
                   uiConfigService, $http) {
             $http.get('release.json').then(function onSuccess(response) {
                 var data = response.data;
@@ -48,7 +48,7 @@
                     console.warn("Error: ", response.data)
                 });
             }
-            
+
             scope.$on('scrollbar.show', function(){
                   console.log('Scrollbar show');
                 });
@@ -57,8 +57,8 @@
                 });
 
             uiConfigService.init(scope);
-            
-            
+
+
             scope.$on('configJsonObj',function(e,response){
                 scope.response = response;
             });
@@ -222,10 +222,13 @@
             '<span>Sounds interesting?<a href="http://mifos.org/take-action/volunteer/"> Get involved!</a></span>';
 
             scope.logout = function () {
-                $rootScope.$broadcast("OnUserPreLogout");
-                scope.currentSession = sessionManager.clear();
-                scope.resetPassword = false;
-                location.path('/').replace();
+                resourceFactory.twoFactorLogoutResource.logout({},{},function (data) {
+                    console.log("Logout successfully")
+                    $rootScope.$broadcast("OnUserPreLogout");
+                    scope.currentSession = sessionManager.clear();
+                    scope.resetPassword = false;
+                    location.path('/').replace();
+                });
             };
 
             scope.langs = mifosX.models.Langs;
@@ -432,6 +435,7 @@
     });
     mifosX.ng.application.controller('MainController', [
         '$scope',
+        'ResourceFactory',
         '$location',
         'SessionManager',
         '$translate',

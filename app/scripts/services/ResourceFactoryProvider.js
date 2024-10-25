@@ -883,6 +883,9 @@
                         getAllConfigs: {method: 'GET', params: {}},
                         put: {method: 'PUT', params: {}}
                     }),
+                    twoFactorLogoutResource: defineResource(apiVer+"/authentication/logout", {}, {
+                        logout: {method: 'POST', params: {}}
+                    }),
                        validationLimitResource: defineResource(apiVer + "/validationlimit/:validationLimitId", { validationLimitId: '@validationLimitId' }, {
                                             getAllValidationLimit: { method: 'GET', params: {}, isArray: true },
                                             getValidationLimit: { method: 'GET', params: {} },
