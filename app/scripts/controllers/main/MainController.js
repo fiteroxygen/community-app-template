@@ -8,12 +8,19 @@
                 scope.releasedate = data.releasedate;
             });
 
+
             scope.islogofoldernamefetched = false;
             scope.islogofoldernameconfig = false;
             scope.isFaviconPath = false;
             scope.isHeaderLogoPath = false;
             scope.isBigLogoPath = false;
             scope.isLargeLogoPath = false;
+
+            //clears existig session on page refresh
+            $rootScope.$broadcast("OnUserPreLogout");
+            scope.currentSession = sessionManager.clear();
+            scope.resetPassword = false;
+            location.path('/').replace();
 
             if(!scope.islogofoldernamefetched && $rootScope.tenantIdentifier && $rootScope.tenantIdentifier != "default"){
                 scope.islogofoldernamefetched = true;
@@ -143,11 +150,17 @@
             });
 
             // Log out the user when the window/tab is closed.
-            window.onunload = function () {
+            window.onunload = function (e) {
                 scope.logout();
                 $idle.unwatch();
                 scope.started = false;
             };
+
+            window.onbeforeunload = function() {
+                scope.logout();
+                $idle.unwatch();
+                scope.started = false;
+            }
 
             scope.start = function (session) {
                 if (session) {
@@ -447,6 +460,7 @@
         '$http',
         mifosX.controllers.MainController
     ]).run(function ($log) {
+
         $log.info("MainController initialized");
     });
 }(mifosX.controllers || {}));

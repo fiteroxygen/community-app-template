@@ -1,11 +1,10 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        LoginFormController: function (scope, authenticationService, resourceFactory, httpService, $timeout) {
+        LoginFormController: function (scope, authenticationService, resourceFactory, httpService,$uibModal, $timeout) {
             scope.loginCredentials = {};
             scope.passwordDetails = {};
             scope.authenticationFailed = false;
             scope.load = false;
-
             scope.twoFactorRequired = false;
             scope.twoFactorDeliveryMethods = {};
             scope.selectedDeliveryMethodName = null;
@@ -13,6 +12,7 @@
             scope.otpToken = null;
             scope.selectedDeliveryMethodName = null;
             scope.twofactorRememberMe = false;
+            scope.formData = {};
 
             scope.login = function () {
                 scope.authenticationFailed = false;
@@ -26,12 +26,14 @@
                 scope.load = false;
                 scope.authenticationFailed = true;
                 if(status != 401) {
-
-                    let errors = data.errors;
                     scope.authenticationErrorMessage = 'error.connection.failed';
-                    if (errors.length>0) {
-                        scope.authenticationErrorMessage = errors[0].developerMessage;
+                    if (data){
+                        let errors = data.errors;
+                        if (errors.length>0) {
+                            scope.authenticationErrorMessage = errors[0].developerMessage;
+                        }
                     }
+
                 } else {
                    scope.authenticationErrorMessage = 'error.login.failed';
                    scope.load = false;
@@ -50,7 +52,36 @@
                 delete scope.otpToken;
                 scope.otpTokenError = false;
                 scope.twofactorRememberMe = false;
+                scope.userId = data.userId;
+                if (data.firstTimeLogin){
+                    $uibModal.open({
+                        templateUrl: 'resetpass.html',
+                        controller: ModalInstanceCtrl
+                    });
+                }
              });
+
+            var ModalInstanceCtrl = function ($scope, $uibModalInstance) {
+                $scope.formData = {};
+                $scope.save = function () {
+                    resourceFactory.userListResource.update({'userId': scope.userId}, $scope.formData, function (data) {
+                        //clear the old authorization token
+                        httpService.cancelAuthorization();
+                        scope.authenticationFailed = false;
+                        scope.loginCredentials.password = $scope.formData.password;
+                        authenticationService.authenticateWithUsernamePassword(scope.loginCredentials);
+                        $uibModalInstance.close('activate');
+                    });
+                };
+                $scope.cancel = function () {
+                    scope.logout();
+                    $uibModalInstance.dismiss('cancel');
+                };
+            };
+
+            scope.cacelReset = function () {
+                route.reload();
+            };
 
             scope.$on("UserAuthenticationTwoFactorRequired", function (event, data) {
                 scope.load = false;
@@ -120,7 +151,7 @@
 
         }
     });
-    mifosX.ng.application.controller('LoginFormController', ['$scope', 'AuthenticationService', 'ResourceFactory', 'HttpService','$timeout', mifosX.controllers.LoginFormController]).run(function ($log) {
+    mifosX.ng.application.controller('LoginFormController', ['$scope', 'AuthenticationService', 'ResourceFactory', 'HttpService','$uibModal','$timeout', mifosX.controllers.LoginFormController]).run(function ($log) {
         $log.info("LoginFormController initialized");
     });
 }(mifosX.controllers || {}));

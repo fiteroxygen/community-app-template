@@ -20,7 +20,7 @@
             <div class="top triangle"></div>
             <div class="left triangle"></div>
             <div class="right triangle"></div>
-          </div>          
+          </div>
         <img src="images/loader.gif" style="margin: 10px auto" class="img-responsive">
     </div>
 </div>
@@ -69,6 +69,37 @@
                 </div>
 
             </div>
+
+            <script type="text/ng-template" id="resetpass.html">
+                <div class="modal-header silver">
+                    <h3 class="bolder">{{'label.heading.changepassword' | translate}}</h3>
+                </div>
+                <api-validate></api-validate>
+                <br>
+                <div class="modal-body form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="password">{{ 'label.input.password' | translate }}<span
+                                class="required">*</span></label>
+
+                        <div class="col-sm-5">
+                            <input type="password" id="password2" ng-model="formData.password" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="repeatPassword">{{ 'label.input.repeatpassword' | translate
+                            }}<span class="required">*</span></label>
+
+                        <div class="col-sm-5">
+                            <input type="password" id="repeatPassword2" ng-model="formData.repeatPassword" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer silver">
+                    <button class="btn btn-warning" ng-click="cancel()">{{'label.button.cancel' | translate}}</button>
+                    <button class="btn btn-primary" ng-click="save()">{{'label.button.save' | translate}}</button>
+                </div>
+            </script>
 
 
         </div>
@@ -194,7 +225,7 @@
 
                 <div class="row" ng-hide = "response.uiDisplayConfigurations.whiteLabel.loginPage.hideCommunityDetails">
                 <hr/>
-                
+
                 <div class="row" >
                     <div class="col-xs-4 text-center">
 
@@ -247,7 +278,7 @@
                 </div>
 
                 <hr/>
-            
+
                 <div class="row">
                     <div class="col-sm-6 col-sm-offset-3 text-center">
                         <br>
