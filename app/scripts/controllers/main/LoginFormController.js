@@ -23,10 +23,15 @@
 
             scope.$on("UserAuthenticationFailureEvent", function (event, data, status) {
                 delete scope.loginCredentials.password;
+                scope.load = false;
                 scope.authenticationFailed = true;
                 if(status != 401) {
+
+                    let errors = data.errors;
                     scope.authenticationErrorMessage = 'error.connection.failed';
-                    scope.load = false;
+                    if (errors.length>0) {
+                        scope.authenticationErrorMessage = errors[0].developerMessage;
+                    }
                 } else {
                    scope.authenticationErrorMessage = 'error.login.failed';
                    scope.load = false;
