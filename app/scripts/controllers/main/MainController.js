@@ -236,12 +236,19 @@
 
             scope.logout = function () {
                 resourceFactory.twoFactorLogoutResource.logout({},{},function (data) {
-                    console.log("Logout successfully")
-                    $rootScope.$broadcast("OnUserPreLogout");
                     scope.currentSession = sessionManager.clear();
+                    $rootScope.$broadcast("OnUserPreLogout");
                     scope.resetPassword = false;
                     location.path('/').replace();
                 });
+
+                setTimeout(function() {
+                    scope.currentSession = sessionManager.clear();
+                    $rootScope.$broadcast("OnUserPreLogout");
+                    scope.resetPassword = false;
+                    location.path('/').replace();
+                }, 2000);
+
             };
 
             scope.langs = mifosX.models.Langs;
