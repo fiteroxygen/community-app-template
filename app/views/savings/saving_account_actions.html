@@ -77,6 +77,15 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="form-group" ng-hide = "holdAmount">
+                    <label class="control-label col-sm-2" for="externalReference">{{ 'label.input.externalid' | translate}}</label>
+
+                    <div class="col-sm-3">
+                        <input id="externalReference" type="text" name="externalReference"
+                               ng-model="formData.externalReference" class="form-control" late-Validate/>
+                    </div>
+                </div>
                 <div class="form-group" data-ng-show="isGroupLoan">
                     <label class="control-label col-sm-2" for="paymentTypeId">{{ 'label.input.transactorname' | translate}}
                         <span class="required">*</span></label>
@@ -240,7 +249,7 @@
                     <br/>
                     <button id="cancel" ng-click="cancel()"
                             class="btn btn-default">{{ 'label.button.cancel' | translate }}</button>
-                    
+
                     <button id="debit"  type="submit" ng-click = "blockUnblockDebit(taskPermissionNameDebit)" ng-show = "debitStatus"
                             class="btn btn-primary">{{buttonTextDebit | translate}}</button>
                     <button id="credit"  type="submit" ng-click = "blockUnblockDebit(taskPermissionNameCredit)" ng-show = "creditStatus"
