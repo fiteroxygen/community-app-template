@@ -71,6 +71,10 @@
                 <td>{{ 'label.heading.lienTransaction' | translate}}</td>
                 <td>{{transaction.lienTransaction}}</td>
             </tr>
+            <tr ng-if="transaction.externalReference">
+                <td>{{ 'label.heading.externalid' | translate}}</td>
+                <td>{{transaction.externalReference}}</td>
+            </tr>
             <tr ng-if="transaction.note">
                 <td>{{ 'label.heading.notes' | translate}}</td>
                 <td>{{transaction.note}}</td>
