@@ -29,7 +29,7 @@
                 if(data.varyAmounts){
                     scope.chart.chartSlabs = data.charges;
                 }
-                
+
                 var accountMappingForChargeConfigVar = scope.accountMappingForChargeConfig.toLowerCase();
 
                 if(accountMappingForChargeConfigVar.indexOf("asset") > -1){
@@ -116,6 +116,7 @@
                     restartCountFrequency: data.restartFrequency,
                     countFrequencyType: data.restartFrequencyEnum,
                     penalty: data.penalty,
+                    graceExtension: data.isGraceExtension,
                     currencyCode: data.currency.code,
                     chargeAppliesTo: data.chargeAppliesTo.id,
                     chargeTimeType: data.chargeTimeType.id,
@@ -125,9 +126,9 @@
                     maxAmount: data.maxAmount,
                     maxOccurrence: data.maxOccurrence
                 };
-                
+
                 if(data.incomeOrLiabilityAccount){
-                    scope.formData.incomeAccountId = data.incomeOrLiabilityAccount.id;   
+                    scope.formData.incomeAccountId = data.incomeOrLiabilityAccount.id;
                 }
 
                 if(data.paymentTypeOptions){

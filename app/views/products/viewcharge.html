@@ -53,13 +53,13 @@
 						<td>
 							<table class="table table-bordered width100">
 								<tr class="graybg">
-								
+
 									<td>{{'label.heading.liquidation.number' | translate}}</td>
 									<td >{{'label.heading.liquidation.fee.amount' | translate}}</td>
 								</tr>
-		
+
 								<tr ng-repeat="chartSlab in charge.charges">
-								   
+
 									<td class="width15">
 										<table class="width100">
 											<tr>
@@ -80,7 +80,7 @@
 							</table>
 						</td>
 					</tr>
-				
+
 					<tr>
 	                    <td>{{'label.heading.minAmount' | translate}}</td>
 	                    <td>{{charge.minAmount|number}}</td>
@@ -101,6 +101,9 @@
 	                    <td>{{'label.heading.chargecalculationtype' | translate}}</td>
 	                    <td>{{charge.chargeCalculationType.value}}</td>
 	                </tr>
+
+					<td>{{'label.input.isgraceextension' | translate}}</td>
+					<td>{{charge.isGraceExtension}}</td>
 					<tr>
 						<td>{{'label.heading.enablepaymenttype' | translate}}</td>
 						<td>{{charge.isPaymentType}}</td>
