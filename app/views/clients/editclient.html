@@ -13,7 +13,7 @@
 	        <div class="form-group">
 	            <label class="control-label col-sm-2">{{ 'label.heading.office' | translate }}:<span
 	                    class="required">*</span></label>
-	
+
 	            <div class="col-sm-3">
 	                <select chosen="offices" id="officeId" ng-model="officeId"  class="form-control"
 	                        ng-options="office.id as office.name for office in offices" value="{{office.id}}"
@@ -138,21 +138,21 @@
 			</div>
 	        <div class="form-group">
 	            <label class="control-label col-sm-2">{{ 'label.input.accno' | translate }}:</label>
-	
+
 	            <div class="col-sm-3">
 	                <input id="accountNo" type="text" ng-model="formData.accountNo" class="form-control" disabled="disabled">
 	            </div>
 	        </div>
 			<div class="form-group">
 			    <label class="control-label col-sm-2">{{ 'label.input.externalid' | translate }}:</label>
-			
+
 			    <div class="col-sm-3">
 			        <input id="externalId" type="text" ng-model="formData.externalId" class="form-control">
 			    </div>
 			</div>
 	        <div class="form-group">
 	            <label class="control-label col-sm-2" for="mobileNo">{{'label.input.mobilenumber' | translate}}</label>
-	
+
 	            <div class="col-sm-3">
 	                <input id="mobileNo" name="mobileNo" ng-model="formData.mobileNo" ng-pattern="/^[0-9]+$/" class="form-control"/>
 	            </div>
@@ -178,12 +178,12 @@
 					  </small>
 				   </span>
 				</div>
-				
+
 			 </div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" ng-hide="showNonPersonOptions">{{'label.input.dateofbirth' | translate}}</label>
 				<label class="control-label col-sm-2" ng-show="showNonPersonOptions">{{'label.input.incorporationdate' | translate}}</label>
-			
+
 			    <div class="col-sm-3">
 			        <input id="dateofbirth" type="text" name="dateofbirth" datepicker-pop="dd MMMM yyyy"
 			               ng-model="date.dateOfBirth" is-open="opened1" min="minDate" max="restrictDate"  class="form-control"/>
@@ -217,7 +217,7 @@
 			<div data-ng-switch on="showNonPersonOptions">
 				<div data-ng-switch-when="true">
 				   <div class="form-group">
-			 
+
 					  <label class="control-label col-sm-2">{{'label.input.ageinbusiness' |
 						 translate}}</label>
 					  <div class="col-sm-3">
@@ -285,7 +285,7 @@
 			<div data-ng-switch on="showNonPersonOptions">
 				<div data-ng-switch-when="true">
 					<div class="form-group">
-						<label class="control-label col-sm-2">{{'label.input.constitution' | translate}}<span
+						<label class="control-label col-sm-2" for="constitutionId">{{'label.input.constitution' | translate}}<span
 								class="required">*</span></label>
 
 						<div class="col-sm-3">
@@ -355,7 +355,7 @@
 	            <div class="form-group" data-ng-switch-when="1">
 	                <label class="control-label col-sm-2">{{'label.input.activationdate' | translate}}:<span
 	                        class="required">*</span></label>
-	
+
 	                <div class="col-sm-3">
 	                    <input id="activationDate" type="text" datepicker-pop="dd MMMM yyyy"
 	                           ng-model="date.activationDate" is-open="opened" min="'2000-01-01'"
@@ -378,7 +378,7 @@
 	            </a>
 	            <button id="save" type="submit" class="btn btn-primary" has-permission='UPDATE_CLIENT'>{{'label.button.save' | translate}}</button>
 	        </div>
-	
+
 	    </fieldset>
 	</div>
 </form>

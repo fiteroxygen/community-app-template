@@ -53,7 +53,7 @@
                                 <input type="text" class="form-control" value="{{chargeData.chargeTimeType.value}}" readonly>
                             </div>
                         </div>
-                      
+
                         <div class="form-group" ng-show="chargeData.chargeTimeType.id==2 || chargeData.chargeTimeType.id==17">
                             <label class="control-label col-sm-2">{{ 'label.input.dueon' | translate }}<span
                                     class="required">*</span></label>
@@ -67,6 +67,18 @@
                                     <form-validate valattributeform="loanchargeform" valattribute="dueDate"/>
                             </div>
                         </div>
+                        <div class="form-group" ng-if="chargeData.isGraceExtension">
+                            <label class="control-label col-sm-2">{{ 'label.input.extensionDays' | translate }}<span
+                                    class="required">*</span></label>
+
+                            <div class="col-sm-3">
+                                <input id="extensionPeriod" name="extensionDays" type="number" ng-model="formData.graceExtensionDays" class="form-control"
+                                       late-Validate/>
+                            </div>
+                            <div class="col-sm-2">
+                                    <form-validate valattributeform="loanchargeform" valattribute="extensionDays"/>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
                 <div class="col-md-offset-3">
@@ -76,7 +88,7 @@
                         translate }}
                     </button>
                 </div>
-            </form>    
+            </form>
         </div>
     </div>
 </div>
