@@ -850,11 +850,15 @@
                             </tr>
                             <tr ng-repeat="charge in charges" class="pointer-main">
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.name}}</td>
-                                <td ng-show="charge.penalty" class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{"penalty"}}</td>
-                                <td ng-hide="charge.penalty" class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{"fee"}}</td>
+
+                                <td ng-hide="charge.isGraceExtension" class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.penalty?'penalty':'Fee'}}</td>
+                                <td ng-show="charge.isGraceExtension" class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">
+                                    {{charge.isGraceExtension? charge.graceExtensionDays:''}} {{charge.graceExtensionDays? ('label.input.isgraceextension.days'|translate) :''}}
+                                </td>
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.chargeTimeType.value}}</td>
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.dueDate | DateFormat}}</td>
-                                <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.chargeCalculationType.value}}</td>
+                                <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">
+                                    {{charge.chargeCalculationType.value}}</td>
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.currency.displaySymbol}}{{charge.amount| number}}</td>
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.currency.displaySymbol}}{{charge.amountPaid| number}}</td>
                                 <td class="pointer" data-ng-click="viewLoanChargeDetails(charge.id)">{{charge.currency.displaySymbol}}{{charge.amountWaived| number}}</td>
