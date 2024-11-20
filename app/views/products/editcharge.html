@@ -310,7 +310,7 @@
                     </label>
                 </div>
             </div>
-            <div class="form-group" ng-show="showPenalty">
+            <div class="form-group" ng-show="showPenalty" ng-if="!formData.graceExtension">
                 <label class="control-label col-sm-2" for="ispenalty">{{'label.input.ispenalty' | translate}}</label>
 
                 <div class="col-sm-3">
@@ -319,7 +319,7 @@
                     </label>
                 </div>
             </div>
-            <div class="form-group" ng-show="showPenalty">
+            <div class="form-group" ng-show="showPenalty" ng-if="!formdata.penalty">
                 <label class="control-label col-sm-2" for="ispenalty">{{'label.input.isgraceextension' | translate}}</label>
 
                 <div class="col-sm-3">
