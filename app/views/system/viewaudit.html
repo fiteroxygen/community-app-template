@@ -71,6 +71,54 @@
                     </tbody>
                 </table>
             </div>
+            <div>
+                <br>
+                   
+                    <div data-ng-show="flag">
+                        <table class="table table-bordered width1200px" data-anchor>
+                            <thead>
+                            <tr class="graybg">
+                                <th>{{'label.heading.id' | translate}}</th>
+                                <th>{{'label.heading.resourceid' | translate}}</th>
+                                <th>{{'label.heading.status' | translate}}</th>
+                                <th>{{'label.heading.madeby' | translate}}</th>
+                                <th>{{'label.heading.action' | translate}}</th>
+                                <th>{{'label.heading.entity' | translate}}</th>
+                                <th>{{'label.heading.office' | translate}}</th>
+                                <th>{{'label.heading.madedate' | translate}}</th>
+                                <th>{{'label.heading.checker' | translate}}</th>
+                                <th>{{'label.heading.checkeddate' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="pointer-main" data-ng-click="routeTo(data.id)" ng-repeat="data in searchData.pageItems">
+                                <td>{{data.id}}</td>
+                                <td>{{data.resourceId}}</td>
+                                <td>{{data.processingResult | translate}}</td>
+                                <td>{{data.maker}}</td>
+                                <td>{{data.actionName}}</td>
+                                <td>{{data.entityName}}</td>
+                                <td>{{data.officeName}}</td>
+                                <td>{{data.madeOnDate | date:'d MMM y h:mm:ss'}}</td>
+                                <td>{{data.checker}}</td>
+                                <td>{{data.checkedOnDate | date:'d MMM y h:mm:ss'}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <ul class="pager">
+                        <li class="previous">
+                            <a id="prev" ng-click="audit.previous()" href="" ng-disabled="!audit.hasPrevious()">&larr; {{'label.button.previous' | translate}}</a>
+                        </li>
+                        <li class="next">
+                            <a id="next" ng-click="audit.next()" href="" ng-disabled="!audit.hasNext()">{{'label.button.next' | translate}} &rarr;</a>
+                        </li>
+                    </ul>
+
+                    <h3 data-ng-show="!flag" class="auditnodata"><strong>{{ 'label.nodata' | translate }}</strong></h3>
+                </div>
+      
         </div>
     </div>
 </div>
