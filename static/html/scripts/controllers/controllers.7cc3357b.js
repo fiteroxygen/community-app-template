@@ -30333,16 +30333,25 @@
     mifosX.controllers = _.extend(module, {
         XBRLReportController: function (scope, resourceFactory, location, $rootScope) {
 
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
             scope.xmlData = $rootScope.xmlData;
             var html = "<table width='100%' border='1'><tr><th>Title</th><th>Dimension</th><th>Value</th></tr>";
             $(scope.xmlData).find("*[contextRef]").each(function (i) {
                 var contextId = $(this).attr("contextRef");
-                var context = $(scope.xmlData).find("#" + contextId).find("scenario").text();
+                var context = escapeHtml($(scope.xmlData).find("#" + contextId).find("scenario").text());
                 html += '<tr>';
-                html += '<td>' + this.tagName + '</td>';
+                html += '<td>' + escapeHtml(this.tagName) + '</td>';
                 html += '<td>' + context + '</td>';
                 var inputId = this.tagName + "|" + contextId;
-                html += '<td><input type="text" class="report" id="' + inputId + '" value="' + $(this).text() + '" ></td>';
+                html += '<td><input type="text" class="report" id="' + inputId + '" value="' + escapeHtml($(this).text()) + '" ></td>';
                 html += '</tr>';
             });
             $("#xbrlreport").html(html);
