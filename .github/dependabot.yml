@@ -9,3 +9,4 @@ updates:
     directory: "/" # Adjust based on package.json location
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 40
