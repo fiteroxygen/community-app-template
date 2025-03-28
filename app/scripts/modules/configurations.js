@@ -4,5 +4,5 @@ angular.module('configurations', [])
     .constant('WARN_DURATION', 3)
     .constant('FINERACT_BASE_URL', '$FINERACT_BASE_URL')
     .constant('KEEPALIVE_INTERVAL', 5 * 60)
-    .constant('SECURITY', '2fa');
+    .constant('SECURITY', 'basicauth');
 // Use SECURITY constant as 'oauth' to enable Oauth2 on community app
