@@ -6,16 +6,18 @@
         var baseApiUrl = "";
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
+        const DOMPurify = require('dompurify');
+
         if (mainLink.hostname != "") {
             baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
         }
 
         if (QueryParameters["baseApiUrl"]) {
-            baseApiUrl = QueryParameters["baseApiUrl"];
+            baseApiUrl = DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
         }
 
         if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
-            baseApiUrl = baseApiUrlEnv;
+            baseApiUrl = DOMPurify.sanitize(baseApiUrlEnv);
         }
 
         var queryLink = getLocation(baseApiUrl);
@@ -25,8 +27,8 @@
         $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
         ResourceFactoryProvider.setTenantIdenetifier('default');
         if (QueryParameters["tenantIdentifier"]) {
-            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
-            ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
+            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+            ResourceFactoryProvider.setTenantIdenetifier(DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
         }
 
         ResourceFactoryProvider.setBaseUrl(host);
@@ -53,7 +55,7 @@
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
         //Timeout settings.
-        $idleProvider.idleDuration(IDLE_DURATION); //Idle time 
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
