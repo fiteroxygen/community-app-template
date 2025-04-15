@@ -11,11 +11,11 @@
         }
 
         if (QueryParameters["baseApiUrl"]) {
-            baseApiUrl = QueryParameters["baseApiUrl"];
+            baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
         }
 
         if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
-            baseApiUrl = baseApiUrlEnv;
+            baseApiUrl = window.DOMPurify.sanitize(baseApiUrlEnv);
         }
 
         var queryLink = getLocation(baseApiUrl);
@@ -25,8 +25,8 @@
         $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
         ResourceFactoryProvider.setTenantIdenetifier('default');
         if (QueryParameters["tenantIdentifier"]) {
-            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
-            ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
+            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+            ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
         }
 
         ResourceFactoryProvider.setBaseUrl(host);
@@ -53,7 +53,7 @@
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
         //Timeout settings.
-        $idleProvider.idleDuration(IDLE_DURATION); //Idle time 
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
