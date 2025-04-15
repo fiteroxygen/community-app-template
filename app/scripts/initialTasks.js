@@ -6,18 +6,16 @@
         var baseApiUrl = "";
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
-        const DOMPurify = require('dompurify');
-
         if (mainLink.hostname != "") {
             baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
         }
 
         if (QueryParameters["baseApiUrl"]) {
-            baseApiUrl = DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
+            baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
         }
 
         if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
-            baseApiUrl = DOMPurify.sanitize(baseApiUrlEnv);
+            baseApiUrl = window.DOMPurify.sanitize(baseApiUrlEnv);
         }
 
         var queryLink = getLocation(baseApiUrl);
@@ -27,8 +25,8 @@
         $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
         ResourceFactoryProvider.setTenantIdenetifier('default');
         if (QueryParameters["tenantIdentifier"]) {
-            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
-            ResourceFactoryProvider.setTenantIdenetifier(DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
+            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+            ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
         }
 
         ResourceFactoryProvider.setBaseUrl(host);
