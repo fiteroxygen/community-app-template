@@ -6,7 +6,8 @@
         var baseApiUrl = "";
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
-        if (mainLink.hostname != "") {
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+        if (allowedHosts.includes(mainLink.hostname)) {
             baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
         }
 
