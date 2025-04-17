@@ -1079,7 +1079,7 @@
             }
 
             if (QueryParameters["baseApiUrl"]) {
-                baseApiUrl = QueryParameters["baseApiUrl"];
+                baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
             }
             var queryLink = getLocation(baseApiUrl);
             host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
@@ -1088,8 +1088,8 @@
             $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
             ResourceFactoryProvider.setTenantIdenetifier('default');
             if (QueryParameters["tenantIdentifier"]) {
-                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
-                ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
+                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+                ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
             }
 
 
@@ -1129,7 +1129,8 @@
 
 getLocation = function (href) {
     var l = document.createElement("a");
-    l.href = href;
+    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
+    l.href = sanitizedHref;
     return l;
 };
 
@@ -1140,7 +1141,11 @@ QueryParameters = (function () {
         var params = window.location.search.slice(1).split("&");
         for (var i = 0; i < params.length; i++) {
             var tmp = params[i].split("=");
-            result[tmp[0]] = unescape(tmp[1]);
+            let key = decodeURIComponent(tmp[0]);
+            let value = decodeURIComponent(tmp[1]);
+            key = key.replace(/[^a-zA-Z0-9_\-]/g, "");
+            value = value.replace(/[^a-zA-Z0-9_\-]/g, "");
+            result[key] = unescape(value);
         }
     }
     return result;
