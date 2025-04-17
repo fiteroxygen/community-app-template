@@ -1073,7 +1073,8 @@
         var host = "";
         var portNumber = "";
 
-        if (mainLink.hostname != "") {
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+        if (allowedHosts.includes(mainLink.hostname)) {
                 baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
             }
 
@@ -1116,7 +1117,7 @@
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
         //Timeout settings.
-        $idleProvider.idleDuration(IDLE_DURATION); //Idle time 
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
