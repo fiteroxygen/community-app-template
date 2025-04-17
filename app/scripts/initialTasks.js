@@ -6,7 +6,8 @@
         var baseApiUrl = "";
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
-        if (mainLink.hostname != "") {
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+        if (allowedHosts.includes(mainLink.hostname)) {
             baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
         }
 
@@ -65,7 +66,8 @@
 
 getLocation = function(href) {
     var l = document.createElement("a");
-    l.href = href;
+    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
+    l.href = sanitizedHref;
     return l;
 };
 
@@ -76,7 +78,11 @@ QueryParameters = (function() {
         var params = window.location.search.slice(1).split("&");
         for (var i = 0; i < params.length; i++) {
             var tmp = params[i].split("=");
-            result[tmp[0]] = unescape(tmp[1]);
+            let key = decodeURIComponent(tmp[0]);
+            let value = decodeURIComponent(tmp[1]);
+            key = key.replace(/[^a-zA-Z0-9_\-]/g, "");
+            value = value.replace(/[^a-zA-Z0-9_\-]/g, "");
+            result[key] = unescape(value);
         }
     }
     return result;
