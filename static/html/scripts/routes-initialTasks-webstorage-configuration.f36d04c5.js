@@ -1069,69 +1069,29 @@
 (function (mifosX) {
     var defineHeaders = function ($httpProvider, $translateProvider, ResourceFactoryProvider, HttpServiceProvider, $idleProvider, $keepaliveProvider, IDLE_DURATION, WARN_DURATION, KEEPALIVE_INTERVAL) {
         var mainLink = getLocation(window.location.href);
-        var baseApiUrl = "https://fina.internal.oxygenx.africa"; // Changed default to your production URL
+        var baseApiUrl = "https://demo.openmf.org";
         var host = "";
         var portNumber = "";
 
-        // Whitelist of allowed domains - only your specific domains
-        var allowedDomains = [
-            'fina.internal.oxygenx.africa',
-            'staging-fina.internal.theoxygen.com',
-            'fina.theoxygen.com',
-            'localhost'
-        ];
-
-        // Function to validate if a hostname is allowed
-        function isAllowedDomain(hostname) {
-            // First convert to lowercase for case-insensitive comparison
-            hostname = hostname.toLowerCase();
-
-            // Check exact matches or subdomains of allowed domains
-            return allowedDomains.some(function(domain) {
-                return hostname === domain ||
-                    (hostname.endsWith('.' + domain) && hostname.length > domain.length + 1);
-            });
-        }
-
-        if (mainLink.hostname != "") {
-            // Only use the hostname if it's in our allowed list
-            if (isAllowedDomain(mainLink.hostname)) {
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+        if (allowedHosts.includes(mainLink.hostname)) {
                 baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
             }
-        }
 
-        if (QueryParameters["baseApiUrl"]) {
-            try {
-                // Safely parse the URL
-                var urlObj = new URL(QueryParameters["baseApiUrl"]);
-                // Only use if the hostname is allowed
-                if (isAllowedDomain(urlObj.hostname)) {
-                    baseApiUrl = QueryParameters["baseApiUrl"];
-                }
-            } catch (e) {
-                // Invalid URL - ignore and use default
-                console.error("Invalid baseApiUrl parameter");
+            if (QueryParameters["baseApiUrl"]) {
+                baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
             }
-        }
-
-        var queryLink = getLocation(baseApiUrl);
-
-        // Additional validation
-        if (isAllowedDomain(queryLink.hostname)) {
+            var queryLink = getLocation(baseApiUrl);
             host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
             portNumber = queryLink.port;
-        } else {
-            // Use default if hostname not allowed - your production domain
-            host = "https://fina.internal.oxygenx.africa";
-            portNumber = "";
-        }
 
-        $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
-        ResourceFactoryProvider.setTenantIdenetifier('default');
-        if (QueryParameters["tenantIdentifier"]) {
-            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
-            ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
-        }
+            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
+            ResourceFactoryProvider.setTenantIdenetifier('default');
+            if (QueryParameters["tenantIdentifier"]) {
+                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+                ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
+            }
+
 
         ResourceFactoryProvider.setBaseUrl(host);
         HttpServiceProvider.addRequestInterceptor('demoUrl', function (config) {
@@ -1142,10 +1102,12 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-        // Set headers
+        //Set headers
         $httpProvider.defaults.headers.common['Content-Type'] = 'application/json; charset=utf-8';
 
-        // Configure i18n and prefer language
+        // Configure i18n and preffer language
+        //$translateProvider.translations('en', translationsEN);
+        //$translateProvider.translations('de', translationsDE);
         $translateProvider.useSanitizeValueStrategy('escaped');
         $translateProvider.useStaticFilesLoader({
             prefix: 'global-translations/locale-',
@@ -1154,13 +1116,11 @@
 
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
-
-        // Timeout settings
-        $idleProvider.idleDuration(IDLE_DURATION);
-        $idleProvider.warningDuration(WARN_DURATION);
-        $keepaliveProvider.interval(KEEPALIVE_INTERVAL);
+        //Timeout settings.
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
+        $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
+        $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
-
     mifosX.ng.application.config(defineHeaders).run(function ($log, $idle) {
         $log.info("Initial tasks are done!");
         $idle.watch();
@@ -1169,7 +1129,8 @@
 
 getLocation = function (href) {
     var l = document.createElement("a");
-    l.href = href;
+    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
+    l.href = sanitizedHref;
     return l;
 };
 
@@ -1180,7 +1141,11 @@ QueryParameters = (function () {
         var params = window.location.search.slice(1).split("&");
         for (var i = 0; i < params.length; i++) {
             var tmp = params[i].split("=");
-            result[tmp[0]] = unescape(tmp[1]);
+            let key = decodeURIComponent(tmp[0]);
+            let value = decodeURIComponent(tmp[1]);
+            key = key.replace(/[^a-zA-Z0-9_\-]/g, "");
+            value = value.replace(/[^a-zA-Z0-9_\-]/g, "");
+            result[key] = unescape(value);
         }
     }
     return result;
