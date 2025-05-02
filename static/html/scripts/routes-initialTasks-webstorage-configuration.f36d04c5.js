@@ -1079,7 +1079,16 @@
             }
 
             if (QueryParameters["baseApiUrl"]) {
-                baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
+                const sanitizedBaseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
+                const parsedUrl = getLocation(sanitizedBaseApiUrl);
+
+                // Validate the URL against a whitelist of allowed domains
+                const allowedDomains = ['fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'fina.internal.theoxygen.africa'];
+                if (allowedDomains.includes(parsedUrl.hostname)) {
+                    baseApiUrl = sanitizedBaseApiUrl;
+                } else {
+                    throw new Error("Invalid baseApiUrl: Hostname not allowed");
+                }
             }
             var queryLink = getLocation(baseApiUrl);
             host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
