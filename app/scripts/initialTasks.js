@@ -68,6 +68,10 @@ getLocation = function(href) {
     var l = document.createElement("a");
     var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
     l.href = sanitizedHref;
+    const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+    if (!allowedHosts.includes(l.hostname)) {
+        throw new Error("Untrusted URL detected: " + l.hostname);
+    }
     return l;
 };
 
