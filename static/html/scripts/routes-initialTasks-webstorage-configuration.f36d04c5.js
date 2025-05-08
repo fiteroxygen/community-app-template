@@ -1138,7 +1138,7 @@
 
 getLocation = function (href) {
     const allowedDomains = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
-    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");	    try {
+    try {
         const url = new URL(href);
         if (!allowedDomains.includes(url.hostname)) {
             throw new Error("Invalid URL: Hostname not allowed");
