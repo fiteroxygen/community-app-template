@@ -1136,11 +1136,18 @@
     });
 }(mifosX || {}));
 
-getLocation = function (href) {
-    var l = document.createElement("a");
-    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
-    l.href = sanitizedHref;
-    return l;
+getLocation = function (href) { 4394815
+    const allowedDomains = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");	    try {
+        const url = new URL(href);
+        if (!allowedDomains.includes(url.hostname)) {
+            throw new Error("Invalid URL: Hostname not allowed");
+        }
+        return url;
+    } catch (e) {
+        console.error("Invalid URL provided:", e.message);
+        throw new Error("Invalid URL");
+    }
 };
 
 QueryParameters = (function () {
