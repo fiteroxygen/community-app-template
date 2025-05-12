@@ -7,10 +7,11 @@
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
         const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
-        if (allowedHosts.includes(mainLink.hostname)) {
-            baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
+        if (!allowedHosts.includes(mainLink.hostname)) {
+            throw new Error("Untrusted URL detected: " + mainLink.hostname);
         }
 
+        baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
         if (QueryParameters["baseApiUrl"]) {
             baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
         }
@@ -66,8 +67,7 @@
 
 getLocation = function(href) {
     var l = document.createElement("a");
-    var sanitizedHref = href.replace(/javascript:/gi, "").replace(/[^\w\-/:.?&=]/g, "");
-    l.href = sanitizedHref;
+    l.href = href;
     const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
     if (!allowedHosts.includes(l.hostname)) {
         throw new Error("Untrusted URL detected: " + l.hostname);
@@ -82,10 +82,10 @@ QueryParameters = (function() {
         var params = window.location.search.slice(1).split("&");
         for (var i = 0; i < params.length; i++) {
             var tmp = params[i].split("=");
-            let key = decodeURIComponent(tmp[0]);
-            let value = decodeURIComponent(tmp[1]);
-            key = key.replace(/[^a-zA-Z0-9_\-]/g, "");
-            value = value.replace(/[^a-zA-Z0-9_\-]/g, "");
+            let key = tmp[0];
+            let value = tmp[1];
+            key = key.replace(/javascript:/gi, "");
+            value = value.replace(/javascript:/gi, "");
             result[key] = unescape(value);
         }
     }
