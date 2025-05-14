@@ -6,7 +6,7 @@
         var baseApiUrl = "";
         var baseApiUrlEnv = FINERACT_BASE_URL;
 
-        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa','localhost'];
         if (!allowedHosts.includes(mainLink.hostname)) {
             throw new Error("Untrusted URL detected: " + mainLink.hostname);
         }
@@ -68,7 +68,7 @@
 getLocation = function(href) {
     var l = document.createElement("a");
     l.href = href;
-    const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa'];
+    const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa','localhost'];
     if (!allowedHosts.includes(l.hostname)) {
         throw new Error("Untrusted URL detected: " + l.hostname);
     }

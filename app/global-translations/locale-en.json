@@ -1345,6 +1345,7 @@
   "label.button.createreport": "Create Report",
   "label.button.parameters": "Parameters",
   "label.button.exportcsv": "Export CSV",
+  "label.button.exportexecel": "Export XLSX",
   "label.button.export": "Export",
   "label.button.exportSchedule": "Export Schedule",
   "#Misc Labels": "..",
