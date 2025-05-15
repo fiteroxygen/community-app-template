@@ -27,7 +27,7 @@
 
             // Pagination variables
             scope.currentPage = 1;
-            scope.pageSize = 50; // Number of records per page
+            scope.pageSize = 25; // Number of records per page
             scope.totalItems = 0;
             scope.isLoading = false;
             scope.noRecordsFound = false;
@@ -521,34 +521,6 @@
                 } else {
                     scope.isLoading = false;
                 }
-            };
-
-            // Function to export as Excel
-            scope.exportAsExcel = function() {
-                if (scope.reportData.data.length === 0) {
-                    return; // No data to export
-                }
-
-                // Create Excel-friendly format
-                var exportData = scope.prepareCsvData();
-
-                // Convert to CSV
-                let csvContent = '';
-                exportData.forEach(function(rowArray) {
-                    let row = rowArray.join(',');
-                    csvContent += row + '\r\n';
-                });
-
-                // Create download link
-                var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                var link = document.createElement('a');
-                var url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', scope.reportName + '.csv');
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
             };
         }
     });
