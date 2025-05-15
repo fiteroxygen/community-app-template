@@ -25,6 +25,17 @@
             scope.pentahoReportParameters = [];
             scope.type = "pie";
 
+            // Pagination variables
+            scope.currentPage = 1;
+            scope.pageSize = 25; // Number of records per page
+            scope.totalItems = 0;
+            scope.isLoading = false;
+            scope.noRecordsFound = false;
+
+            // Avoid chunky scrolling when loading data
+            scope.renderedRows = [];
+            scope.renderLimit = 20; // Adjust this based on UI performance
+
             scope.highlight = function (id) {
                 var i = document.getElementById(id);
                 if (i.className == 'selected-row') {
@@ -33,6 +44,7 @@
                     i.className = 'selected-row';
                 }
             };
+
             if (scope.reportType == 'Pentaho') {
                 scope.formData.outputType = 'HTML';
             };
@@ -233,6 +245,26 @@
                 }
             }
 
+            // Helper function to incrementally render table rows
+            // This helps avoid browser hang when rendering large tables
+            scope.renderMoreRows = function() {
+                if (scope.renderedRows.length >= scope.reportData.data.length) {
+                    return;
+                }
+
+                var startIdx = scope.renderedRows.length;
+                var endIdx = Math.min(startIdx + scope.renderLimit, scope.reportData.data.length);
+
+                for (var i = startIdx; i < endIdx; i++) {
+                    scope.renderedRows.push(scope.reportData.data[i]);
+                }
+
+                // If there are more rows to render, schedule the next batch
+                if (scope.renderedRows.length < scope.reportData.data.length) {
+                    setTimeout(scope.renderMoreRows, 50);
+                }
+            };
+
             function buildReportParms() {
                 var paramCount = 1;
                 var reportParams = "";
@@ -256,26 +288,31 @@
                     return d.key;
                 };
             };
+
             scope.yFunction = function () {
                 return function (d) {
                     return d.values;
                 };
             };
+
             scope.setTypePie = function () {
                 if (scope.type == 'bar') {
                     scope.type = 'pie';
                 }
             };
+
             scope.setTypeBar = function () {
                 if (scope.type == 'pie') {
                     scope.type = 'bar';
                 }
             };
+
             scope.colorFunctionPie = function () {
                 return function (d, i) {
                     return colorArrayPie[i];
                 };
             };
+
             scope.isDecimal = function(index){
                 if(scope.reportData.columnHeaders && scope.reportData.columnHeaders.length > 0){
                     for(var i=0; i<scope.reportData.columnHeaders.length; i++){
@@ -286,10 +323,47 @@
                 }
                 return false;
             };
+
+            // Prepare CSV data on-demand instead of automatically
+            scope.prepareCsvData = function() {
+                if (scope.csvData.length > 0) {
+                    return scope.csvData; // Return cached data if already prepared
+                }
+
+                scope.csvData = [];
+                var headerRow = [];
+
+                // Add headers
+                for (var i in scope.reportData.columnHeaders) {
+                    headerRow.push(scope.reportData.columnHeaders[i].columnName);
+                }
+                scope.csvData.push(headerRow);
+
+                // Add data rows
+                for (var k in scope.reportData.data) {
+                    scope.csvData.push(scope.reportData.data[k].row);
+                }
+
+                return scope.csvData;
+            };
+
+            // Handle page change for pagination
+            scope.pageChanged = function() {
+                scope.runReport();
+            };
+
+            // Function to change the number of items per page
+            scope.changePageSize = function() {
+                scope.currentPage = 1; // Reset to first page
+                scope.runReport();
+            };
+
             scope.runReport = function () {
                 //clear the previous errors
                 scope.errorDetails = [];
                 removeErrors();
+                scope.isLoading = true;
+                scope.noRecordsFound = false;
 
                 //update date fields with proper dateformat
                 for (var i in scope.reportDateParams) {
@@ -310,18 +384,45 @@
                             scope.hidePentahoReport = true;
                             scope.hideChart = true;
                             scope.formData.reportSource = scope.reportName;
+
+                            // Add pagination parameters
+                            scope.formData.offset = (scope.currentPage - 1) * scope.pageSize;
+                            scope.formData.limit = scope.pageSize;
+
+                            // Reset csvData to ensure fresh data
+                            scope.csvData = [];
+
+                            // Split the report call into two phases - one for headers and another for data
+                            // This can help with large datasets
                             resourceFactory.runReportsResource.getReport(scope.formData, function (data) {
-                                //clear the csvData array for each request
-                                scope.csvData = [];
-                                scope.reportData.columnHeaders = data.columnHeaders;
-                                scope.reportData.data = data.data;
-                                for (var i in data.columnHeaders) {
-                                    scope.row.push(data.columnHeaders[i].columnName);
+                                // Clear any previous data
+                                scope.reportData.columnHeaders = data.columnHeaders || [];
+                                scope.reportData.data = data.data || [];
+                                scope.totalItems = data.totalFilteredRecords || data.data.length;
+                                scope.isLoading = false;
+
+                                // Check if we have data
+                                if (scope.reportData.data.length === 0) {
+                                    scope.noRecordsFound = true;
+                                } else {
+                                    // Reset rendered rows
+                                    scope.renderedRows = [];
+
+                                    // Start progressive rendering
+                                    setTimeout(function() {
+                                        scope.$apply(function() {
+                                            scope.renderMoreRows();
+                                        });
+                                    }, 100);
                                 }
-                                scope.csvData.push(scope.row);
-                                for (var k in data.data) {
-                                    scope.csvData.push(data.data[k].row);
-                                }
+                            }, function(error) {
+                                scope.isLoading = false;
+                                console.error("Error loading report data:", error);
+                                // Show error message to user
+                                scope.errorDetails.push({
+                                    code: 'error.message.report.load.failed',
+                                    args: {params: []}
+                                });
                             });
                             break;
 
@@ -340,6 +441,8 @@
                             // http://docs.angularjs.org/error/$sce/insecurl
                             reportURL = $sce.trustAsResourceUrl(reportURL);
                             reportURL = $sce.valueOf(reportURL);
+
+                            scope.isLoading = true;
                             http.get(reportURL, {responseType: 'arraybuffer'})
                                 .then(function(response) {
                                     let data = response.data;
@@ -352,17 +455,27 @@
 
                                     // Pass the form data to the iframe as a data url.
                                     scope.baseURL = $sce.trustAsResourceUrl(fileContent);
-                              })
-                            .catch(function(error){
-                                $log.error(`Error loading ${scope.reportType} report`);
-                                $log.error(error);
-                            });
+                                    scope.isLoading = false;
+                                })
+                                .catch(function(error){
+                                    scope.isLoading = false;
+                                    $log.error(`Error loading ${scope.reportType} report`);
+                                    $log.error(error);
+                                    // Show error message to user
+                                    scope.errorDetails.push({
+                                        code: 'error.message.report.load.failed',
+                                        args: {params: []}
+                                    });
+                                });
                             break;
+
                         case "Chart":
                             scope.hideTable = true;
                             scope.hidePentahoReport = true;
                             scope.hideChart = false;
                             scope.formData.reportSource = scope.reportName;
+
+                            scope.isLoading = true;
                             resourceFactory.runReportsResource.getReport(scope.formData, function (data) {
                                 scope.reportData.columnHeaders = data.columnHeaders;
                                 scope.reportData.data = data.data;
@@ -383,9 +496,20 @@
                                     x.values.push(inner);
                                 }
                                 scope.barData.push(x);
+                                scope.isLoading = false;
+                            }, function(error) {
+                                scope.isLoading = false;
+                                console.error("Error loading chart data:", error);
+                                // Show error message to user
+                                scope.errorDetails.push({
+                                    code: 'error.message.report.load.failed',
+                                    args: {params: []}
+                                });
                             });
                             break;
+
                         default:
+                            scope.isLoading = false;
                             var errorObj = new Object();
                             errorObj.field = scope.reportType;
                             errorObj.code = 'error.message.report.type.is.invalid';
@@ -394,6 +518,8 @@
                             scope.errorDetails.push(errorObj);
                             break;
                     }
+                } else {
+                    scope.isLoading = false;
                 }
             };
         }
