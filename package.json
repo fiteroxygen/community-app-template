@@ -54,5 +54,8 @@
     "type": "git",
     "url": "https://github.com/openMF/community-app.git"
   },
-  "homepage": "https://github.com/openMF/community-app"
+  "homepage": "https://github.com/openMF/community-app",
+  "overrides": {
+    "ws": "^7.5.10"
+  }
 }
