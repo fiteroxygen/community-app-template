@@ -65,59 +65,60 @@
     });
 }(mifosX || {}));
 
-/**
- * Safely parses a URL and ensures it uses http(s) and is from an allowed host.
- * Throws an error if the URL is untrusted.
- * @param {string} href - The URL to parse.
- * @returns {URL} - The parsed URL object.
- */
-getLocation = function(href) {
-    // Sanitize the input URL
-    var sanitizedHref = window.DOMPurify.sanitize(href);
-    
-    // Use the URL constructor for robust parsing
-    let urlObj;
-    try {
-        urlObj = new URL(sanitizedHref, window.location.origin);
-    } catch (e) {
-        throw new Error("Invalid URL provided.");
-    }
+ /**
+     * Safely parses a URL and ensures it uses http(s) and is from an allowed host.
+     * Throws an error if the URL is untrusted.
+     * @param {string} href - The URL to parse.
+     * @returns {URL} - The parsed URL object.
+     */
+    getLocation = function(href) {
+        // Sanitize the input URL
+        var sanitizedHref = window.DOMPurify.sanitize(href);
 
-    // Only allow http and https protocols
-    if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
-        throw new Error("Untrusted protocol detected: " + urlObj.protocol);
-    }
-
-    const allowedHosts = [
-        'fina.theoxygen.com', 
-        'www.fina.theoxygen.com', 
-        'staging-fina.internal.theoxygen.com', 
-        'www.staging-fina.internal.theoxygen.com', 
-        'fina.internal.oxygenx.africa', 
-        'www.fina.internal.oxygenx.africa',
-        'localhost'
-    ];
-    
-    if (!allowedHosts.includes(urlObj.hostname)) {
-        throw new Error("Untrusted URL detected: " + urlObj.hostname);
-    }
-    
-    return urlObj;
-};
-
-QueryParameters = (function() {
-    var result = {};
-    if (window.location.search) {
-        // split up the query string and store in an associative array
-        var params = window.location.search.slice(1).split("&");
-        for (var i = 0; i < params.length; i++) {
-            var tmp = params[i].split("=");
-            let key = tmp[0];
-            let value = tmp[1];
-            key = key.replace(/javascript:/gi, "");
-            value = value.replace(/javascript:/gi, "");
-            result[key] = unescape(value);
+        // Use the URL constructor for robust parsing
+        let urlObj;
+        try {
+            urlObj = new URL(sanitizedHref, window.location.origin);
+        } catch (e) {
+            throw new Error("Invalid URL provided.");
         }
+
+        // Only allow http and https protocols
+        if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
+            throw new Error("Untrusted protocol detected: " + urlObj.protocol);
+        }
+
+        const allowedHosts = [
+            'fina.theoxygen.com',
+            'www.fina.theoxygen.com',
+            'staging-fina.internal.theoxygen.com',
+            'www.staging-fina.internal.theoxygen.com',
+            'fina.internal.oxygenx.africa',
+            'www.fina.internal.oxygenx.africa',
+            'localhost'
+        ];
+
+        if (!allowedHosts.includes(urlObj.hostname)) {
+            throw new Error("Untrusted URL detected: " + urlObj.hostname);
+        }
+
+        return urlObj;
     }
-    return result;
-}());
+
+    /**
+     * Securely extracts query parameters from the current window location.
+     * Decodes values, strips dangerous protocols.
+     */
+    const QueryParameters = (() => {
+        const result = {};
+        if (window.location.search) {
+            const params = window.location.search.slice(1).split("&");
+            for (let i = 0; i < params.length; i++) {
+                let [key, value = ""] = params[i].split("=");
+                key = decodeURIComponent((key || "").replace(/javascript:/gi, "")).trim();
+                value = decodeURIComponent((value || "").replace(/javascript:/gi, "")).trim();
+                result[key] = value;
+            }
+        }
+        return result;
+    })();
