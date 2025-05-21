@@ -115,8 +115,8 @@
             const params = window.location.search.slice(1).split("&");
             for (let i = 0; i < params.length; i++) {
                 let [key, value = ""] = params[i].split("=");
-                key = decodeURIComponent((key || "").replace(/javascript:/gi, "")).trim();
-                value = decodeURIComponent((value || "").replace(/javascript:/gi, "")).trim();
+                key = decodeURIComponent((key || "").replace(/(?:javascript:|data:|vbscript:)/gi, "")).trim();
+                value = decodeURIComponent((value || "").replace(/(?:javascript:|data:|vbscript:)/gi, "")).trim();
                 result[key] = value;
             }
         }
