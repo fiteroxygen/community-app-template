@@ -13,7 +13,7 @@
     "angular-webstorage": "latest",
     "angular-animate": "1.7.9",
     "angular-touch": "1.7.9",
-    "jquery": "2.2.1",
+    "jquery": "^3.7.1",
     "requirejs": "^2.3.6",
     "require-css": "^0.1.10",
     "underscore": "1.8.3",
