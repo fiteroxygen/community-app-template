@@ -1072,23 +1072,39 @@
         var baseApiUrl = "https://demo.openmf.org";
         var host = "";
         var portNumber = "";
+        //accessing from openmf server
+        if (mainLink.hostname.indexOf('openmf.org') >= 0) {
+            var hostname = window.location.hostname;
+            console.log('hostname---' + hostname);
+            domains = hostname.split('.');
+            console.log('domains---' + domains);
+            // For multi tenant hosting
+            if (domains[0] == "demo") {
+                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
+                ResourceFactoryProvider.setTenantIdenetifier('default');
+                console.log("demo server", domains[0]);
+            } else {
+                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = domains[0];
+                ResourceFactoryProvider.setTenantIdenetifier(domains[0]);
+                console.log("other than demo server", domains[0]);
+            }
+            host = "https://" + mainLink.hostname;
+            console.log('hostname from mainLink = ', host);
+        }
+        //accessing from a file system or other servers
+        else {
+            var baseApiUrlEnv = FINERACT_BASE_URL;
 
-        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa','localhost'];
-        if (allowedHosts.includes(mainLink.hostname)) {
+            if (mainLink.hostname != "") {
                 baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
             }
 
             if (QueryParameters["baseApiUrl"]) {
-                const sanitizedBaseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
-                const parsedUrl = getLocation(sanitizedBaseApiUrl);
+                baseApiUrl = QueryParameters["baseApiUrl"];
+            }
 
-                // Validate the URL against a whitelist of allowed domains
-                const allowedDomains = ['fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'fina.internal.theoxygen.africa'];
-                if (allowedDomains.includes(parsedUrl.hostname)) {
-                    baseApiUrl = sanitizedBaseApiUrl;
-                } else {
-                    throw new Error("Invalid baseApiUrl: Hostname not allowed");
-                }
+            if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
+                baseApiUrl = baseApiUrlEnv;
             }
             var queryLink = getLocation(baseApiUrl);
             host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
@@ -1097,10 +1113,10 @@
             $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
             ResourceFactoryProvider.setTenantIdenetifier('default');
             if (QueryParameters["tenantIdentifier"]) {
-                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
-                ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
+                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
+                ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
             }
-
+        }
 
         ResourceFactoryProvider.setBaseUrl(host);
         HttpServiceProvider.addRequestInterceptor('demoUrl', function (config) {
@@ -1126,7 +1142,7 @@
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
         //Timeout settings.
-        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time 
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
@@ -1136,36 +1152,57 @@
     });
 }(mifosX || {}));
 
-getLocation = function (href) {
-    const allowedDomains = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa','localhost'];
-    try {
-        const url = new URL(href);
-        if (!allowedDomains.includes(url.hostname)) {
-            throw new Error("Invalid URL: Hostname not allowed");
-        }
-        return url;
-    } catch (e) {
-        console.error("Invalid URL provided:", e.message);
-        throw new Error("Invalid URL");
-    }
-};
+getLocation = function(href) {
+        // Sanitize the input URL
+        var sanitizedHref = window.DOMPurify.sanitize(href);
 
-QueryParameters = (function () {
-    var result = {};
-    if (window.location.search) {
-        // split up the query string and store in an associative array
-        var params = window.location.search.slice(1).split("&");
-        for (var i = 0; i < params.length; i++) {
-            var tmp = params[i].split("=");
-            let key = decodeURIComponent(tmp[0]);
-            let value = decodeURIComponent(tmp[1]);
-            key = key.replace(/[^a-zA-Z0-9_\-]/g, "");
-            value = value.replace(/[^a-zA-Z0-9_\-]/g, "");
-            result[key] = unescape(value);
+        // Use the URL constructor for robust parsing
+        let urlObj;
+        try {
+            urlObj = new URL(sanitizedHref, window.location.origin);
+        } catch (e) {
+            throw new Error("Invalid URL provided.");
         }
+
+        // Only allow http and https protocols
+        if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
+            throw new Error("Untrusted protocol detected: " + urlObj.protocol);
+        }
+
+        const allowedHosts = [
+            'fina.theoxygen.com',
+            'www.fina.theoxygen.com',
+            'staging-fina.internal.theoxygen.com',
+            'www.staging-fina.internal.theoxygen.com',
+            'fina.internal.oxygenx.africa',
+            'www.fina.internal.oxygenx.africa',
+            'localhost'
+        ];
+
+        if (!allowedHosts.includes(urlObj.hostname)) {
+            throw new Error("Untrusted URL detected: " + urlObj.hostname);
+        }
+
+        return urlObj;
     }
-    return result;
-}());
+
+    /**
+     * Securely extracts query parameters from the current window location.
+     * Decodes values, strips dangerous protocols.
+     */
+    const QueryParameters = (() => {
+        const result = {};
+        if (window.location.search) {
+            const params = window.location.search.slice(1).split("&");
+            for (let i = 0; i < params.length; i++) {
+                let [key, value = ""] = params[i].split("=");
+                key = decodeURIComponent((key || "").replace(/(?:javascript:|data:|vbscript:)/gi, "")).trim();
+                value = decodeURIComponent((value || "").replace(/(?:javascript:|data:|vbscript:)/gi, "")).trim();
+                result[key] = value;
+            }
+        }
+        return result;
+})();
 ;define(['angular', 'webstorage'], function (angular) {
     angular.module('webStorageModule')
         .constant('prefix', 'mifosX')
