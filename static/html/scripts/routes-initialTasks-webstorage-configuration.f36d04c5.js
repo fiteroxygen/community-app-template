@@ -1066,61 +1066,42 @@
     });
 }(mifosX || {}));
 ;
-(function (mifosX) {
-    var defineHeaders = function ($httpProvider, $translateProvider, ResourceFactoryProvider, HttpServiceProvider, $idleProvider, $keepaliveProvider, IDLE_DURATION, WARN_DURATION, KEEPALIVE_INTERVAL) {
+(function(mifosX) {
+    var defineHeaders = function($httpProvider, $translateProvider, ResourceFactoryProvider, HttpServiceProvider, $idleProvider, $keepaliveProvider, IDLE_DURATION, WARN_DURATION, KEEPALIVE_INTERVAL, FINERACT_BASE_URL) {
         var mainLink = getLocation(window.location.href);
-        var baseApiUrl = "https://demo.openmf.org";
         var host = "";
         var portNumber = "";
-        //accessing from openmf server
-        if (mainLink.hostname.indexOf('openmf.org') >= 0) {
-            var hostname = window.location.hostname;
-            console.log('hostname---' + hostname);
-            domains = hostname.split('.');
-            console.log('domains---' + domains);
-            // For multi tenant hosting
-            if (domains[0] == "demo") {
-                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
-                ResourceFactoryProvider.setTenantIdenetifier('default');
-                console.log("demo server", domains[0]);
-            } else {
-                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = domains[0];
-                ResourceFactoryProvider.setTenantIdenetifier(domains[0]);
-                console.log("other than demo server", domains[0]);
-            }
-            host = "https://" + mainLink.hostname;
-            console.log('hostname from mainLink = ', host);
+        var baseApiUrl = "";
+        var baseApiUrlEnv = FINERACT_BASE_URL;
+
+        const allowedHosts = ['fina.theoxygen.com', 'www.fina.theoxygen.com', 'staging-fina.internal.theoxygen.com', 'www.staging-fina.internal.theoxygen.com', 'fina.internal.oxygenx.africa', 'www.fina.internal.oxygenx.africa','localhost'];
+        if (!allowedHosts.includes(mainLink.hostname)) {
+            throw new Error("Untrusted URL detected: " + mainLink.hostname);
         }
-        //accessing from a file system or other servers
-        else {
-            var baseApiUrlEnv = FINERACT_BASE_URL;
 
-            if (mainLink.hostname != "") {
-                baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
-            }
+        baseApiUrl = "https://" + mainLink.hostname + (mainLink.port ? ':' + mainLink.port : '');
+        if (QueryParameters["baseApiUrl"]) {
+            baseApiUrl = window.DOMPurify.sanitize(QueryParameters["baseApiUrl"]);
+        }
 
-            if (QueryParameters["baseApiUrl"]) {
-                baseApiUrl = QueryParameters["baseApiUrl"];
-            }
+        if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
+            baseApiUrl = window.DOMPurify.sanitize(baseApiUrlEnv);
+        }
 
-            if (baseApiUrlEnv !== '$FINERACT_BASE_URL') {
-                baseApiUrl = baseApiUrlEnv;
-            }
-            var queryLink = getLocation(baseApiUrl);
-            host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
-            portNumber = queryLink.port;
+        var queryLink = getLocation(baseApiUrl);
+        host = "https://" + queryLink.hostname + (queryLink.port ? ':' + queryLink.port : '');
+        portNumber = queryLink.port;
 
-            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
-            ResourceFactoryProvider.setTenantIdenetifier('default');
-            if (QueryParameters["tenantIdentifier"]) {
-                $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = QueryParameters["tenantIdentifier"];
-                ResourceFactoryProvider.setTenantIdenetifier(QueryParameters["tenantIdentifier"]);
-            }
+        $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = 'default';
+        ResourceFactoryProvider.setTenantIdenetifier('default');
+        if (QueryParameters["tenantIdentifier"]) {
+            $httpProvider.defaults.headers.common['Fineract-Platform-TenantId'] = window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]);
+            ResourceFactoryProvider.setTenantIdenetifier(window.DOMPurify.sanitize(QueryParameters["tenantIdentifier"]));
         }
 
         ResourceFactoryProvider.setBaseUrl(host);
-        HttpServiceProvider.addRequestInterceptor('demoUrl', function (config) {
-            return _.extend(config, {url: host + config.url });
+        HttpServiceProvider.addRequestInterceptor('demoUrl', function(config) {
+            return _.extend(config, { url: host + config.url });
         });
 
         // Enable CORS! (see e.g. http://enable-cors.org/)
@@ -1142,17 +1123,23 @@
         $translateProvider.preferredLanguage('en');
         $translateProvider.fallbackLanguage('en');
         //Timeout settings.
-        $idleProvider.idleDuration(IDLE_DURATION); //Idle time 
+        $idleProvider.idleDuration(IDLE_DURATION); //Idle time
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
     };
-    mifosX.ng.application.config(defineHeaders).run(function ($log, $idle) {
+    mifosX.ng.application.config(defineHeaders).run(function($log, $idle) {
         $log.info("Initial tasks are done!");
         $idle.watch();
     });
 }(mifosX || {}));
 
-getLocation = function(href) {
+ /**
+     * Safely parses a URL and ensures it uses http(s) and is from an allowed host.
+     * Throws an error if the URL is untrusted.
+     * @param {string} href - The URL to parse.
+     * @returns {URL} - The parsed URL object.
+     */
+    getLocation = function(href) {
         // Sanitize the input URL
         var sanitizedHref = window.DOMPurify.sanitize(href);
 
@@ -1202,7 +1189,7 @@ getLocation = function(href) {
             }
         }
         return result;
-})();
+    })();
 ;define(['angular', 'webstorage'], function (angular) {
     angular.module('webStorageModule')
         .constant('prefix', 'mifosX')
