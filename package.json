@@ -56,6 +56,8 @@
   },
   "homepage": "https://github.com/openMF/community-app",
   "overrides": {
-    "ws": "^7.5.10"
+    "ws": "^7.5.10",
+    "@babel/helpers": "^7.26.10",
+    "@babel/runtime": "^7.26.10"
   }
 }
