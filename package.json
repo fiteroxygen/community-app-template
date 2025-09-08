@@ -57,8 +57,9 @@
   "homepage": "https://github.com/openMF/community-app",
   "overrides": {
     "ws": "^7.5.10",
-    "@babel/helpers": "^7.26.10",
-    "@babel/runtime": "^7.26.10",
+    "@babel/core": "7.26.10",
+    "@babel/helpers": "7.26.10",
+    "@babel/runtime": "7.26.10",
     "brace-expansion@1": "1.1.12",
     "brace-expansion@2": "2.0.2",
     "semver-regex": "^3.1.4",
