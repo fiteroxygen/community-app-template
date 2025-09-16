@@ -80,15 +80,20 @@
                 localStorageService.addToLocalStorage('userData', userData);
             };
 
-            var onOTPValidateSuccess = function (data) {
-                var accessToken = data.token;
-                if(twoFactorIsRememberMeRequest) {
-                    saveTwoFactorTokenToStorage(userData.username, data);
+            var onOTPValidateSuccess = function (response) {
+                var data = response.data;
+                if (data && data.token) {
+                    var accessToken = data.token;
+                    if(twoFactorIsRememberMeRequest) {
+                        saveTwoFactorTokenToStorage(userData.username, data);
+                    }
+                    twoFactorAccessToken = accessToken;
+                    httpService.setTwoFactorAccessToken(accessToken);
+                    scope.$broadcast("UserAuthenticationSuccessEvent", userData);
+                    localStorageService.addToLocalStorage('userData', userData);
+                } else {
+                    onOTPValidateError(response);
                 }
-                twoFactorAccessToken = accessToken;
-                httpService.setTwoFactorAccessToken(accessToken);
-                scope.$broadcast("UserAuthenticationSuccessEvent", userData);
-                localStorageService.addToLocalStorage('userData', userData);
             };
 
             var onOTPValidateError = function (data, status) {
