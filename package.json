@@ -55,22 +55,31 @@
     "url": "https://github.com/openMF/community-app.git"
   },
   "homepage": "https://github.com/openMF/community-app",
+
   "overrides": {
-    "ws": "^7.5.10",
-    "@babel/core": "7.26.10",
-    "@babel/helpers": "7.26.10",
-    "@babel/runtime": "7.26.10",
-    "brace-expansion@1": "1.1.12",
-    "brace-expansion@2": "2.0.2",
-    "semver-regex": "^3.1.4",
+    "ws": "8.17.1",
     "nodeunit-x": {
       "tap": {
+        "ink": {
+          "ws": "8.17.1",
+          "react-devtools-core": {
+            "ws": "8.17.1"
+          }
+        },
         "glob": {
           "minimatch": {
             "brace-expansion": "1.1.12"
           }
         }
       }
-    }
+    },
+    "@babel/core": "7.26.10",
+    "@babel/helpers": "7.26.10",
+    "@babel/runtime": "7.26.10",
+    "brace-expansion@1": "1.1.12",
+    "brace-expansion@2": "2.0.2",
+    "semver-regex": "^3.1.4"
   }
+
+
 }
