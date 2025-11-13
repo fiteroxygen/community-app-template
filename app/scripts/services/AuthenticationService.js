@@ -141,7 +141,17 @@
             this.validateOTP = function (token, rememberMe) {
                 twoFactorIsRememberMeRequest = rememberMe;
                 httpService.post(apiVer + "/twofactor/validate?token=" + token)
-                    .then(onOTPValidateSuccess)
+                    .then(function(response) {
+                        var data = response.data;
+                        // Check if token is present and valid
+                        if (!data.token || typeof data.token !== 'string' || data.token.length === 0) {
+                            // Invalid token, force logout
+                            scope.$broadcast("OnUserPreLogout");
+                            scope.$broadcast("TwoFactorAuthenticationFailureEvent", data, response.status);
+                            return;
+                        }
+                        onOTPValidateSuccess(response);
+                    })
                     .catch(onOTPValidateError);
             };
 
