@@ -4614,6 +4614,7 @@
   "chargeTimeType.interestForfeited": "Interest Forfeited",
   "label.checkbox.allowFreeWithdrawal": "Allow Free Withdrawals",
   "error.msg.deposit.period.is.please.select.charge.which.have.no.free.withdrawal": "Deposit Period select `{{params[0].value}}` So please select charge with  no of free withdrawals allowed for that",
+  "error.msg.glclosure.invalid.accrual.job.not.run": "Accrual job has not run for the selected period. Please run the accrual job before closing Date `{{params[0].value}}` ",
   "label.button.generatexls" : "Generate Excel",
   "label.totalinteresttobeearned": "Interest to be Earned",
   "label.input.allowManuallyEnterInterestRate": "Allow Manually Enter Interest Rate",
