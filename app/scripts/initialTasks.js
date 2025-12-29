@@ -58,6 +58,21 @@
         $idleProvider.idleDuration(IDLE_DURATION); //Idle time
         $idleProvider.warningDuration(WARN_DURATION); //warning time(sec)
         $keepaliveProvider.interval(KEEPALIVE_INTERVAL); //keep-alive ping
+
+        $httpProvider.interceptors = $httpProvider.interceptors || [];
+        $httpProvider.interceptors.push(['$q', '$injector', function($q, $injector) {
+            return {
+                responseError: function(rejection) {
+                    if (rejection.status === 401) {
+                        var $rootScope = $injector.get('$rootScope');
+                        if (typeof $rootScope.logout === 'function') {
+                            $rootScope.logout();
+                        }
+                    }
+                    return $q.reject(rejection);
+                }
+            };
+        }]);
     };
     mifosX.ng.application.config(defineHeaders).run(function($log, $idle) {
         $log.info("Initial tasks are done!");

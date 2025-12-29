@@ -248,8 +248,8 @@
                     scope.resetPassword = false;
                     location.path('/').replace();
                 }, 2000);
-
             };
+            $rootScope.logout = scope.logout;
 
             scope.langs = mifosX.models.Langs;
             if (localStorageService.getFromLocalStorage('Language')) {
