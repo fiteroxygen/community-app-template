@@ -12,7 +12,7 @@
             scope.openShares = true ;
             scope.openFixed = true;
             scope.openRecurring = true;
-            scope.showFixed = false;
+            scope.showFixed = true;
             scope.showRecurring = false;
             scope.updateDefaultSavings = false;
             scope.charges = [];
@@ -49,7 +49,6 @@
                 scope.selectedSavingStatusOptions = scope.searchCriteria.clientSavingAccountStatus;
             }
 
-
             resourceFactory.clientTemplateResource.get(function(data)
             {
                 scope.enableAddress=data.isAddressEnabled;
@@ -59,9 +58,7 @@
                 scope.savingStatusOptions = data.savingStatusOptions;
                 if(scope.enableAddress===true)
                 {
-
                     resourceFactory.addressFieldConfiguration.get({entity:entityname},function(data){
-
 
                         for(var i=0;i<data.length;i++)
                         {
@@ -70,30 +67,15 @@
 
                         }
 
-
                     })
 
 
                     resourceFactory.clientAddress.get({clientId:routeParams.id},function(data)
                     {
-
                         scope.addresses=data;
                         console.log(data);
-
-
                     })
-
-
                 }
-
-
-               /* resourceFactory.getAllFamilyMembers.get({clientId:routeParams.id},function(data)
-                {
-
-                    scope.families=data;
-
-
-                })*/
 
             });
 
@@ -1398,9 +1380,11 @@
                 } else {
                     scope.openLoan = true;
                 }
-                scope.filteredLoanAccounts = scope.clientAccounts.loanAccounts.filter(function(loanAccount) {
-                    return loanAccount.status.id === selectedStatusId;
-                });
+                if(scope.clientAccounts.loanAccounts != undefined) {
+                    scope.filteredLoanAccounts = scope.clientAccounts.loanAccounts.filter(function (loanAccount) {
+                        return loanAccount.status.id === selectedStatusId;
+                    });
+                }
                 scope.searchCriteria.clientLoanAccountStatus = selectedStatusId;
                 scope.saveSC();
             };
