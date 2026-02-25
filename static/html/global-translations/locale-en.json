@@ -2043,6 +2043,7 @@
   "label.input.enforceMinRequiredBalance": "Enforce minimum balance",
   "label.input.minRequiredBalance": "Minimum balance",
   "label.input.withholdtax": "Is Withhold tax applicable",
+  "label.input.withholdtaxAmount": "Withhold tax Amount",
   "label.input.requesteddate": "Request Date",
   "label.input.dividendperiodstartdate": "Dividend Period Start Date",
   "label.input.dividendperiodenddate": "Dividend Period End Date",

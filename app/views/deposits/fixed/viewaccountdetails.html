@@ -183,12 +183,31 @@
                                   ng-class="{statusactiveoverdue : savingaccountdetails.summary.totalInterestEarned < 0}">{{savingaccountdetails.currency.displaySymbol}}&nbsp;{{savingaccountdetails.summary.totalInterestEarned| number}}</span>
                         </td>
                     </tr>
-                    <tr ng-show="(savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount) >= 0">
-                        <th class="table-bold-acc fontnormal">{{'label.totalinterestpayable' |
-                            translate}}
+                    <tr ng-show="savingaccountdetails.withholdTaxAmount >= 0">
+                        <th class="table-bold-acc fontnormal">{{'label.input.withholdtaxAmount' | translate}}
                         </th>
                         <td><span class="padded-td"
-                                  ng-class="{statusactiveoverdue : (savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount) < 0}">{{savingaccountdetails.currency.displaySymbol}}&nbsp;{{(savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount)| number}}</span>
+                                  ng-class="{statusactiveoverdue : savingaccountdetails.withholdTaxAmount < 0}">{{savingaccountdetails.currency.displaySymbol}}&nbsp;{{savingaccountdetails.withholdTaxAmount| number}}</span>
+                        </td>
+                    </tr>
+                    <tr ng-show="(savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount) >= 0">
+                        <th class="table-bold-acc fontnormal">
+                            {{ 'label.totalinterestpayable' | translate }}
+                        </th>
+                        <td>
+        <span class="padded-td"
+              ng-class="{
+                  statusactiveoverdue :
+                  (savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount) < 0
+              }">
+            {{ savingaccountdetails.currency.displaySymbol }}&nbsp;
+            {{
+                (savingaccountdetails.withholdTaxAmount && savingaccountdetails.withholdTaxAmount > 0)
+                ? (savingaccountdetails.maturityAmount - savingaccountdetails.withholdTaxAmount)
+                : (savingaccountdetails.maturityAmount - savingaccountdetails.depositAmount)
+                | number
+            }}
+        </span>
                         </td>
                     </tr>
                 </table>
