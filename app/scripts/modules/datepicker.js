@@ -143,14 +143,12 @@ angular.module('modified.datepicker', ['strap.position'])
                         numDisplayedFromNextMonth = 0,firstDate = new Date(firstDayOfMonth), numDates = 0;
 
                     if (numDisplayedFromPreviousMonth > 0) {
-                        numDisplayedFromNextMonth = (35 - getDaysInMonth(year, month + 1)) - numDisplayedFromPreviousMonth;
                         firstDate.setDate(-numDisplayedFromPreviousMonth + 1);
                         numDates += numDisplayedFromPreviousMonth; // Previous
-                    }else {
-                        numDisplayedFromNextMonth = 35 - getDaysInMonth(year, month + 1);
                     }
                     numDates += getDaysInMonth(year, month + 1); // Current
-                    numDates += (7 - numDates % 7) % 7; // Next
+                    numDisplayedFromNextMonth = (7 - numDates % 7) % 7; // Next
+                    numDates += numDisplayedFromNextMonth;
 
                     var days = getDates(firstDate, numDates), labels = new Array(7);
                     for (var i = 0; i < numDates; i++) {
