@@ -183,7 +183,7 @@
                                   ng-class="{statusactiveoverdue : savingaccountdetails.summary.totalInterestEarned < 0}">{{savingaccountdetails.currency.displaySymbol}}&nbsp;{{savingaccountdetails.summary.totalInterestEarned| number}}</span>
                         </td>
                     </tr>
-                    <tr ng-show="savingaccountdetails.withholdTaxAmount >= 0">
+                    <tr ng-show="savingaccountdetails.withholdTaxAmount >= 0 && !savingaccountdetails.status.active">
                         <th class="table-bold-acc fontnormal">{{'label.input.withholdtaxAmount' | translate}}
                         </th>
                         <td><span class="padded-td"
