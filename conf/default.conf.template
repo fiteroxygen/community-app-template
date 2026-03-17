@@ -53,7 +53,7 @@ server {
     root   /usr/share/nginx/html/self;
   }
 
-  location ${FINERACT_BASE_URL}/jobs {
+  location ${FINERACT_BASE_URL}/api/v1/jobs {
     error_log /var/log/nginx/error.log error;
     access_log off;
 
@@ -90,5 +90,5 @@ server {
     proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
     #proxy_pass_header X-XSRF-TOKEN;
   }
-  
+
 }
