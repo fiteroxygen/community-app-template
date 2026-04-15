@@ -15,6 +15,7 @@
             scope.fromDate = {}; //required for date formatting
             scope.endDate = {};//required for date formatting
             scope.deletedincentives = [];
+            scope.deletedChartSlabs = [];
             scope.isPrimaryGroupingByAmount = false;
 
             resourceFactory.fixedDepositProductResource.get({productId: routeParams.productId, template: 'true'}, function (data) {
@@ -74,9 +75,18 @@
                 if(data.withHoldTax){
                     scope.formData.taxGroupId = data.taxGroup.id;
                 }
-                scope.chart = scope.product.activeChart;
+                scope.chart = scope.product.activeChart || {};
 
+                // Ensure chart has chartSlabs array
+                if (!scope.chart.chartSlabs) {
+                    scope.chart.chartSlabs = [];
+                }
+
+                // Ensure each chartSlab has periodType as an object with id property
                 _.each(scope.chart.chartSlabs, function (chartSlab) {
+                    if (!chartSlab.periodType || typeof chartSlab.periodType !== 'object') {
+                        chartSlab.periodType = {id: ''};
+                    }
                     _.each(chartSlab.incentives, function (incentive){
                         incentive.attributeValue = parseInt(incentive.attributeValue);
                     })
@@ -322,7 +332,7 @@
             scope.addNewRow = function () {
                 var fromPeriod = '';
                 var amountRangeFrom = '';
-                var periodType = '';
+                var periodType = {id: ''};
                 var toPeriod = '';
                 var amountRangeTo = '';
                 if (_.isNull(scope.chart.chartSlabs) || _.isUndefined(scope.chart.chartSlabs)) {
@@ -354,7 +364,12 @@
                                 amountRangeFrom = _.isNull(lastChartSlab) ? '' : parseInt(lastChartSlab.amountRangeTo) + 1;
                             }
                         }
-                        periodType = angular.copy(lastChartSlab.periodType);
+                        // Ensure periodType is always an object with id property
+                        if (lastChartSlab.periodType && typeof lastChartSlab.periodType === 'object') {
+                            periodType = angular.copy(lastChartSlab.periodType);
+                        } else {
+                            periodType = {id: ''};
+                        }
                     }
                 }
 
@@ -408,6 +423,13 @@
              */
             copyChartSlabs = function (chartSlabs) {
                 var detailsArray = [];
+
+                // Add deleted chart slabs first (with delete: true)
+                _.each(scope.deletedChartSlabs, function (deletedSlab) {
+                    detailsArray.push(deletedSlab);
+                });
+
+                // Add current chart slabs
                 _.each(chartSlabs, function (chartSlab) {
                     var chartSlabData = copyChartSlab(chartSlab);
                     detailsArray.push(chartSlabData);
@@ -464,6 +486,14 @@
              * Remove chart details row
              */
             scope.removeRow = function (index) {
+                var removedSlab = scope.chart.chartSlabs[index];
+                // If the slab has an id, it exists in the database and needs to be deleted
+                if (removedSlab && removedSlab.id) {
+                    scope.deletedChartSlabs.push({
+                        id: removedSlab.id,
+                        delete: true
+                    });
+                }
                 scope.chart.chartSlabs.splice(index, 1);
             }
 
