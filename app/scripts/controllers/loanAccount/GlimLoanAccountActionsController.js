@@ -381,6 +381,7 @@
                                     scope.formData.paymentTypeId = data.paymentDetailData.paymentType.id;
                                 }
                                 scope.formData.accountNumber = data.paymentDetailData.accountNumber;
+                                scope.formData.accountName = data.paymentDetailData.accountName;
                                 scope.formData.checkNumber = data.paymentDetailData.checkNumber;
                                 scope.formData.routingCode = data.paymentDetailData.routingCode;
                                 scope.formData.receiptNumber = data.paymentDetailData.receiptNumber;
