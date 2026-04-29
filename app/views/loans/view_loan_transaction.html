@@ -76,6 +76,10 @@
                         <td>{{ 'label.heading.accnum' | translate}}</td>
                         <td>{{transaction.paymentDetailData.accountNumber}}</td>
                     </tr>
+                    <tr ng-show="transaction.paymentDetailData.accountName">
+                        <td>{{ 'label.heading.accountname' | translate}}</td>
+                        <td>{{transaction.paymentDetailData.accountName}}</td>
+                    </tr>
                     <tr ng-show="transaction.paymentDetailData.checkNumber">
                         <td>{{ 'label.heading.checknumber' | translate}}</td>
                         <td>{{transaction.paymentDetailData.checkNumber}}</td>
@@ -89,7 +93,7 @@
                         <td>{{transaction.paymentDetailData.receiptNumber}}</td>
                     </tr>
                     <tr ng-show="transaction.paymentDetailData.bankNumber">
-                        <td>{{ 'label.heading.banknumber' | translate}}</td>
+                        <td>{{ 'label.heading.bankname' | translate}}</td>
                         <td>{{transaction.paymentDetailData.bankNumber}}</td>
                     </tr>
                 </table>
