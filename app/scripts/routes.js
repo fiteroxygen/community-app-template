@@ -812,6 +812,9 @@
             .when('/bulkloan', {
                 templateUrl: 'views/organization/bulkloan.html'
             })
+            .when('/bulkforeclosure', {
+                templateUrl: 'views/organization/bulkforeclosure.html'
+            })
             .when('/audit', {
                 templateUrl: 'views/system/audit.html'
             })

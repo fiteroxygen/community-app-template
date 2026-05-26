@@ -523,6 +523,12 @@
                     loanReassignmentResource: defineResource(apiVer + "/loans/loanreassignment/:templateSource", {templateSource: '@templateSource'}, {
                         get: {method: 'GET', params: {}}
                     }),
+                    bulkForeclosureResource: defineResource(apiVer + "/loans/foreclosure/:action/:jobId", {action: '@action', jobId: '@jobId'}, {
+                        getEligibleLoans: {method: 'GET', params: {action: 'eligible'}},
+                        getJobHistory: {method: 'GET', params: {action: 'jobs'}},
+                        executeBulk: {method: 'POST', params: {action: 'bulk'}},
+                        getJobStatus: {method: 'GET', params: {action: 'jobs'}}
+                    }),
                     loanRescheduleResource: defineResource(apiVer + "/rescheduleloans/:scheduleId",{scheduleId:'@scheduleId', command: '@command'},{
                      get: {method: 'GET',params:{}},
                      getAll: {method: 'GET', params: {}, isArray: true},

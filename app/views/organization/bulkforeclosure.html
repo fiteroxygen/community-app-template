@@ -1,0 +1,334 @@
+<div class="content-container" ng-controller="BulkForeclosureController">
+    <ul class="breadcrumb">
+        <li><a href="#/organization">{{'label.anchor.organization' | translate}}</a></li>
+        <li class="active">{{'label.anchor.bulkforeclosure' | translate}}</li>
+    </ul>
+    <div class="card">
+        <div class="content">
+            <div class="toolbar">
+                <h4>{{'label.heading.bulkforeclosure' | translate}}</h4>
+            </div>
+            <br>
+            <!-- Filters Section -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">{{'label.heading.filters' | translate}}</h5>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">{{'label.input.product' | translate}} <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select chosen="loanProducts" ng-model="filterData.productId" 
+                                                data-ng-options="product.id as product.name for product in loanProducts"
+                                                class="form-control" required>
+                                            <option value="">{{'label.select.product' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">{{'label.input.fromdate' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" datepicker-pop="dd MMMM yyyy"
+                                               ng-model="filterData.fromDate" is-open="fromDateOpened"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">{{'label.input.todate' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" datepicker-pop="dd MMMM yyyy"
+                                               ng-model="filterData.toDate" is-open="toDateOpened"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="button" class="btn btn-default" ng-click="resetFilters()">
+                                            <i class="fa fa-refresh"></i> {{'label.button.reset' | translate}}
+                                        </button>
+                                        <button type="button" class="btn btn-primary" ng-click="loadEligibleLoans(true)" ng-disabled="!filterData.productId">
+                                            <i class="fa fa-search"></i> {{'label.button.submit' | translate}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <uib-tabset class="scrollable" tabset-name="Tabset" scrollable persistent-tab>
+                <!-- Eligible Loans Table -->
+                <uib-tab heading="{{'label.heading.eligibleloans' | translate}}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            {{'label.heading.eligibleloans' | translate}}
+                            <span class="badge" ng-show="filteredLoans.length">{{filteredLoans.length}}</span>
+                            <span ng-show="totalRecords > 0" class="text-muted small"> / {{totalRecords}} total</span>
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Loading Indicator -->
+                        <div ng-show="isLoading" class="text-center">
+                            <i class="fa fa-spinner fa-spin fa-3x"></i>
+                            <p>{{'label.loading' | translate}}</p>
+                        </div>
+                        <!-- No Product Selected Message -->
+                        <div ng-show="!isLoading && !filterData.productId" class="alert alert-info">
+                            {{'label.selectproducttosearch' | translate}}
+                        </div>
+                        <!-- No Data Message -->
+                        <div ng-show="!isLoading && filterData.productId && filteredLoans.length === 0" class="alert alert-info">
+                            {{'label.noeligibleloans' | translate}}
+                        </div>
+                        <!-- Selection Actions -->
+                        <div ng-show="!isLoading && filteredLoans.length > 0" class="row" style="margin-bottom: 15px;">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-sm btn-default" ng-click="selectAll()">
+                                    <i class="fa fa-check-square-o"></i> {{'label.button.selectall' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-default" ng-click="deselectAll()">
+                                    <i class="fa fa-square-o"></i> {{'label.button.deselectall' | translate}}
+                                </button>
+                                <span class="text-muted" style="margin-left: 15px;">
+                                    {{'label.selected' | translate}}: <strong>{{getSelectedCount()}}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button type="button" class="btn btn-danger" ng-click="confirmBulkForeclosure()"
+                                        ng-disabled="getSelectedCount() === 0">
+                                    <i class="fa fa-gavel"></i> {{'label.button.bulkforeclosure' | translate}}
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Loans Table -->
+                        <div ng-show="!isLoading && filteredLoans.length > 0" class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <input type="checkbox" ng-model="selectAllChecked" ng-change="toggleSelectAll()"/>
+                                        </th>
+                                        <th>{{'label.heading.loanid' | translate}}</th>
+                                        <th>{{'label.heading.clientid' | translate}}</th>
+                                        <th class="text-right">{{'label.heading.outstandingprincipal' | translate}}</th>
+                                        <th class="text-right">{{'label.heading.outstandinginterest' | translate}}</th>
+                                        <th class="text-right">{{'label.heading.feecharges' | translate}}</th>
+                                        <th class="text-right">{{'label.heading.penalty' | translate}}</th>
+                                        <th class="text-right">{{'label.heading.totalpayoff' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="loan in filteredLoans"
+                                        ng-class="{'success': selectedLoans[loan.loanId]}">
+                                        <td>
+                                            <input type="checkbox" ng-model="selectedLoans[loan.loanId]"/>
+                                        </td>
+                                        <td>
+                                            <a href="#/viewloanaccount/{{loan.loanId}}">{{loan.loanId}}</a>
+                                        </td>
+                                        <td>
+                                            <a href="#/viewclient/{{loan.clientId}}">{{loan.clientId}}</a>
+                                        </td>
+                                        <td class="text-right">{{loan.principalOutstanding | number:2}}</td>
+                                        <td class="text-right">{{loan.interestOutstanding | number:2}}</td>
+                                        <td class="text-right">{{loan.feeChargesOutstanding | number:2}}</td>
+                                        <td class="text-right">{{loan.penalyOutstanding | number:2}}</td>
+                                        <td class="text-right"><strong>{{loan.totalPayoff | number:2}}</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div ng-show="!isLoading && totalRecords > itemsPerPage" class="text-center">
+                            <uib-pagination total-items="totalRecords" ng-model="currentPage"
+                                           items-per-page="itemsPerPage" ng-change="pageChanged()"
+                                           max-size="5" boundary-links="true">
+                            </uib-pagination>
+                        </div>
+                    </div>
+                </div>
+                </uib-tab>
+                <uib-tab heading="{{'label.heading.jobmonitor' | translate}}" select="loadJobHistory()">
+                <!-- Job History List -->
+                <div class="panel panel-default" ng-hide="showJobMonitor">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <i class="fa fa-history"></i> {{'label.heading.jobhistory' | translate}}
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <div ng-show="isLoadingJobs" class="text-center">
+                            <i class="fa fa-spinner fa-spin fa-3x"></i>
+                            <p>{{'label.loading' | translate}}</p>
+                        </div>
+                        <div ng-show="!isLoadingJobs && jobHistory.length === 0" class="alert alert-info">
+                            {{'label.nojobhistory' | translate}}
+                        </div>
+                        <div ng-show="!isLoadingJobs && jobHistory.length > 0" class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{{'label.jobid' | translate}}</th>
+                                        <th>{{'label.status' | translate}}</th>
+                                        <th>{{'label.totalloans' | translate}}</th>
+                                        <th>{{'label.successfulloans' | translate}}</th>
+                                        <th>{{'label.failedloans' | translate}}</th>
+                                        <th>{{'label.createddate' | translate}}</th>
+                                        <th>{{'label.heading.actions' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="job in jobHistory">
+                                        <td>{{job.jobId}}</td>
+                                        <td>
+                                            <span class="label" ng-class="getJobStatusClass(job.status)">{{job.status}}</span>
+                                        </td>
+                                        <td>{{job.total}}</td>
+                                        <td class="text-success">{{job.successful}}</td>
+                                        <td class="text-danger">{{job.failed}}</td>
+                                        <td>{{formatJobDate(job.createdOn)}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-xs btn-info" ng-click="viewJobDetails(job)">
+                                                <i class="fa fa-eye"></i> {{'label.button.view' | translate}}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-show="!isLoadingJobs && totalJobRecords > jobsPerPage" class="text-center">
+                            <uib-pagination total-items="totalJobRecords" ng-model="jobCurrentPage"
+                                           items-per-page="jobsPerPage" ng-change="jobPageChanged()"
+                                           max-size="5" boundary-links="true">
+                            </uib-pagination>
+                        </div>
+                    </div>
+                </div>
+                <!-- Job Detail Section -->
+                <div class="panel panel-default" ng-show="showJobMonitor">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <i class="fa fa-tasks"></i> {{'label.heading.jobmonitor' | translate}}
+                            <button type="button" class="btn btn-sm btn-default pull-right" ng-click="hideJobMonitor()">
+                                <i class="fa fa-arrow-left"></i> {{'label.button.back' | translate}}
+                            </button>
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Job Status Card -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="well">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <dl class="dl-horizontal">
+                                                <dt>{{'label.jobid' | translate}}</dt>
+                                                <dd>{{jobStatus.jobId}}</dd>
+                                                <dt>{{'label.status' | translate}}</dt>
+                                                <dd>
+                                                    <span class="label" ng-class="getJobStatusClass(jobStatus.status)">
+                                                        {{jobStatus.status}}
+                                                    </span>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <dl class="dl-horizontal">
+                                                <dt>{{'label.totalloans' | translate}}</dt>
+                                                <dd>{{jobStatus.total}}</dd>
+                                                <dt>{{'label.successfulloans' | translate}}</dt>
+                                                <dd><span class="text-success">{{jobStatus.successful}}</span></dd>
+                                                <dt>{{'label.failedloans' | translate}}</dt>
+                                                <dd><span class="text-danger">{{jobStatus.failed}}</span></dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="progress" style="margin-top: 15px;" ng-show="jobStatus.total > 0">
+                                        <div class="progress-bar progress-bar-success" role="progressbar"
+                                             style="width: {{getSuccessPercentage()}}%;">
+                                            {{jobStatus.successful}} Success
+                                        </div>
+                                        <div class="progress-bar progress-bar-danger" role="progressbar"
+                                             style="width: {{getFailedPercentage()}}%;">
+                                            {{jobStatus.failed}} Failed
+                                        </div>
+                                    </div>
+                                    <!-- Refresh Button -->
+                                    <div class="text-center" style="margin-top: 15px;"
+                                         ng-show="jobStatus.status === 'QUEUED' || jobStatus.status === 'IN_PROGRESS'">
+                                        <button type="button" class="btn btn-info" ng-click="refreshJobStatus()" ng-disabled="isRefreshing">
+                                            <i class="fa fa-refresh" ng-class="{'fa-spin': isRefreshing}"></i>
+                                            {{'label.button.refresh' | translate}}
+                                        </button>
+                                        <p class="text-muted" style="margin-top: 5px;">
+                                            <small>{{'label.autorefreshin' | translate}} {{autoRefreshCountdown}} {{'label.seconds' | translate}}</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Failed Loans Details -->
+                        <div ng-show="jobStatus.failed > 0 && jobStatus.failures && jobStatus.failures.length > 0">
+                            <h5>{{'label.heading.failedloandetails' | translate}}</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'label.heading.loanid' | translate}}</th>
+                                            <th>{{'label.heading.reason' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="failure in jobStatus.failures">
+                                            <td>
+                                                <a href="#/viewloanaccount/{{failure.loanId}}">{{failure.loanId}}</a>
+                                            </td>
+                                            <td class="text-danger">{{failure.reason}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </uib-tab>
+
+            </uib-tabset>
+        </div>
+    </div>
+</div>
+<!-- Confirmation Modal -->
+<script type="text/ng-template" id="bulkForeclosureConfirmModal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <i class="fa fa-exclamation-triangle text-warning"></i>
+            {{'label.heading.confirmforeclosure' | translate}}
+        </h4>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-warning">
+            <p><strong>{{'label.warning' | translate}}:</strong></p>
+            <p>{{'label.bulkforeclosure.warning' | translate}}</p>
+        </div>
+        <p>{{'label.totalselectedloans' | translate}}: <strong>{{selectedCount}}</strong></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="cancel()">
+            {{'label.button.cancel' | translate}}
+        </button>
+        <button type="button" class="btn btn-danger" ng-click="confirm()">
+            <i class="fa fa-gavel"></i> {{'label.button.proceed' | translate}}
+        </button>
+    </div>
+</script>
