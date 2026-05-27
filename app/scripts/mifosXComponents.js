@@ -270,6 +270,7 @@ define(['Q', 'underscore', 'mifosX'], function (Q) {
             'product/productmix/ViewProductMixController',
             'product/productmix/AddProductMixController',
             'organization/BulkLoanReassignmentController',
+            'organization/BulkForeclosureController',
             'system/AuditController',
             'system/ViewAuditController',
             'template/TemplateController',
