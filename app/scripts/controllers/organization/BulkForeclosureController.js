@@ -1,10 +1,16 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        BulkForeclosureController: function (scope, resourceFactory, location, route, http, $uibModal, dateFilter, $interval) {
+        BulkForeclosureController: function (scope, resourceFactory, location, route, http, $uibModal, dateFilter, $interval, $rootScope) {
+            // Permission checks
+            scope.hasExecutePermission = $rootScope.hasPermission('BULKFORECLOSURE_LOAN');
+            scope.hasReadJobPermission = $rootScope.hasPermission('READ_BULKFORECLOSUREJOB');
+            scope.hasDownloadPermission = $rootScope.hasPermission('DOWNLOAD_BULKFORECLOSUREJOB');
+
             // Initialize scope variables
             scope.eligibleLoans = [];
             scope.filteredLoans = [];
             scope.selectedLoans = {};
+            scope.selectedLoansData = {}; // Store full loan data for export across pages
             scope.selectAllChecked = false;
             scope.isLoading = false;
             scope.showJobMonitor = false;
@@ -13,8 +19,12 @@
             scope.loanProducts = [];
             scope.jobStatus = {};
             scope.totalRecords = 0;
-            scope.itemsPerPage = 50;
-            scope.currentPage = 1;
+            scope.itemsPerPage = 20;
+
+            // Use object for pagination to fix two-way binding issue with uib-pagination
+            scope.pagination = {
+                currentPage: 1
+            };
 
             // Tab management
             scope.activeTab = 'eligible';
@@ -45,6 +55,7 @@
             scope.setActiveTab = function (tab) {
                 scope.activeTab = tab;
                 if (tab === 'jobs') {
+                    scope.showJobMonitor = false;
                     scope.loadJobHistory();
                 }
             };
@@ -87,6 +98,7 @@
             // Hide job monitor and go back to job list
             scope.hideJobMonitor = function () {
                 scope.showJobMonitor = false;
+                scope.loadJobHistory();
             };
 
             // Format date array [year, month, day, hour, minute, second] to readable string
@@ -113,13 +125,14 @@
                 scope.isLoading = true;
                 // Only reset selection when explicitly requested (e.g., on search/filter change)
                 if (resetSelection) {
-                    scope.selectedLoans = {};;
+                    scope.selectedLoans = {};
+                    scope.selectedLoansData = {}; // Clear stored loan data
                     scope.selectAllChecked = false;
                 }
                 var params = {
                     productId: scope.filterData.productId,
-                    limit: scope.itemsPerPage,
-                    offset: (scope.currentPage - 1) * scope.itemsPerPage
+                    limit: parseInt(scope.itemsPerPage, 10),
+                    offset: (parseInt(scope.pagination.currentPage, 10) - 1) * parseInt(scope.itemsPerPage, 10)
                 };
                 // Add date filters if provided (format: dd-MM-yyyy)
                 if (scope.filterData.fromDate) {
@@ -128,6 +141,10 @@
                 if (scope.filterData.toDate) {
                     params.toDate = dateFilter(scope.filterData.toDate, 'dd-MM-yyyy');
                 }
+                console.log("Current Page:", scope.pagination.currentPage);
+                console.log("Total Records:", scope.totalRecords);
+                console.log("Offset:", params.offset);
+                console.log("Limit:", params.limit);
                 resourceFactory.bulkForeclosureResource.getEligibleLoans(params, function (data) {
                     scope.eligibleLoans = data.pageItems || [];
                     scope.filteredLoans = scope.eligibleLoans;
@@ -162,7 +179,7 @@
                     toDate: ''
                 };
                 scope.localFilter = { searchText: '' };
-                scope.currentPage = 1;
+                scope.pagination.currentPage = 1;
                 scope.loadEligibleLoans(true); // Reset selection when filters are reset
             };
             // Pagination - keep selection when changing pages
@@ -177,7 +194,12 @@
                 }
                 var allSelected = true;
                 scope.filteredLoans.forEach(function (loan) {
-                    if (!scope.selectedLoans[loan.loanId]) {
+                    if (scope.selectedLoans[loan.loanId]) {
+                        // Store loan data when selected
+                        scope.selectedLoansData[loan.loanId] = loan;
+                    } else {
+                        // Remove loan data when deselected
+                        delete scope.selectedLoansData[loan.loanId];
                         allSelected = false;
                     }
                 });
@@ -187,11 +209,13 @@
             scope.selectAll = function () {
                 scope.filteredLoans.forEach(function (loan) {
                     scope.selectedLoans[loan.loanId] = true;
+                    scope.selectedLoansData[loan.loanId] = loan; // Store full loan data
                 });
                 scope.selectAllChecked = true;
             };
             scope.deselectAll = function () {
                 scope.selectedLoans = {};
+                scope.selectedLoansData = {}; // Clear all loan data
                 scope.selectAllChecked = false;
             };
             scope.toggleSelectAll = function () {
@@ -231,21 +255,24 @@
                     resolve: {
                         selectedCount: function () {
                             return selectedCount;
+                        },
+                        dateFormat: function () {
+                            return scope.df;
                         }
                     }
                 });
-                modalInstance.result.then(function () {
-                    scope.executeBulkForeclosure();
+                modalInstance.result.then(function (foreclosureDate) {
+                    scope.executeBulkForeclosure(foreclosureDate);
                 });
             };
             // Execute bulk foreclosure
-            scope.executeBulkForeclosure = function () {
+            scope.executeBulkForeclosure = function (foreclosureDate) {
                 var loanIds = scope.getSelectedLoanIds();
                 var requestData = {
                     loanIds: loanIds,
                     dateFormat: scope.df,
                     locale: scope.optlang.code,
-                    foreclosureDate: dateFilter(new Date(), scope.df)
+                    foreclosureDate: dateFilter(foreclosureDate, scope.df)
                 };
                 scope.isLoading = true;
                 resourceFactory.bulkForeclosureResource.executeBulk(requestData, function (data) {
@@ -334,19 +361,107 @@
             };
             // Initialize - don't auto-load, wait for product selection
             scope.localFilter = { searchText: '' };
+
+            // Export selected eligible loans to Excel
+            scope.exportSelectedLoans = function () {
+                var selectedLoanIds = scope.getSelectedLoanIds();
+                if (selectedLoanIds.length === 0) {
+                    return;
+                }
+
+                // Get selected loan data from selectedLoansData (stores data across all pages)
+                var selectedLoanData = [];
+                for (var loanId in scope.selectedLoansData) {
+                    if (scope.selectedLoans[loanId] === true) {
+                        selectedLoanData.push(scope.selectedLoansData[loanId]);
+                    }
+                }
+
+                // Create CSV content
+                var csvContent = 'Client Name,Loan Account No,Principal Outstanding,Interest Outstanding,Fee Charges Outstanding,Penalty Outstanding,Total Payoff\n';
+
+                selectedLoanData.forEach(function (loan) {
+                    csvContent += '"' + (loan.clientName || '') + '",';
+                    csvContent += '"' + (loan.loanAccountNo || '') + '",';
+                    csvContent += (loan.principalOutstanding || 0) + ',';
+                    csvContent += (loan.interestOutstanding || 0) + ',';
+                    csvContent += (loan.feeChargesOutstanding || 0) + ',';
+                    csvContent += (loan.penalyOutstanding || 0) + ',';
+                    csvContent += (loan.payoffAmount || 0) + '\n';
+                });
+
+                // Create blob and download
+                var blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+                var downloadUrl = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'eligible-loans-export-' + dateFilter(new Date(), 'yyyyMMdd-HHmmss') + '.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl);
+            };
+
+            // Download job report as Excel
+            scope.downloadJobReport = function (jobId, reportType) {
+                var url = $rootScope.hostUrl + '/fineract-provider/api/v1/loans/foreclosure/jobs/' + jobId + '/download?reportType=' + (reportType || 'all');
+                url += '&tenantIdentifier=' + $rootScope.tenantIdentifier;
+
+                http.get(url, {responseType: 'arraybuffer'}).then(function (response) {
+                    var contentType = response.headers('Content-Type') || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    var blob = new Blob([response.data], {type: contentType});
+                    var downloadUrl = URL.createObjectURL(blob);
+                    var link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = 'bulk-foreclosure-report-' + jobId + '-' + (reportType || 'all') + '.xlsx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(downloadUrl);
+                }, function (error) {
+                    scope.errorDetails = scope.errorDetails || [];
+                    scope.errorDetails.push({code: 'error.message.download.failed', args: {params: []}});
+                });
+            };
         }
     });
-    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount) {
+    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount, dateFormat) {
         $scope.selectedCount = selectedCount;
+        $scope.dateFormat = dateFormat || 'dd MMMM yyyy';
+
+        // Initialize form data with today's date as default (date only, no time)
+        var today = new Date();
+        $scope.formData = {
+            foreclosureDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+        };
+
+        // Datepicker configuration
+        $scope.foreclosureDateOpened = false;
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1,
+            showWeeks: false
+        };
+
+        // Open date picker
+        $scope.openForeclosureDate = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.foreclosureDateOpened = true;
+        };
+
         $scope.confirm = function () {
-            $uibModalInstance.close(true);
+            // Return date only without time component
+            var selectedDate = $scope.formData.foreclosureDate;
+            var dateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+            $uibModalInstance.close(dateOnly);
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
     };
     mifosX.ng.application.controller('BulkForeclosureController', [
-        '$scope', 'ResourceFactory', '$location', '$route', '$http', '$uibModal', 'dateFilter', '$interval',
+        '$scope', 'ResourceFactory', '$location', '$route', '$http', '$uibModal', 'dateFilter', '$interval', '$rootScope',
         mifosX.controllers.BulkForeclosureController
     ]).run(function ($log) {
         $log.info("BulkForeclosureController initialized");
