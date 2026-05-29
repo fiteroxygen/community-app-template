@@ -301,6 +301,30 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Successful Loans Details -->
+                        <div ng-show="jobStatus.successful > 0 && jobStatus.successes && jobStatus.successes.length > 0">
+                            <h5>{{'label.heading.successfulloandetails' | translate}}</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'label.heading.loanaccountnum' | translate}}</th>
+                                            <th>{{'label.heading.clientname' | translate}}</th>
+                                            <th class="text-right">{{'label.heading.totalpayoff' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="success in jobStatus.successes">
+                                            <td>
+                                                <a href="#/viewloanaccount/{{success.loanId}}">{{success.loanAccountNo}}</a>
+                                            </td>
+                                            <td>{{success.clientName}}</td>
+                                            <td class="text-right text-success">{{success.payoffAmount | number:2}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <!-- Failed Loans Details -->
                         <div ng-show="jobStatus.failed > 0 && jobStatus.failures && jobStatus.failures.length > 0">
                             <h5>{{'label.heading.failedloandetails' | translate}}</h5>
@@ -345,12 +369,26 @@
             <p>{{'label.bulkforeclosure.warning' | translate}}</p>
         </div>
         <p>{{'label.totalselectedloans' | translate}}: <strong>{{selectedCount}}</strong></p>
+        <div class="form-group">
+            <label class="control-label">{{'label.input.foreclosuredate' | translate}} <span class="required">*</span></label>
+            <div class="input-group">
+                <input type="text" class="form-control" datepicker-pop="dd MMMM yyyy"
+                       ng-model="formData.foreclosureDate" is-open="foreclosureDateOpened"
+                       ng-required="true"/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="openForeclosureDate($event)">
+                        <i class="fa fa-calendar"></i>
+                    </button>
+                </span>
+            </div>
+            <span class="help-block text-muted">{{'label.help.foreclosuredate' | translate}}</span>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="cancel()">
             {{'label.button.cancel' | translate}}
         </button>
-        <button type="button" class="btn btn-danger" ng-click="confirm()">
+        <button type="button" class="btn btn-danger" ng-click="confirm()" ng-disabled="!formData.foreclosureDate">
             <i class="fa fa-gavel"></i> {{'label.button.proceed' | translate}}
         </button>
     </div>

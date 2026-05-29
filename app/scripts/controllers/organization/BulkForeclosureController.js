@@ -255,21 +255,24 @@
                     resolve: {
                         selectedCount: function () {
                             return selectedCount;
+                        },
+                        dateFormat: function () {
+                            return scope.df;
                         }
                     }
                 });
-                modalInstance.result.then(function () {
-                    scope.executeBulkForeclosure();
+                modalInstance.result.then(function (foreclosureDate) {
+                    scope.executeBulkForeclosure(foreclosureDate);
                 });
             };
             // Execute bulk foreclosure
-            scope.executeBulkForeclosure = function () {
+            scope.executeBulkForeclosure = function (foreclosureDate) {
                 var loanIds = scope.getSelectedLoanIds();
                 var requestData = {
                     loanIds: loanIds,
                     dateFormat: scope.df,
                     locale: scope.optlang.code,
-                    foreclosureDate: dateFilter(new Date(), scope.df)
+                    foreclosureDate: dateFilter(foreclosureDate, scope.df)
                 };
                 scope.isLoading = true;
                 resourceFactory.bulkForeclosureResource.executeBulk(requestData, function (data) {
@@ -384,7 +387,7 @@
                     csvContent += (loan.interestOutstanding || 0) + ',';
                     csvContent += (loan.feeChargesOutstanding || 0) + ',';
                     csvContent += (loan.penalyOutstanding || 0) + ',';
-                    csvContent += (loan.totalPayoff || 0) + '\n';
+                    csvContent += (loan.payoffAmount || 0) + '\n';
                 });
 
                 // Create blob and download
@@ -422,10 +425,36 @@
             };
         }
     });
-    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount) {
+    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount, dateFormat) {
         $scope.selectedCount = selectedCount;
+        $scope.dateFormat = dateFormat || 'dd MMMM yyyy';
+
+        // Initialize form data with today's date as default (date only, no time)
+        var today = new Date();
+        $scope.formData = {
+            foreclosureDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+        };
+
+        // Datepicker configuration
+        $scope.foreclosureDateOpened = false;
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1,
+            showWeeks: false
+        };
+
+        // Open date picker
+        $scope.openForeclosureDate = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.foreclosureDateOpened = true;
+        };
+
         $scope.confirm = function () {
-            $uibModalInstance.close(true);
+            // Return date only without time component
+            var selectedDate = $scope.formData.foreclosureDate;
+            var dateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+            $uibModalInstance.close(dateOnly);
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
