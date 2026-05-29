@@ -40,12 +40,14 @@
             scope.filterData = {
                 productId: '',
                 fromDate: '',
-                toDate: ''
+                toDate: '',
+                foreclosureDate: new Date() // Default to today
             };
 
             // Datepicker configuration
             scope.fromDateOpened = false;
             scope.toDateOpened = false;
+            scope.foreclosureDateOpened = false;
             scope.dateOptions = {
                 formatYear: 'yy',
                 startingDay: 1
@@ -141,6 +143,10 @@
                 if (scope.filterData.toDate) {
                     params.toDate = dateFilter(scope.filterData.toDate, 'dd-MM-yyyy');
                 }
+                // Add foreclosure date for payoff calculation
+                if (scope.filterData.foreclosureDate) {
+                    params.foreclosureDate = dateFilter(scope.filterData.foreclosureDate, 'dd MMMM yyyy');
+                }
                 console.log("Current Page:", scope.pagination.currentPage);
                 console.log("Total Records:", scope.totalRecords);
                 console.log("Offset:", params.offset);
@@ -176,7 +182,8 @@
                 scope.filterData = {
                     productId: scope.loanProducts.length > 0 ? scope.loanProducts[0].id : '',
                     fromDate: '',
-                    toDate: ''
+                    toDate: '',
+                    foreclosureDate: new Date() // Reset to today
                 };
                 scope.localFilter = { searchText: '' };
                 scope.pagination.currentPage = 1;
@@ -258,6 +265,9 @@
                         },
                         dateFormat: function () {
                             return scope.df;
+                        },
+                        foreclosureDate: function () {
+                            return scope.filterData.foreclosureDate;
                         }
                     }
                 });
@@ -425,14 +435,14 @@
             };
         }
     });
-    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount, dateFormat) {
+    var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount, dateFormat, foreclosureDate) {
         $scope.selectedCount = selectedCount;
         $scope.dateFormat = dateFormat || 'dd MMMM yyyy';
 
-        // Initialize form data with today's date as default (date only, no time)
-        var today = new Date();
+        // Initialize form data with foreclosure date from filter (or today if not set)
+        var initialDate = foreclosureDate || new Date();
         $scope.formData = {
-            foreclosureDate: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+            foreclosureDate: new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate())
         };
 
         // Datepicker configuration

@@ -49,13 +49,24 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">{{'label.input.foreclosuredate' | translate}} <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" datepicker-pop="dd MMMM yyyy"
+                                               ng-model="filterData.foreclosureDate" is-open="foreclosureDateOpened" ng-required="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
                                         <button type="button" class="btn btn-default" ng-click="resetFilters()">
                                             <i class="fa fa-refresh"></i> {{'label.button.reset' | translate}}
                                         </button>
-                                        <button type="button" class="btn btn-primary" ng-click="loadEligibleLoans(true)" ng-disabled="!filterData.productId">
+                                        <button type="button" class="btn btn-primary" ng-click="loadEligibleLoans(true)" ng-disabled="!filterData.productId || !filterData.foreclosureDate">
                                             <i class="fa fa-search"></i> {{'label.button.submit' | translate}}
                                         </button>
                                     </div>
