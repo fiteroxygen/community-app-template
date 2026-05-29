@@ -4733,5 +4733,6 @@
   "label.heading.jobid": "Job ID",
   "label.nojobsfound": "No foreclosure jobs found",
   "label.button.view": "View",
+  "label.createddate" : "Created Date",
   "----End---": "--End of file--- "
 }
