@@ -4733,5 +4733,11 @@
   "label.heading.jobid": "Job ID",
   "label.nojobsfound": "No foreclosure jobs found",
   "label.button.view": "View",
+  "label.createddate" : "Created Date",
+  "label.button.retry": "Retry",
+  "label.heading.confirmretry": "Confirm Retry",
+  "label.info": "Info",
+  "label.retryforeclosure.info": "You are about to retry the selected failed foreclosure transactions. This will reprocess only the selected failed loans.",
+  "label.totalselectedfailedloans": "Total Selected Failed Loans",
   "----End---": "--End of file--- "
 }
