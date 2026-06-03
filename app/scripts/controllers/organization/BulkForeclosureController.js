@@ -36,9 +36,14 @@
             scope.jobsPerPage = 20;
             scope.jobCurrentPage = 1;
 
+            // Failed loans retry variables
+            scope.selectedFailedLoans = {};
+            scope.selectAllFailedChecked = false;
+            scope.isRetrying = false;
+
             // Filter data matching backend API
             scope.filterData = {
-                productId: '',
+                product: null,
                 fromDate: '',
                 toDate: '',
                 foreclosureDate: new Date() // Default to today
@@ -88,6 +93,9 @@
             scope.viewJobDetails = function (job) {
                 scope.isLoadingJobs = true;
                 scope.showJobMonitor = true;
+                // Reset failed loans selection when viewing a new job
+                scope.selectedFailedLoans = {};
+                scope.selectAllFailedChecked = false;
                 resourceFactory.bulkForeclosureResource.getJobStatus({jobId: job.jobId}, function (data) {
                     scope.jobStatus = data;
                     scope.isLoadingJobs = false;
@@ -119,7 +127,7 @@
             });
             // Load eligible loans from API
             scope.loadEligibleLoans = function (resetSelection) {
-                if (!scope.filterData.productId) {
+                if (!scope.filterData.product) {
                     scope.eligibleLoans = [];
                     scope.filteredLoans = [];
                     return;
@@ -131,8 +139,9 @@
                     scope.selectedLoansData = {}; // Clear stored loan data
                     scope.selectAllChecked = false;
                 }
+                console.log("Loading eligible loans with filters:", scope.filterData);
                 var params = {
-                    productId: scope.filterData.productId,
+                    productId: scope.filterData.product.id,
                     limit: parseInt(scope.itemsPerPage, 10),
                     offset: (parseInt(scope.pagination.currentPage, 10) - 1) * parseInt(scope.itemsPerPage, 10)
                 };
@@ -180,7 +189,7 @@
             // Reset filters
             scope.resetFilters = function () {
                 scope.filterData = {
-                    productId: scope.loanProducts.length > 0 ? scope.loanProducts[0].id : '',
+                    product: scope.loanProducts.length > 0 ? scope.loanProducts[0] : null,
                     fromDate: '',
                     toDate: '',
                     foreclosureDate: new Date() // Reset to today
@@ -433,6 +442,123 @@
                     scope.errorDetails.push({code: 'error.message.download.failed', args: {params: []}});
                 });
             };
+
+            // Failed loans retry functions
+            scope.selectAllFailedLoans = function () {
+                scope.selectedFailedLoans = {};
+                if (scope.jobStatus.failures && scope.jobStatus.failures.length > 0) {
+                    for (var i = 0; i < scope.jobStatus.failures.length; i++) {
+                        scope.selectedFailedLoans[String(i)] = true;
+                    }
+                }
+                scope.selectAllFailedChecked = true;
+            };
+
+            scope.deselectAllFailedLoans = function () {
+                scope.selectedFailedLoans = {};
+                scope.selectAllFailedChecked = false;
+            };
+
+            scope.toggleSelectAllFailed = function () {
+                scope.selectedFailedLoans = {};
+                if (scope.selectAllFailedChecked) {
+                    // Checkbox is now checked, select all failed loans
+                    if (scope.jobStatus.failures && scope.jobStatus.failures.length > 0) {
+                        for (var i = 0; i < scope.jobStatus.failures.length; i++) {
+                            scope.selectedFailedLoans[String(i)] = true;
+                        }
+                    }
+                }
+            };
+
+            scope.toggleFailedLoanSelection = function () {
+                // Update selectAllFailedChecked state based on current selections
+                if (!scope.jobStatus.failures || scope.jobStatus.failures.length === 0) {
+                    scope.selectAllFailedChecked = false;
+                    return;
+                }
+                var allSelected = true;
+                for (var i = 0; i < scope.jobStatus.failures.length; i++) {
+                    if (!scope.selectedFailedLoans[String(i)]) {
+                        allSelected = false;
+                        break;
+                    }
+                }
+                scope.selectAllFailedChecked = allSelected;
+            };
+
+            scope.getSelectedFailedCount = function () {
+                var count = 0;
+                for (var key in scope.selectedFailedLoans) {
+                    if (scope.selectedFailedLoans.hasOwnProperty(key) && scope.selectedFailedLoans[key] === true) {
+                        count++;
+                    }
+                }
+                return count;
+            };
+
+            scope.getSelectedFailedLoanIds = function () {
+                var loanIds = [];
+                for (var key in scope.selectedFailedLoans) {
+                    if (scope.selectedFailedLoans.hasOwnProperty(key) && scope.selectedFailedLoans[key] === true) {
+                        var index = parseInt(key, 10);
+                        if (scope.jobStatus.failures && scope.jobStatus.failures[index]) {
+                            loanIds.push(scope.jobStatus.failures[index].loanId);
+                        }
+                    }
+                }
+                return loanIds;
+            };
+
+            // Retry confirmation modal
+            scope.confirmRetryFailed = function () {
+                var selectedCount = scope.getSelectedFailedCount();
+                if (selectedCount === 0) {
+                    return;
+                }
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'retryForeclosureConfirmModal.html',
+                    controller: RetryForeclosureConfirmModalController,
+                    resolve: {
+                        selectedCount: function () {
+                            return selectedCount;
+                        }
+                    }
+                });
+                modalInstance.result.then(function () {
+                    scope.executeRetryForeclosure();
+                });
+            };
+
+            // Execute retry foreclosure for failed loans (uses original job's foreclosure date)
+            scope.executeRetryForeclosure = function () {
+                var loanIds = scope.getSelectedFailedLoanIds();
+                if (loanIds.length === 0) {
+                    return;
+                }
+                var requestData = {
+                    loanIds: loanIds,
+                    locale: scope.optlang.code
+                };
+                scope.isRetrying = true;
+                resourceFactory.bulkForeclosureResource.retryFailed({jobId: scope.jobStatus.jobId}, requestData, function (data) {
+                    scope.isRetrying = false;
+                    // Clear selected failed loans after successful retry submission
+                    scope.selectedFailedLoans = {};
+                    scope.selectAllFailedChecked = false;
+                    // Go back to job list after successful retry
+                    scope.showJobMonitor = false;
+                    scope.loadJobHistory();
+                }, function (error) {
+                    scope.isRetrying = false;
+                    scope.errorDetails = scope.errorDetails || [];
+                    if (error.data && error.data.errors) {
+                        scope.errorDetails = error.data.errors;
+                    } else {
+                        scope.errorDetails.push({code: 'error.message.retry.failed', args: {params: []}});
+                    }
+                });
+            };
         }
     });
     var BulkForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount, dateFormat, foreclosureDate) {
@@ -470,6 +596,19 @@
             $uibModalInstance.dismiss('cancel');
         };
     };
+
+    // Retry Foreclosure Confirmation Modal Controller (simple confirmation, uses original job's foreclosure date)
+    var RetryForeclosureConfirmModalController = function ($scope, $uibModalInstance, selectedCount) {
+        $scope.selectedCount = selectedCount;
+
+        $scope.confirm = function () {
+            $uibModalInstance.close();
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
     mifosX.ng.application.controller('BulkForeclosureController', [
         '$scope', 'ResourceFactory', '$location', '$route', '$http', '$uibModal', 'dateFilter', '$interval', '$rootScope',
         mifosX.controllers.BulkForeclosureController

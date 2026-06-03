@@ -21,8 +21,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-4">{{'label.input.product' | translate}} <span class="required">*</span></label>
                                     <div class="col-sm-8">
-                                        <select chosen="loanProducts" ng-model="filterData.productId" 
-                                                data-ng-options="product.id as product.name for product in loanProducts"
+                                        <select chosen="loanProducts" ng-model="filterData.product"
+                                                data-ng-options="product as product.name for product in loanProducts track by product.id"
                                                 class="form-control" required>
                                             <option value="">{{'label.select.product' | translate}}</option>
                                         </select>
@@ -66,7 +66,7 @@
                                         <button type="button" class="btn btn-default" ng-click="resetFilters()">
                                             <i class="fa fa-refresh"></i> {{'label.button.reset' | translate}}
                                         </button>
-                                        <button type="button" class="btn btn-primary" ng-click="loadEligibleLoans(true)" ng-disabled="!filterData.productId || !filterData.foreclosureDate">
+                                        <button type="button" class="btn btn-primary" ng-click="loadEligibleLoans(true)" ng-disabled="!filterData.product || !filterData.foreclosureDate">
                                             <i class="fa fa-search"></i> {{'label.button.submit' | translate}}
                                         </button>
                                     </div>
@@ -94,11 +94,11 @@
                             <p>{{'label.loading' | translate}}</p>
                         </div>
                         <!-- No Product Selected Message -->
-                        <div ng-show="!isLoading && !filterData.productId" class="alert alert-info">
+                        <div ng-show="!isLoading && !filterData.product" class="alert alert-info">
                             {{'label.selectproducttosearch' | translate}}
                         </div>
                         <!-- No Data Message -->
-                        <div ng-show="!isLoading && filterData.productId && filteredLoans.length === 0" class="alert alert-info">
+                        <div ng-show="!isLoading && filterData.product && filteredLoans.length === 0" class="alert alert-info">
                             {{'label.noeligibleloans' | translate}}
                         </div>
                         <!-- Selection Actions -->
@@ -131,7 +131,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 40px;">
-                                            <input type="checkbox" ng-model="selectAllChecked" ng-change="toggleSelectAll()"/>
+
                                         </th>
                                         <th>{{'label.heading.loanaccountnum' | translate}}</th>
                                         <th>{{'label.heading.clientname' | translate}}</th>
@@ -339,16 +339,45 @@
                         <!-- Failed Loans Details -->
                         <div ng-show="jobStatus.failed > 0 && jobStatus.failures && jobStatus.failures.length > 0">
                             <h5>{{'label.heading.failedloandetails' | translate}}</h5>
+                            <!-- Retry Actions -->
+                            <div class="row" style="margin-bottom: 15px;" ng-show="hasExecutePermission">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="selectAllFailedLoans()">
+                                        <i class="fa fa-check-square-o"></i> {{'label.button.selectall' | translate}}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="deselectAllFailedLoans()">
+                                        <i class="fa fa-square-o"></i> {{'label.button.deselectall' | translate}}
+                                    </button>
+                                    <span class="text-muted" style="margin-left: 15px;">
+                                        {{'label.selected' | translate}}: <strong>{{getSelectedFailedCount()}}</strong>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-warning" ng-click="confirmRetryFailed()"
+                                            ng-disabled="getSelectedFailedCount() === 0 || isRetrying">
+                                        <i class="fa fa-repeat" ng-class="{'fa-spin': isRetrying}"></i>
+                                        {{'label.button.retry' | translate}}
+                                    </button>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
+                                            <th style="width: 40px;" ng-show="hasExecutePermission">
+
+                                            </th>
                                             <th>{{'label.heading.loanaccountnum' | translate}}</th>
                                             <th>{{'label.heading.reason' | translate}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="failure in jobStatus.failures">
+                                        <tr ng-repeat="failure in jobStatus.failures track by $index"
+                                            ng-class="{'warning': selectedFailedLoans['' + $index]}">
+                                            <td ng-show="hasExecutePermission">
+                                                <input type="checkbox" ng-model="selectedFailedLoans['' + $index]"
+                                                       ng-change="toggleFailedLoanSelection()"/>
+                                            </td>
                                             <td>
                                                 <a href="#/viewloanaccount/{{failure.loanId}}">{{failure.loanAccountNo}}</a>
                                             </td>
@@ -401,6 +430,30 @@
         </button>
         <button type="button" class="btn btn-danger" ng-click="confirm()" ng-disabled="!formData.foreclosureDate">
             <i class="fa fa-gavel"></i> {{'label.button.proceed' | translate}}
+        </button>
+    </div>
+</script>
+<!-- Retry Confirmation Modal -->
+<script type="text/ng-template" id="retryForeclosureConfirmModal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <i class="fa fa-repeat text-warning"></i>
+            {{'label.heading.confirmretry' | translate}}
+        </h4>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-info">
+            <p><strong>{{'label.info' | translate}}:</strong></p>
+            <p>{{'label.retryforeclosure.info' | translate}}</p>
+        </div>
+        <p>{{'label.totalselectedfailedloans' | translate}}: <strong>{{selectedCount}}</strong></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="cancel()">
+            {{'label.button.cancel' | translate}}
+        </button>
+        <button type="button" class="btn btn-warning" ng-click="confirm()">
+            <i class="fa fa-repeat"></i> {{'label.button.retry' | translate}}
         </button>
     </div>
 </script>
