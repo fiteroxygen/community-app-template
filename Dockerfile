@@ -19,6 +19,5 @@ COPY ./nginx-conf/* /etc/nginx/conf.d/
 COPY conf/default.conf.template /etc/nginx/conf.d/default.conf.template
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/ca-bundle.pem /etc/ssl/keys/cert.pem
-COPY conf/private-key.pem /etc/ssl/keys/key.pem
 EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
