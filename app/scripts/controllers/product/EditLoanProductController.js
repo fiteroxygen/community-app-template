@@ -1,9 +1,10 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        EditLoanProductController: function (scope, resourceFactory, location, routeParams, dateFilter, translate) {
+        EditLoanProductController: function (scope, resourceFactory, location, routeParams, dateFilter, translate, $uibModal) {
             scope.formData = {};
             scope.restrictDate = new Date();
             scope.charges = [];
+            scope.cliChargeSlabs = {}; // CLI slabs per charge, keyed by chargeId
             scope.loanProductConfigurableAttributes = [];
             scope.showOrHideValue = "show";
             scope.configureFundOptions = [];
@@ -40,6 +41,25 @@
                 scope.penaltyOptions = scope.product.penaltyOptions || [];
                 scope.chargeOptions = scope.product.chargeOptions || [];
                 scope.charges = scope.product.charges || [];
+                
+                // Initialize CLI slabs from existing product data
+                // API returns flat array of slabs, group them by chargeId
+                if (scope.product.cliChargeSlabs && scope.product.cliChargeSlabs.length > 0) {
+                    scope.product.cliChargeSlabs.forEach(function(slab) {
+                        if (!scope.cliChargeSlabs[slab.chargeId]) {
+                            scope.cliChargeSlabs[slab.chargeId] = [];
+                        }
+                        scope.cliChargeSlabs[slab.chargeId].push({
+                            id: slab.id,
+                            fromPeriod: slab.fromPeriod,
+                            toPeriod: slab.toPeriod,
+                            periodType: slab.periodType ? slab.periodType.id : 2,
+                            amountRangeTo: slab.amountRangeTo,
+                            rate: slab.rate
+                        });
+                    });
+                }
+                
                 if (data.startDate) {
                     scope.date.first = new Date(data.startDate);
                 }
@@ -350,7 +370,73 @@
             };
 
             scope.deleteCharge = function (index) {
+                var charge = scope.charges[index];
+                // Clean up CLI slabs for this charge if any
+                if (charge && charge.id && scope.cliChargeSlabs[charge.id]) {
+                    delete scope.cliChargeSlabs[charge.id];
+                }
                 scope.charges.splice(index, 1);
+            };
+
+            // CLI Charge Slab Functions
+            scope.hasCLISlabs = function(charge) {
+                return charge && charge.id && scope.cliChargeSlabs[charge.id] && 
+                       scope.cliChargeSlabs[charge.id].length > 0;
+            };
+
+            scope.configureCLISlabs = function(charge) {
+                var CLISlabConfigCtrl = function ($scope, $uibModalInstance, charge, slabs) {
+                    $scope.charge = charge;
+                    $scope.slabs = angular.copy(slabs) || [];
+                    $scope.periodTypeOptions = [
+                        {id: 0, value: 'Days'},
+                        {id: 1, value: 'Weeks'},
+                        {id: 2, value: 'Months'},
+                        {id: 3, value: 'Years'}
+                    ];
+
+                    $scope.addSlab = function() {
+                        var fromPeriod = 1;
+                        if ($scope.slabs.length > 0) {
+                            var lastSlab = $scope.slabs[$scope.slabs.length - 1];
+                            if (lastSlab.toPeriod) {
+                                fromPeriod = parseInt(lastSlab.toPeriod) + 1;
+                            }
+                        }
+                        $scope.slabs.push({
+                            fromPeriod: fromPeriod,
+                            toPeriod: '',
+                            periodType: 2, // Months
+                            amountRangeTo: '',
+                            rate: ''
+                        });
+                    };
+
+                    $scope.removeSlab = function(index) {
+                        $scope.slabs.splice(index, 1);
+                    };
+
+                    $scope.save = function() {
+                        $uibModalInstance.close($scope.slabs);
+                    };
+
+                    $scope.cancel = function() {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                };
+
+                var currentSlabs = scope.cliChargeSlabs[charge.id] || [];
+                
+                $uibModal.open({
+                    templateUrl: 'cliSlabConfig.html',
+                    controller: CLISlabConfigCtrl,
+                    resolve: {
+                        charge: function() { return charge; },
+                        slabs: function() { return currentSlabs; }
+                    }
+                }).result.then(function(slabs) {
+                    scope.cliChargeSlabs[charge.id] = slabs;
+                });
             };
 
             //advanced accounting rule
@@ -547,6 +633,30 @@
                 this.formData.penaltyToIncomeAccountMappings = scope.penaltyToIncomeAccountMappings;
                 this.formData.charges = scope.chargesSelected;
                 this.formData.allowAttributeOverrides = scope.selectedConfigurableAttributes;
+                
+                // Add CLI charge slabs
+                var cliChargeSlabsArray = [];
+                for (var chargeId in scope.cliChargeSlabs) {
+                    if (scope.cliChargeSlabs.hasOwnProperty(chargeId) && scope.cliChargeSlabs[chargeId].length > 0) {
+                        cliChargeSlabsArray.push({
+                            chargeId: parseInt(chargeId),
+                            slabs: scope.cliChargeSlabs[chargeId].map(function(slab) {
+                                return {
+                                    id: slab.id || null,
+                                    fromPeriod: slab.fromPeriod ? parseInt(slab.fromPeriod) : null,
+                                    toPeriod: slab.toPeriod ? parseInt(slab.toPeriod) : null,
+                                    periodType: slab.periodType ? parseInt(slab.periodType) : 2,
+                                    amountRangeTo: slab.amountRangeTo ? parseFloat(slab.amountRangeTo) : null,
+                                    rate: slab.rate ? parseFloat(slab.rate) : null
+                                };
+                            })
+                        });
+                    }
+                }
+                if (cliChargeSlabsArray.length > 0) {
+                    this.formData.cliChargeSlabs = cliChargeSlabsArray;
+                }
+                
                 this.formData.dateFormat = scope.df;
                 this.formData.locale = scope.optlang.code;
                 this.formData.startDate = reqFirstDate;
@@ -772,7 +882,7 @@
 
         }
     });
-    mifosX.ng.application.controller('EditLoanProductController', ['$scope', 'ResourceFactory', '$location', '$routeParams', 'dateFilter', '$translate', mifosX.controllers.EditLoanProductController]).run(function ($log) {
+    mifosX.ng.application.controller('EditLoanProductController', ['$scope', 'ResourceFactory', '$location', '$routeParams', 'dateFilter', '$translate', '$uibModal', mifosX.controllers.EditLoanProductController]).run(function ($log) {
         $log.info("EditLoanProductController initialized");
     });
 }(mifosX.controllers || {}));

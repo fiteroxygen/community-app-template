@@ -1407,6 +1407,7 @@
                         <th></th>
                         <th>{{'label.heading.date' | translate}}</th>
                         <th></th>
+                        <th>{{'label.heading.clirateconfig' | translate}}</th>
                         <th>{{'label.heading.actions' | translate}}</th>
                     </tr>
                     <tr ng-repeat="charge in charges" ng-hide="charge.penalty">
@@ -1419,6 +1420,17 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td>
+                            <span ng-if="charge.isCLICharge">
+                                <button type="button" class="btn btn-default btn-sm" ng-click="configureCLISlabs(charge)">
+                                    <i class="fa fa-cog"></i>&nbsp;{{'label.button.configure' | translate}}
+                                </button>
+                                <span ng-show="hasCLISlabs(charge)" class="text-success">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </span>
+                            <span ng-if="!charge.isCLICharge" class="text-muted">-</span>
+                        </td>
                         <td><a ng-click="deleteCharge($index)"><i class="fa fa-times-circle fa-2x"></i></a></td>
                     </tr>
                 </table>
@@ -2368,3 +2380,61 @@
         </wz-step>
     </wizard>
 </div>
+
+<!-- CLI Slab Configuration Modal Template -->
+<script type="text/ng-template" id="cliSlabConfig.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{'label.heading.clirateconfig' | translate}} - {{charge.name}}</h3>
+    </div>
+    <div class="modal-body">
+        <p class="text-muted">{{'label.heading.clislabdescription' | translate}}</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="graybg">
+                    <th>{{'label.heading.periodfrom' | translate}}</th>
+                    <th>{{'label.heading.periodto' | translate}}</th>
+                    <th>{{'label.heading.periodtype' | translate}}</th>
+                    <th>{{'label.heading.amountupto' | translate}}</th>
+                    <th>{{'label.heading.rate' | translate}} (%)</th>
+                    <th>{{'label.heading.actions' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="slab in slabs">
+                    <td>
+                        <input type="number" class="form-control" ng-model="slab.fromPeriod" min="1" placeholder="1">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" ng-model="slab.toPeriod" min="1" placeholder="6">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" value="Months" disabled>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" ng-model="slab.amountRangeTo" placeholder="100000000">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" ng-model="slab.rate" step="0.01" min="0" max="100" placeholder="1.0">
+                    </td>
+                    <td>
+                        <a ng-click="removeSlab($index)" class="text-danger">
+                            <i class="fa fa-times-circle fa-lg"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr ng-if="slabs.length === 0">
+                    <td colspan="6" class="text-center text-muted">
+                        {{'label.heading.noclislabs' | translate}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-default" ng-click="addSlab()">
+            <i class="fa fa-plus"></i>&nbsp;{{'label.button.addrow' | translate}}
+        </button>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">{{'label.button.cancel' | translate}}</button>
+        <button class="btn btn-primary" ng-click="save()">{{'label.button.save' | translate}}</button>
+    </div>
+</script>

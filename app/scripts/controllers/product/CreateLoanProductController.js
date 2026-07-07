@@ -1,10 +1,11 @@
 (function (module) {
     mifosX.controllers = _.extend(module, {
-        CreateLoanProductController: function (scope, $rootScope, resourceFactory, location, dateFilter,WizardHandler, translate) {
+        CreateLoanProductController: function (scope, $rootScope, resourceFactory, location, dateFilter,WizardHandler, translate, $uibModal) {
             scope.restrictDate = new Date();
             scope.formData = {};
             scope.loanproduct = {};
             scope.charges = [];
+            scope.cliChargeSlabs = {}; // CLI slabs per charge, keyed by chargeId
             scope.accountingOptions = ['None','Cash','Accrual(Periodic)','Accrual(Upfront)'];
             scope.floatingrateoptions = [];
             scope.loanProductConfigurableAttributes = [];
@@ -181,7 +182,73 @@
           };
 
           scope.deleteCharge = function (index) {
+                var charge = scope.charges[index];
+                // Clean up CLI slabs for this charge if any
+                if (charge && charge.id && scope.cliChargeSlabs[charge.id]) {
+                    delete scope.cliChargeSlabs[charge.id];
+                }
                 scope.charges.splice(index, 1);
+            };
+
+            // CLI Charge Slab Functions
+            scope.hasCLISlabs = function(charge) {
+                return charge && charge.id && scope.cliChargeSlabs[charge.id] && 
+                       scope.cliChargeSlabs[charge.id].length > 0;
+            };
+
+            scope.configureCLISlabs = function(charge) {
+                var CLISlabConfigCtrl = function ($scope, $uibModalInstance, charge, slabs) {
+                    $scope.charge = charge;
+                    $scope.slabs = angular.copy(slabs) || [];
+                    $scope.periodTypeOptions = [
+                        {id: 0, value: 'Days'},
+                        {id: 1, value: 'Weeks'},
+                        {id: 2, value: 'Months'},
+                        {id: 3, value: 'Years'}
+                    ];
+
+                    $scope.addSlab = function() {
+                        var fromPeriod = 1;
+                        if ($scope.slabs.length > 0) {
+                            var lastSlab = $scope.slabs[$scope.slabs.length - 1];
+                            if (lastSlab.toPeriod) {
+                                fromPeriod = parseInt(lastSlab.toPeriod) + 1;
+                            }
+                        }
+                        $scope.slabs.push({
+                            fromPeriod: fromPeriod,
+                            toPeriod: '',
+                            periodType: 2, // Months
+                            amountRangeTo: '',
+                            rate: ''
+                        });
+                    };
+
+                    $scope.removeSlab = function(index) {
+                        $scope.slabs.splice(index, 1);
+                    };
+
+                    $scope.save = function() {
+                        $uibModalInstance.close($scope.slabs);
+                    };
+
+                    $scope.cancel = function() {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                };
+
+                var currentSlabs = scope.cliChargeSlabs[charge.id] || [];
+                
+                $uibModal.open({
+                    templateUrl: 'cliSlabConfig.html',
+                    controller: CLISlabConfigCtrl,
+                    resolve: {
+                        charge: function() { return charge; },
+                        slabs: function() { return currentSlabs; }
+                    }
+                }).result.then(function(slabs) {
+                    scope.cliChargeSlabs[charge.id] = slabs;
+                });
             };
 
             //advanced accounting rule
@@ -385,6 +452,29 @@
                 this.formData.penaltyToIncomeAccountMappings = scope.penaltyToIncomeAccountMappings;
                 this.formData.charges = scope.chargesSelected;
                 this.formData.allowAttributeOverrides = scope.selectedConfigurableAttributes;
+                
+                // Add CLI charge slabs
+                var cliChargeSlabsArray = [];
+                for (var chargeId in scope.cliChargeSlabs) {
+                    if (scope.cliChargeSlabs.hasOwnProperty(chargeId) && scope.cliChargeSlabs[chargeId].length > 0) {
+                        cliChargeSlabsArray.push({
+                            chargeId: parseInt(chargeId),
+                            slabs: scope.cliChargeSlabs[chargeId].map(function(slab) {
+                                return {
+                                    fromPeriod: slab.fromPeriod ? parseInt(slab.fromPeriod) : null,
+                                    toPeriod: slab.toPeriod ? parseInt(slab.toPeriod) : null,
+                                    periodType: slab.periodType ? parseInt(slab.periodType) : 2,
+                                    amountRangeTo: slab.amountRangeTo ? parseFloat(slab.amountRangeTo) : null,
+                                    rate: slab.rate ? parseFloat(slab.rate) : null
+                                };
+                            })
+                        });
+                    }
+                }
+                if (cliChargeSlabsArray.length > 0) {
+                    this.formData.cliChargeSlabs = cliChargeSlabsArray;
+                }
+                
                 this.formData.locale = scope.optlang.code;
                 this.formData.dateFormat = scope.df;
                 this.formData.startDate = reqFirstDate;
@@ -591,7 +681,7 @@
 
         }
     });
-    mifosX.ng.application.controller('CreateLoanProductController', ['$scope','$rootScope', 'ResourceFactory', '$location', 'dateFilter','WizardHandler', '$translate', mifosX.controllers.CreateLoanProductController]).run(function ($log) {
+    mifosX.ng.application.controller('CreateLoanProductController', ['$scope','$rootScope', 'ResourceFactory', '$location', 'dateFilter','WizardHandler', '$translate', '$uibModal', mifosX.controllers.CreateLoanProductController]).run(function ($log) {
         $log.info("CreateLoanProductController initialized");
     });
 }(mifosX.controllers || {}));

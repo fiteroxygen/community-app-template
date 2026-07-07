@@ -603,6 +603,32 @@
                 </tr>
             </table>
         </div>
+        
+        <!-- CLI Rate Configuration Display -->
+        <div ng-show="loanaccountinfo.cliChargeSlabs && loanaccountinfo.cliChargeSlabs.length > 0">
+            <br>
+            <label>
+                <strong>{{ 'label.heading.clirateconfig' | translate }}</strong>
+            </label>
+            <p class="text-muted small">{{ 'label.heading.clislabinfo' | translate }}</p>
+            <table class="table table-bordered width100">
+                <tr class="graybg">
+                    <th>{{'label.heading.chargename' | translate}}</th>
+                    <th>{{'label.heading.periodfrom' | translate}} - {{'label.heading.periodto' | translate}}</th>
+                    <th>{{'label.heading.periodtype' | translate}}</th>
+                    <th>{{'label.heading.amountupto' | translate}}</th>
+                    <th>{{'label.heading.rate' | translate}} (%)</th>
+                </tr>
+                <tr ng-repeat="slab in loanaccountinfo.cliChargeSlabs">
+                    <td>{{slab.chargeName}}</td>
+                    <td>{{slab.fromPeriod}} - {{slab.toPeriod}}</td>
+                    <td>{{slab.periodType.value || 'Months'}}</td>
+                    <td>{{slab.amountRangeTo | number}}</td>
+                    <td>{{slab.rate}}</td>
+                </tr>
+            </table>
+        </div>
+        
         <br>
         <div class="col-md-12 paddedtop" ng-hide = "response.uiDisplayConfigurations.loanAccount.isHiddenSection.collateralSection == true">
             <label class="control-label col-sm-1">
