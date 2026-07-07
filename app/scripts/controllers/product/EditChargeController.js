@@ -117,6 +117,7 @@
                     countFrequencyType: data.restartFrequencyEnum,
                     penalty: data.penalty,
                     graceExtension: data.isGraceExtension,
+                    isCLICharge: data.isCLICharge,
                     currencyCode: data.currency.code,
                     chargeAppliesTo: data.chargeAppliesTo.id,
                     chargeTimeType: data.chargeTimeType.id,
@@ -228,6 +229,20 @@
                                 }
                                  console.log(chargeCalculationType+" Charge Calculation type  "+scope.loanChargeCalculationType);
                                     }
+
+            // Check if CLI charge checkbox should be displayed (only for Disbursement and Disburse To Savings)
+            scope.isCLIEligibleChargeTimeType = function () {
+                if (!scope.formData.chargeTimeType || !scope.chargeTimeTypeOptions) {
+                    return false;
+                }
+                for (var i = 0; i < scope.chargeTimeTypeOptions.length; i++) {
+                    if (scope.chargeTimeTypeOptions[i].id === scope.formData.chargeTimeType) {
+                        var code = scope.chargeTimeTypeOptions[i].code || '';
+                        return code === 'chargeTimeType.disbursement' || code === 'chargeTimeType.disburseToSavings';
+                    }
+                }
+                return false;
+            };
 
             scope.filterChargeCalculations = function(chargeTimeType) {
                 return function (item) {
@@ -350,6 +365,7 @@
                 this.formData.enableFreeWithdrawalCharge = this.formData.enableFreeWithdrawalCharge || false;
                 this.formData.enablePaymentType = this.formData.enablePaymentType || false;
                 this.formData.penalty = this.formData.penalty || false;
+                this.formData.isCLICharge = this.formData.isCLICharge || false;
                 resourceFactory.chargeResource.update({chargeId: routeParams.id}, this.formData, function (data) {
                     location.path('/viewcharge/' + data.resourceId);
                 });
