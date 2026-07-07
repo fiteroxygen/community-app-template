@@ -464,6 +464,27 @@
 <tr>
     <td colspan="4"><br/></td>
 </tr>
+
+<!-- CLI Charge Slabs Section -->
+<tr ng-if="loanproduct.cliChargeSlabs && loanproduct.cliChargeSlabs.length > 0" class="bottomborder">
+    <td colspan="4"><strong>{{'label.heading.clirateconfig' | translate}}</strong></td>
+</tr>
+<tr ng-if="loanproduct.cliChargeSlabs && loanproduct.cliChargeSlabs.length > 0" class="graybg">
+    <td>{{'label.heading.periodfrom' | translate}} - {{'label.heading.periodto' | translate}}</td>
+    <td>{{'label.heading.periodtype' | translate}}</td>
+    <td>{{'label.heading.amountupto' | translate}}</td>
+    <td>{{'label.heading.rate' | translate}} (%)</td>
+</tr>
+<tr ng-repeat="slab in loanproduct.cliChargeSlabs">
+    <td>{{slab.fromPeriod}} - {{slab.toPeriod}}</td>
+    <td>{{slab.periodType.value || 'Months'}}</td>
+    <td>{{slab.amountRangeTo|number}}</td>
+    <td>{{slab.rate}}</td>
+</tr>
+<tr ng-if="loanproduct.cliChargeSlabs && loanproduct.cliChargeSlabs.length > 0">
+    <td colspan="4"><br/></td>
+</tr>
+
 <tr class="bottomborder">
     <td colspan="4"><strong>{{'label.heading.overduepenalitycharge' | translate}}</strong></td>
 </tr>

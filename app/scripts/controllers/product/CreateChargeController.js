@@ -102,6 +102,20 @@
                     scope.loanChargeCalculationType = true;
                 }
             }
+            
+            // Check if CLI charge checkbox should be displayed (only for Disbursement and Disburse To Savings)
+            scope.isCLIEligibleChargeTimeType = function () {
+                if (!scope.formData.chargeTimeType || !scope.chargeTimeTypeOptions) {
+                    return false;
+                }
+                for (var i = 0; i < scope.chargeTimeTypeOptions.length; i++) {
+                    if (scope.chargeTimeTypeOptions[i].id === scope.formData.chargeTimeType) {
+                        var code = scope.chargeTimeTypeOptions[i].code || '';
+                        return code === 'chargeTimeType.disbursement' || code === 'chargeTimeType.disburseToSavings';
+                    }
+                }
+                return false;
+            };
             //when chargeAppliesTo is savings, below logic is
             //to display 'Due date' field, if chargeTimeType is
             //'annual fee' or 'monthly fee'
@@ -309,6 +323,7 @@
                 this.formData.active = this.formData.active || false;
                 this.formData.enableFreeWithdrawalCharge = this.formData.enableFreeWithdrawalCharge || false;
                 this.formData.enablePaymentType = this.formData.enablePaymentType || false;
+                this.formData.isCLICharge = this.formData.isCLICharge || false;
                 this.formData.locale = scope.optlang.code;
                 this.formData.monthDayFormat = 'dd MMM';
 

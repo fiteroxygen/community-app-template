@@ -104,6 +104,10 @@
 
 					<td>{{'label.input.isgraceextension' | translate}}</td>
 					<td>{{charge.isGraceExtension}}</td>
+					<tr ng-show="charge.chargeAppliesTo.id === 1">
+						<td>{{'label.input.isclicharge' | translate}}</td>
+						<td>{{charge.isCLICharge}}</td>
+					</tr>
 					<tr>
 						<td>{{'label.heading.enablepaymenttype' | translate}}</td>
 						<td>{{charge.isPaymentType}}</td>
