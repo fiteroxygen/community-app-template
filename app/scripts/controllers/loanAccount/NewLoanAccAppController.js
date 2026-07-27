@@ -215,6 +215,7 @@
                 scope.formData.equityContributionLoanPercentage = scope.loanaccountinfo.equityContributionLoanPercentage;
                 scope.formData.requiresEquityContribution = scope.loanaccountinfo.requiresEquityContribution;
                 scope.toVendorClients = scope.loanaccountinfo.vendorClientOptions;
+                scope.recomputeCLICharges();
             };
 
           //Rate
@@ -292,6 +293,7 @@
                 if (scope.chargeFormData.chargeId) {
                     resourceFactory.chargeResource.get({chargeId: this.chargeFormData.chargeId, template: 'true'}, function (data) {
                         data.chargeId = data.id;
+                        scope.applyCLIRate(data);
                         scope.charges.push(data);
                         scope.chargeFormData.chargeId = undefined;
                     });
@@ -301,6 +303,65 @@
             scope.deleteCharge = function (index) {
                 scope.charges.splice(index, 1);
             }
+
+            // Find the CLI slab (if any) whose tenor/amount range covers the loan's current
+            // principal and term, so the offer/charges step reflects the actual disbursement rate
+            // instead of the charge's flat default.
+            scope.getMatchingCLISlab = function (charge) {
+                if (!charge || !scope.loanaccountinfo || !scope.loanaccountinfo.cliChargeSlabs || !scope.loanaccountinfo.cliChargeSlabs.length) {
+                    return null;
+                }
+                var tenor = scope.formData.loanTermFrequency;
+                var tenorType = scope.formData.loanTermFrequencyType;
+                var principal = scope.formData.principal;
+                if (!tenor || !principal) {
+                    return null;
+                }
+                var chargeIdentifier = charge.chargeId || charge.id;
+                var matched = null;
+                angular.forEach(scope.loanaccountinfo.cliChargeSlabs, function (slab) {
+                    var slabChargeId = slab.chargeId || (slab.charge && slab.charge.id);
+                    var belongsToCharge = (slabChargeId && slabChargeId === chargeIdentifier) || slab.chargeName === charge.name;
+                    if (!belongsToCharge) {
+                        return;
+                    }
+                    var slabPeriodType = slab.periodType ? (slab.periodType.id !== undefined ? slab.periodType.id : slab.periodType) : 2;
+                    var withinPeriod = slabPeriodType === tenorType && tenor >= slab.fromPeriod && tenor <= slab.toPeriod;
+                    var withinAmount = !slab.amountRangeTo || principal <= slab.amountRangeTo;
+                    if (withinPeriod && withinAmount && (!matched || slab.amountRangeTo < matched.amountRangeTo)) {
+                        matched = slab;
+                    }
+                });
+                return matched;
+            };
+
+            // Overrides charge.amount with the matching CLI slab rate; reverts to the charge's
+            // own default if the loan's tenor/amount no longer falls inside any configured slab.
+            scope.applyCLIRate = function (charge) {
+                var matchedSlab = scope.getMatchingCLISlab(charge);
+                if (matchedSlab) {
+                    if (charge.defaultAmount === undefined) {
+                        charge.defaultAmount = charge.amount;
+                    }
+                    charge.amount = matchedSlab.rate;
+                    charge.amountOrPercentage = matchedSlab.rate;
+                    charge.cliMatchedSlab = matchedSlab;
+                } else if (charge.cliMatchedSlab) {
+                    charge.amount = charge.defaultAmount !== undefined ? charge.defaultAmount : charge.amount;
+                    charge.amountOrPercentage = charge.amount;
+                    charge.cliMatchedSlab = null;
+                }
+            };
+
+            scope.recomputeCLICharges = function () {
+                angular.forEach(scope.charges, function (charge) {
+                    scope.applyCLIRate(charge);
+                });
+            };
+
+            scope.$watchGroup(['formData.principal', 'formData.loanTermFrequency', 'formData.loanTermFrequencyType'], function () {
+                scope.recomputeCLICharges();
+            });
 
 
             scope.addTranches = function () {
