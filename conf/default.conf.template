@@ -1,12 +1,3 @@
-#server {
-#  listen 80 default_server;
-#  listen [::]:80 default_server;
-#  server_name _;
-#  return 301 https://${DOLLAR}host${DOLLAR}request_uri;
-#}
-
-# site
-
 server {
   listen 80; 
   listen 443 default_server ssl http2;
@@ -49,18 +40,50 @@ server {
     return 200 "UP";
   }
 
-  location ^~ /self {
-    root   /usr/share/nginx/html/self;
+
+  location = ${FINERACT_BASE_URL}api/v1/jobs {
+    error_log /var/log/nginx/error.log error;
+    access_log off;
+    resolver 127.0.0.11 valid=30s;
+    # set $fineract ${FINERACT_BACKEND};
+    proxy_pass ${FINERACT_PROXY_JOB_URL};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade ${DOLLAR}http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host ${DOLLAR}host;
+    proxy_set_header X-Forwarded-Host ${DOLLAR}host:${DOLLAR}server_port;
+    proxy_set_header X-Forwarded-Server ${DOLLAR}host;
+    proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
+    proxy_set_header X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
+    #proxy_pass_header X-XSRF-TOKEN;
+  }
+
+  location ^~ ${FINERACT_BASE_URL}api/v1/jobs/ {
+    error_log /var/log/nginx/error.log error;
+    access_log off;
+    resolver 127.0.0.11 valid=30s;
+    # set $fineract ${FINERACT_BACKEND};
+    proxy_pass ${FINERACT_PROXY_JOB_URL};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade ${DOLLAR}http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host ${DOLLAR}host;
+    proxy_set_header X-Forwarded-Host ${DOLLAR}host:${DOLLAR}server_port;
+    proxy_set_header X-Forwarded-Server ${DOLLAR}host;
+    proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
+    proxy_set_header X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
+    #proxy_pass_header X-XSRF-TOKEN;
   }
 
   location ${FINERACT_BASE_URL} {
     error_log /var/log/nginx/error.log error;
     access_log off;
-
+    resolver 127.0.0.11 valid=30s;
+    # set $fineract ${FINERACT_BACKEND};
     proxy_pass ${FINERACT_PROXY_URL};
     proxy_http_version 1.1;
-    proxy_ssl_server_name on;
-    proxy_read_timeout 600;
     proxy_set_header Upgrade ${DOLLAR}http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_set_header Host ${DOLLAR}host;
