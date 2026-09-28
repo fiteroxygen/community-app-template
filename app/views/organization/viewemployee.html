@@ -47,6 +47,18 @@
         	                        <td>{{ 'label.heading.joiningDate' | translate }}</td>
         	                        <td>{{employee.joiningDate | DateFormat}}</td>
         	                    </tr>
+        	                    <tr>
+        	                        <td>{{ 'label.heading.activationDate' | translate }}</td>
+        	                        <td>{{employee.activationDate | DateFormat}}</td>
+        	                    </tr>
+        	                    <tr ng-if="!employee.isActive">
+        	                        <td>{{ 'label.heading.deactivatedOnDate' | translate }}</td>
+        	                        <td>{{employee.deactivatedOnDate | DateFormat}}</td>
+        	                    </tr>
+        	                    <tr ng-if="!employee.isActive">
+        	                        <td>{{ 'label.heading.deactivatedByUsername' | translate }}</td>
+        	                        <td>{{employee.deactivatedByUsername}}</td>
+        	                    </tr>
         			        </table>
         				</div>
         			</div>
