@@ -17,6 +17,12 @@
                     scope.savingaccountdetails.transactions[i][dateFieldName] = new Date(scope.savingaccountdetails.transactions[i].date);
                 }
             };
+            // All account loads must go through here so availableBalance is not lost when a later response replaces the details
+            scope.setAccountDetails = function (data) {
+                scope.savingaccountdetails = data;
+                scope.savingaccountdetails.availableBalance = data.enforceMinRequiredBalance ? (data.summary.accountBalance - data.minRequiredOpeningBalance) : data.summary.accountBalance;
+            };
+
             scope.clickEvent = function (eventName, accountId) {
                 eventName = eventName || "";
                 switch (eventName) {
@@ -109,8 +115,7 @@
                 offset: 0,
                 limit: scope.clientsPerPage
             }, function (data) {
-                scope.savingaccountdetails = data;
-                scope.savingaccountdetails.availableBalance = scope.savingaccountdetails.enforceMinRequiredBalance?(scope.savingaccountdetails.summary.accountBalance - scope.savingaccountdetails.minRequiredOpeningBalance):scope.savingaccountdetails.summary.accountBalance;
+                scope.setAccountDetails(data);
                 scope.convertDateArrayToObject('date');
                 scope.chartSlabs = scope.savingaccountdetails.accountChart.chartSlabs;
                 scope.isprematureAllowed = data.maturityDate != null;
@@ -323,7 +328,7 @@
                      offset: ((pageNumber - 1) * scope.transactionsPerPage),
                      limit: scope.clientsPerPage
                      }, function (data) {
-                     scope.savingaccountdetails = data;
+                     scope.setAccountDetails(data);
                      scope.transactions = scope.savingaccountdetails.transactions;
                        });
                   }
@@ -332,7 +337,7 @@
                      offset: 0,
                      limit: scope.transactionsPerPage
                      }, function (data) {
-                     scope.savingaccountdetails = data;
+                     scope.setAccountDetails(data);
                      scope.totalTransactions = scope.savingaccountdetails.transactionSize;
                      scope.transactions = scope.savingaccountdetails.transactions;
                        });
